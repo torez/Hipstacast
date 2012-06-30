@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, HipstacastMain!</string>
+    <string name="app_name">Hipstacast</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_add">Add</string>
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_add_URL">Add URL</string>
+    <string name="podcast_add_title">Add podcast</string>
+    <string name="podcast_url_alert_add_msg">Paste the URL of the podcast\'s feed in the field</string>
+    <string name="podcast_url_alert_add_fetching">Fetching the podcast. Please wait</string>
+    <string name="episode_not_downloaded">This episode isn\'t downloaded (%d MB). Would you like to download it now?</string>
+    <string name="cancel">Cancel</string>
+    <string name="download">Download</string>
+    <string name="menu_play">Play</string>
+    <string name="menu_pause">Pause</string>
+
+</resources>
