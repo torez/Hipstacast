@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/menuAddUrl"
-          android:title="@string/menu_add_URL"
-          android:showAsAction="ifRoom|withText"/>
+    <item
+        android:id="@+id/menuAddUrl"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menu_add_URL"/>
+    <item
+        android:id="@+id/menuSearch"
+        android:icon="@drawable/ic_action_search"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/menu_search"/>
+
 </menu>

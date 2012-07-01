@@ -9,13 +9,10 @@ public class Podcast {
 	public String description;
 	public String imageUrl;
 	
-	public Podcast(int _id, String _title, String _link, String _feed_link, String _author, String _description, String _imageUrl) {
-		id = _id;
+	public Podcast(String _title, String _feed_link, String _author, String _imageUrl) {
 		title = _title;
-		link = _link;
 		feed_link = _feed_link;
 		author = _author;
-		description = _description;
 		imageUrl = _imageUrl;
 	}
 }
