@@ -21,6 +21,8 @@ import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
@@ -29,6 +31,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
@@ -41,7 +44,53 @@ public class HipstacastSearch extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// setContentView(R.layout.search);
+		final ListView listView = getListView();
+
+		listView.setOnItemClickListener(new ListView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, final View view,
+					int position, long id) {
+
+				final Podcast c = (Podcast) getListAdapter().getItem(position);
+				new AlertDialog.Builder(listView.getContext())
+						.setTitle(R.string.subscribe)
+						.setMessage(
+								String.format(
+										getString(R.string.podcast_subscribe),
+										c.title))
+						.setPositiveButton(R.string.subscribe,
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int whichButton) {
+										dialog.dismiss();
+										String value = c.feed_link;
+
+										ProgressDialog progressDialog;
+										progressDialog = new ProgressDialog(listView.getContext());
+										progressDialog
+												.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+										progressDialog
+												.setMessage(getString(R.string.podcast_url_alert_add_fetching));
+										progressDialog.setCancelable(false);
+										progressDialog.show();
+										Log.i("HIP-POD-URL", value);
+
+										new AddPodcastProvider().execute(value,
+												progressDialog,
+												getApplicationContext());
+									}
+								})
+						.setNegativeButton(R.string.cancel,
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int whichButton) {
+										// Do nothing.
+									}
+								}).show();
+
+			}
+
+		});
 
 	}
 
@@ -81,7 +130,8 @@ public class HipstacastSearch extends ListActivity {
 									Log.i("HIP-POD-URL", value);
 
 									new AddPodcastProvider().execute(value,
-											progressDialog);
+											progressDialog,
+											getApplicationContext());
 								}
 							})
 					.setNegativeButton("Cancel",
