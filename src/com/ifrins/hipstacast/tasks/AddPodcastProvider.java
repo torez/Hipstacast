@@ -10,8 +10,8 @@ import java.net.URLConnection;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -24,6 +24,7 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -60,7 +61,7 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 	                dir.mkdirs();
 	           }
 	           	           
-	           URL url = new URL(imageUrl); //you can write here any link
+	           URL url = new URL("http://src.sencha.io/jpg95/700/"+imageUrl); //you can write here any link
 	           File file = new File(dir, UUID.randomUUID().toString()+".jpg");
 
 	           long startTime = System.currentTimeMillis();
@@ -105,7 +106,7 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 	}
  
 	private long convertTimeStrToTimestamp(String timestamp) {
-		SimpleDateFormat format = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss Z");
+		SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
 		try {
 			Date d = format.parse(timestamp);
 			return d.getTime();
@@ -118,9 +119,18 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 	
 	private int convertDurationToSeconds(String duration) {
 		String[] tokens = duration.split(":");
-		int hours = Integer.parseInt(tokens[0]);
-		int minutes = Integer.parseInt(tokens[1]);
-		int seconds = Integer.parseInt(tokens[2]);
+		Log.d("HIP-TK", String.valueOf(tokens.length));
+		int hours = 0;
+		int minutes = 0;
+		int seconds = 0;
+		if (tokens.length == 2) {
+			minutes = Integer.parseInt(tokens[0]);
+			seconds = Integer.parseInt(tokens[1]);
+		} else if (tokens.length == 3) {
+			hours = Integer.parseInt(tokens[0]);
+			minutes = Integer.parseInt(tokens[1]);
+			seconds = Integer.parseInt(tokens[2]);
+		}
 		return (3600 * hours) + (60 * minutes) + seconds;
 	}
 	
@@ -128,6 +138,7 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 	protected ContentValues doInBackground(Object... obj) {
 		String url = obj[0].toString();
 		ProgressDialog c = (ProgressDialog)obj[1];
+		Context ct = (Context)obj[2];
 		if (url == null) return null;
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(false);
@@ -195,8 +206,9 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 																			episodeContentValues);
 			
 			Log.d("HIP-URL", episodeNewUri.toString());
-			
-			c.dismiss();
+			if (c != null) {
+				c.dismiss();
+			}
 			Log.d("HIP-URL", mNewUri.toString());
 
 			return null;
