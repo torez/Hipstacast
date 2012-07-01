@@ -1,6 +1,8 @@
 package com.ifrins.hipstacast;
 
 import java.io.File;
+import java.io.IOException;
+
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ListActivity;
@@ -45,7 +47,15 @@ public class HipstacastEpisodeView extends ListActivity {
 				 final long content_length = c.getLong(c.getColumnIndex("content_length"));
 				 
 				 File f = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/"+podcast_id+"/"+episode_id + ".mp3");
-				 
+				 File _f = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/.nomedia");
+				 if (!_f.exists()) {
+					 try {
+						_f.createNewFile();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				 }
 				 if (status == 0 && !f.exists()) {
 		            	new AlertDialog.Builder(listView.getContext())
 		                .setTitle(c.getString(c.getColumnIndex("title")))
@@ -55,7 +65,8 @@ public class HipstacastEpisodeView extends ListActivity {
 		                    	File d = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/"+podcast_id);
 		                    	if(d.exists() == false) {
 		        	                d.mkdirs();
-		        	           }
+		                    	}
+		                    	
 		                    	d = null;
 		                    	DownloadManager mgr = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
 		                    	mgr.enqueue(new DownloadManager.Request(Uri.parse(content_url))
