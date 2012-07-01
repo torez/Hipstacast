@@ -38,7 +38,7 @@ public class EpisodePlayer extends Activity {
 	
 	private Runnable mUpdateTimeTask = new Runnable() {
         public void run() {
-        	if (player != null && player.isPlaying()) {
+        	if (player != null && player.isPlaying() && player.show_id == show_id && player.podcast_id == podcast_id) {
         		seek.setProgress(player.mediaPlayer.getCurrentPosition());
         		//Log.d("HIP-STATUS", String.valueOf(player.mediaPlayer.getCurrentPosition()));
         		if (player.mediaPlayer.getDuration() > 500000) {
@@ -129,7 +129,7 @@ public class EpisodePlayer extends Activity {
     	c.put("position", (int)player.mediaPlayer.getCurrentPosition()/1000);
     	c.put("status", 2);
     	getContentResolver().update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+show_id+"/episodes/"+podcast_id), 
-    								c, "_id = ?", new String[]{String.valueOf(podcast_id)}); 
+    								c, "_id = ?", new String[]{String.valueOf(player.podcast_id)}); 
     	
     	start_position = player.mediaPlayer.getCurrentPosition();
     }
@@ -170,6 +170,18 @@ public class EpisodePlayer extends Activity {
 	            b.setProgress(start_position);
 	            b.setOnSeekBarChangeListener(chl);
 	            complete = true;
+            } else if (!fromNotification && player.isPlaying()) {
+            	if (player.show_id != show_id && player.podcast_id != podcast_id) {
+            		player.pause();
+            		savePosition();
+            		player.clean();
+        			player.podcastToPlayUrl = android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/"+show_id+"/"+podcast_id + ".mp3";
+                    player.podcast_id = podcast_id;
+                    player.show_id = show_id;
+                    player.n = n;
+        			Log.d("HIP-NW-SP", String.valueOf(start_position));
+        			player.start_position = start_position;
+            	}
             }
         }
 
@@ -198,6 +210,7 @@ public class EpisodePlayer extends Activity {
         	case R.id.menuPlayToggle:
         		Log.d("HIP-DEB", "player.isPlaying() = ");
         		if (!player.isPlaying() && complete) { 
+        			player.clean();
         			item.setTitle(R.string.menu_pause);
         			item.setIcon(R.drawable.ic_action_pause);
         			player.podcastToPlayUrl = android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/"+show_id+"/"+podcast_id + ".mp3";
