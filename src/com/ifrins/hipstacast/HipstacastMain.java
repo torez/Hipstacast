@@ -73,6 +73,9 @@ public class HipstacastMain extends ListActivity {
 		case R.id.menuRefresh:
 			startService(new Intent(this, HipstacastSyncService.class));
 			return true;
+		case R.id.menuSettings:
+			startActivity(new Intent(this, HipstacastSettings.class));
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
