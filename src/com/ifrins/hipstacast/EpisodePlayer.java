@@ -33,6 +33,8 @@ public class EpisodePlayer extends Activity {
 	Boolean complete = false;
 	Boolean fromNotification = false;
 	SeekBar seek;
+	String name;
+	String url;
 	private Handler mHandler = new Handler();
 	Notification n;
 
@@ -115,7 +117,7 @@ public class EpisodePlayer extends Activity {
 							+ show_id + "/episodes"),
 							new String[] { "_id", "title", "duration",
 									"podcast_id", "status", "position",
-									"content_url", "shownotes" }, "_id = ?",
+									"content_url", "shownotes", "guid" }, "_id = ?",
 							new String[] { String.valueOf(podcast_id) }, null);
 			p.moveToFirst();
 			seek = (SeekBar) findViewById(R.id.playerSeekBar);
@@ -126,17 +128,17 @@ public class EpisodePlayer extends Activity {
 				seek.setOnSeekBarChangeListener(chl);
 			}
 
-			Log.d("HIP_ST_P", String.valueOf(start_position));
 			((TextView) findViewById(R.id.playerEpisodeName)).setText(p
 					.getString(p.getColumnIndex("title")));
 			seek.setMax(p.getInt(p.getColumnIndex("duration")) * 1000);
 
-			Log.d("HIP-TOT",
-					String.valueOf(p.getInt(p.getColumnIndex("duration"))));
 			WebView v = (WebView) findViewById(R.id.playerEpisodeDesc);
 			v.loadData(p.getString(p.getColumnIndex("shownotes")), "text/html",
 					null);
+			
 			isPlaying = false;
+			name = p.getString(p.getColumnIndex("title"));
+			url = p.getString(p.getColumnIndex("guid"));
 			mHandler.removeCallbacks(mUpdateTimeTask);
 			mHandler.postDelayed(mUpdateTimeTask, 1000);
 			buildNotification(p.getString(p.getColumnIndex("title")));
@@ -276,6 +278,13 @@ public class EpisodePlayer extends Activity {
 				isPlaying = false;
 				Log.d("HIP-STATUS", "Should stop");
 			}
+
+			return true;
+		case R.id.menuPlayShare:
+			Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+			sharingIntent.setType("text/plain");
+			sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, String.format(getString(R.string.share_text), name + " - " + url));
+			startActivity(Intent.createChooser(sharingIntent, getString(R.string.share)));
 
 			return true;
 		default:
