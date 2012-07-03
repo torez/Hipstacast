@@ -35,6 +35,7 @@ public class EpisodePlayer extends Activity {
 	SeekBar seek;
 	String name;
 	String url;
+	String donation_url;
 	private Handler mHandler = new Handler();
 	Notification n;
 
@@ -117,7 +118,8 @@ public class EpisodePlayer extends Activity {
 							+ show_id + "/episodes"),
 							new String[] { "_id", "title", "duration",
 									"podcast_id", "status", "position",
-									"content_url", "shownotes", "guid" },
+									"content_url", "shownotes", "guid", "donation_url" },
+							"_id = ?",
 							new String[] { String.valueOf(podcast_id) }, null);
 			p.moveToFirst();
 			seek = (SeekBar) findViewById(R.id.playerSeekBar);
@@ -139,6 +141,7 @@ public class EpisodePlayer extends Activity {
 			isPlaying = false;
 			name = p.getString(p.getColumnIndex("title"));
 			url = p.getString(p.getColumnIndex("guid"));
+			donation_url = p.getString(p.getColumnIndex("donation_url"));
 			mHandler.removeCallbacks(mUpdateTimeTask);
 			mHandler.postDelayed(mUpdateTimeTask, 1000);
 			buildNotification(p.getString(p.getColumnIndex("title")));
@@ -246,6 +249,10 @@ public class EpisodePlayer extends Activity {
 			item.setTitle(R.string.menu_pause);
 			item.setIcon(R.drawable.ic_action_pause);
 		}
+		if (donation_url != "") {
+			MenuItem d = menu.findItem(R.id.menuPlayDonate);
+			d.setEnabled(true);
+		}
 		return true;
 	}
 
@@ -290,6 +297,17 @@ public class EpisodePlayer extends Activity {
 			startActivity(Intent.createChooser(sharingIntent,
 					getString(R.string.share)));
 
+			return true;
+		case R.id.menuPlayDonate:
+			Intent donateIntent = new Intent(Intent.ACTION_VIEW);
+			donateIntent.setData(Uri.parse(donation_url));
+			startActivity(donateIntent);
+
+			return true;
+		case R.id.menuPlayWebsite:
+			Intent openIntent = new Intent(Intent.ACTION_VIEW);
+			openIntent.setData(Uri.parse(url));
+			startActivity(openIntent);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

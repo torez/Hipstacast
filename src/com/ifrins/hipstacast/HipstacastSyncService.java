@@ -56,6 +56,8 @@ public class HipstacastSyncService extends Service {
 		private static final String MEDIALENGHT_ITEM_XPATH = "rss/channel/item[position() = 1]/enclosure/@length";
 		private static final String SHOWNOTES_ITEM_XPATH = "rss/channel/item[position() = 1]/encoded/text()";
 		private static final String DURATION_ITEM_XPATH = "rss/channel/item[position() = 1]/duration/text()";
+		private static final String DONATE_ITEM_XPATH = "/rss/channel/item[position() = 1]/link[@rel='payment']/@href";
+
 
 		private static final String START_HTML = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><style>body{background-color:#000;color:#fff;}body a{color:#33b5e5;}</style></head><body>";
 		private static final String END_HTML = "</body></html>";
@@ -139,7 +141,7 @@ public class HipstacastSyncService extends Service {
 					episodeContentValues.put("duration", convertDurationToSeconds(xpath.compile(DURATION_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString()));
 					episodeContentValues.put("title", title);
 					episodeContentValues.put("guid", xpath.compile(LINK_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-					episodeContentValues.put("donation_url", "");
+					episodeContentValues.put("donation_url", xpath.compile(DONATE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
 					episodeContentValues.put("status", 0);
 					if (shownotes == "") {
 						String ds = xpath.compile(DESCR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString();

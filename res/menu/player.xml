@@ -13,8 +13,13 @@
         android:title="@string/share"/>
     <item
         android:id="@+id/menuPlayWebsite"
+        android:icon="@drawable/ic_action_website"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/openEpisodeWebsite"
-        android:icon="@drawable/ic_action_website"/>
+        android:title="@string/openEpisodeWebsite"/>
+    <item
+        android:id="@+id/menuPlayDonate"
+        android:icon="@drawable/ic_action_website"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/donate"/>
 
 </menu>
