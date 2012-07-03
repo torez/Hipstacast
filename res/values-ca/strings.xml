@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, HipstacastMain!</string>
+    <string name="app_name">Hipstacast</string>
+    <string name="menu_search">Cerca</string>
+    <string name="menu_add">Afegeix</string>
+    <string name="menu_refresh">Refresca</string>
+    <string name="menu_add_URL">Afegeix URL</string>
+    <string name="podcast_add_title">Afegeix un podcast</string>
+    <string name="podcast_url_alert_add_msg">Enganxa la URL del feed d\'un podcast al camp</string>
+    <string name="podcast_url_alert_add_fetching">Comprovant el podcast. Esperi\'s</string>
+    <string name="episode_not_downloaded">Aquest episodi no està baixat (%d MB). El vol baixar ara?</string>
+    <string name="podcast_subscribe">Et vols subscriure a "%s"?</string>
+    <string name="cancel">Cancel·lar</string>
+    <string name="subscribe">Subscriure\'s-hi</string>
+    <string name="download">Baixar</string>
+    <string name="menu_play">Reproduir</string>
+    <string name="menu_pause">Pausa</string>
+    <string name="subscription_ok">Estàs subscrit a "%s"</string>
+    <string name="share">Compartir</string>
+    <string name="share_text">Estic escoltant %s</string>
+    <string name="settings">Configuració</string>
+    <string name="fetchFrequency">Freqüència d\'actualització</string>
+    <string name="fetchFrequencyDesc">El temps que Hipstacast espera per buscar nous episodis.</string>
+    <string name="openEpisodeWebsite">Obrir pàgina web</string>
+    <string name="donate">Fer una donació</string>
+    <string name="unsubscribe">Aturar la subscripcció</string>
+    <string name="delete">Esborrar</string>
+    <string name="unsubscribing">Aturant la subscripcció&#8230;</string>
+    <string name="version">Versió</string>
+    <string name="author">Autor</string>
+    <string name="sendfeedback">Envia comentaris</string>
+	<string name="import_menu">Importar</string>
+	<string name="export">Exportar</string>
+
+</resources>
