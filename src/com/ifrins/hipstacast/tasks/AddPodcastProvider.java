@@ -199,7 +199,8 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 			episodeContentValues.put("duration", convertDurationToSeconds(xpath.compile(DURATION_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString()));
 			episodeContentValues.put("title", xpath.compile(TITLE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
 			episodeContentValues.put("guid", xpath.compile(LINK_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-			episodeContentValues.put("donation_url", "");
+			
+			Log.d("HIP-DON", xpath.compile(LINK_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
 			episodeContentValues.put("status", 0);
 			if (shownotes == "") {
 				String ds = xpath.compile(DESCR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString();

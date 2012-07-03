@@ -11,5 +11,10 @@
         android:icon="@drawable/ic_action_share"
         android:showAsAction="ifRoom|withText"
         android:title="@string/share"/>
+    <item
+        android:id="@+id/menuPlayWebsite"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/openEpisodeWebsite"
+        android:icon="@drawable/ic_action_website"/>
 
 </menu>

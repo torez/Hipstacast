@@ -49,7 +49,11 @@ public class HipstacastPlayerService extends Service implements
 		}
 
 		try {
-			mediaPlayer.setDataSource(fileInputStream.getFD());
+			if (fileInputStream != null) {
+				mediaPlayer.setDataSource(fileInputStream.getFD());
+			}
+			else {
+			}
 		} catch (IllegalArgumentException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

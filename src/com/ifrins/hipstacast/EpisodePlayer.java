@@ -117,7 +117,7 @@ public class EpisodePlayer extends Activity {
 							+ show_id + "/episodes"),
 							new String[] { "_id", "title", "duration",
 									"podcast_id", "status", "position",
-									"content_url", "shownotes", "guid" }, "_id = ?",
+									"content_url", "shownotes", "guid" },
 							new String[] { String.valueOf(podcast_id) }, null);
 			p.moveToFirst();
 			seek = (SeekBar) findViewById(R.id.playerSeekBar);
@@ -127,15 +127,15 @@ public class EpisodePlayer extends Activity {
 				seek.setProgress(start_position);
 				seek.setOnSeekBarChangeListener(chl);
 			}
-
-			((TextView) findViewById(R.id.playerEpisodeName)).setText(p
-					.getString(p.getColumnIndex("title")));
+			TextView title = ((TextView) findViewById(R.id.playerEpisodeName));
+			title.setText(p.getString(p.getColumnIndex("title")));
+			title.setSelected(true);
 			seek.setMax(p.getInt(p.getColumnIndex("duration")) * 1000);
 
 			WebView v = (WebView) findViewById(R.id.playerEpisodeDesc);
 			v.loadData(p.getString(p.getColumnIndex("shownotes")), "text/html",
 					null);
-			
+
 			isPlaying = false;
 			name = p.getString(p.getColumnIndex("title"));
 			url = p.getString(p.getColumnIndex("guid"));
@@ -283,8 +283,12 @@ public class EpisodePlayer extends Activity {
 		case R.id.menuPlayShare:
 			Intent sharingIntent = new Intent(Intent.ACTION_SEND);
 			sharingIntent.setType("text/plain");
-			sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, String.format(getString(R.string.share_text), name + " - " + url));
-			startActivity(Intent.createChooser(sharingIntent, getString(R.string.share)));
+			sharingIntent.putExtra(
+					android.content.Intent.EXTRA_TEXT,
+					String.format(getString(R.string.share_text), name + " - "
+							+ url));
+			startActivity(Intent.createChooser(sharingIntent,
+					getString(R.string.share)));
 
 			return true;
 		default:
