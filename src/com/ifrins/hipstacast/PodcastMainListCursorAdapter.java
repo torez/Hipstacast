@@ -22,6 +22,7 @@ public class PodcastMainListCursorAdapter extends CursorAdapter {
         String title = cursor.getString(cursor.getColumnIndex("title"));
         holder.name.setText(title);
         holder.image.setImageURI(Uri.parse(cursor.getString(cursor.getColumnIndex("imageUrl"))));
+        holder.author.setText(cursor.getString(cursor.getColumnIndex("author")));
 
 	}
 
@@ -37,6 +38,7 @@ public class PodcastMainListCursorAdapter extends CursorAdapter {
 
         holder.name = (TextView) v.findViewById(R.id.podcastTitle);
         holder.image= (ImageView) v.findViewById(R.id.podcastLogo);
+        holder.author = (TextView) v.findViewById(R.id.podcastAuthor);
 
         v.setTag(holder);
         return v;
@@ -46,6 +48,7 @@ public class PodcastMainListCursorAdapter extends CursorAdapter {
 	
 	private class Holder {
         TextView name;
+        TextView author;
         ImageView image;
     }
 }

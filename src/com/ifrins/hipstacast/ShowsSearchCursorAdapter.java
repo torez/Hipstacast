@@ -35,6 +35,8 @@ public class ShowsSearchCursorAdapter extends ArrayAdapter<Object> {
 
 		View rowView = inflater.inflate(R.layout.podcasts_list, parent, false);
 		TextView textView = (TextView) rowView.findViewById(R.id.podcastTitle);
+		TextView author = (TextView) rowView.findViewById(R.id.podcastAuthor);
+		author.setText(((Podcast)podcsts[position]).author);
 		ImageView imageView = (ImageView) rowView
 				.findViewById(R.id.podcastLogo);
 		textView.setText(((Podcast) podcsts[position]).title);
