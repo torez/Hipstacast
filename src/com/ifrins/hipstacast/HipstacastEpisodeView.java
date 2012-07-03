@@ -92,12 +92,15 @@ public class HipstacastEpisodeView extends ListActivity {
 
 				 }
 				 else if (status == 0 && f.exists()) {
-					 Toast.makeText(getApplicationContext(), "The file is there!", Toast.LENGTH_SHORT).show();
 					 ContentValues up = new ContentValues();
 					 up.put("status", 1);
 					 int r = getContentResolver().update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+getIntent().getExtras().getString("show_id")+"/episodes/"+episode_id), 
 							 up, "podcast_id = ?", new String[] {getIntent().getExtras().getString("show_id")});
-					 Log.d("UPD-ROWS", Integer.valueOf(r).toString());
+					 Intent openIntent = new Intent(getApplicationContext(), EpisodePlayer.class);
+					 openIntent.putExtra("show_id", Integer.parseInt(getIntent().getExtras().getString("show_id")));
+					 openIntent.putExtra("episode_id", episode_id);
+					 startActivity(openIntent);
+
 				 }
 				 
 				 else {
@@ -139,7 +142,7 @@ public class HipstacastEpisodeView extends ListActivity {
 		}
 		Cursor c = (Cursor)getListAdapter().getItem(info.position);
 		menu.setHeaderTitle(c.getString(c.getColumnIndex("title")));
-		if (episodes_count > 1 && info.position > 0) {
+		if (episodes_count > 1 && info.position > 0 && c.getInt(c.getColumnIndex("string")) > 0) {
 			menu.add(0, 1, 1, R.string.delete);
 		}
 	}
