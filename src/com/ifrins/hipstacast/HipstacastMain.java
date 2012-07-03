@@ -7,10 +7,12 @@ import android.app.ListActivity;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,7 +29,8 @@ public class HipstacastMain extends ListActivity {
 
 		Cursor p = managedQuery(
 				Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"),
-				new String[] { "_id", "title", "imageUrl", "author" }, null, null, "title ASC");
+				new String[] { "_id", "title", "imageUrl", "author" }, null,
+				null, "title ASC");
 
 		setListAdapter(new PodcastMainListCursorAdapter(
 				getApplicationContext(), p));
@@ -87,10 +90,16 @@ public class HipstacastMain extends ListActivity {
 		Intent newIntent = new Intent(this, HipstacastSyncService.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 				newIntent, 0);
-		long d = SystemClock.elapsedRealtime()+100;
+		long d = SystemClock.elapsedRealtime() + 100;
 
-		((AlarmManager) getApplicationContext().getSystemService(ALARM_SERVICE))
-				.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, d,
-						120000, contentIntent);
+		SharedPreferences prefs = PreferenceManager
+				.getDefaultSharedPreferences(this);
+
+		AlarmManager m = ((AlarmManager) getApplicationContext()
+				.getSystemService(ALARM_SERVICE));
+		m.cancel(contentIntent);
+		m.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, d,
+				Long.parseLong(prefs.getString("fetchFrequency", "86400000")),
+				contentIntent);
 	}
 }
