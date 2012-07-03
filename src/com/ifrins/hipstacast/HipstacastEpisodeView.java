@@ -16,30 +16,33 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.Toast;
 
 
 public class HipstacastEpisodeView extends ListActivity {
 	int show_id;
+	int episodes_count;
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         show_id = Integer.parseInt(getIntent().getExtras().getString("show_id"));
         
         Cursor p = managedQuery(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+getIntent().getExtras().getString("show_id")+"/episodes"), 
         						new String[] {"_id", "title", "duration", "podcast_id", "status", "position", "content_url", "content_length", "publication_date"}, "podcast_id = ?", new String[] {getIntent().getExtras().getString("show_id")}, "publication_date DESC");
-        //ActionBar a = getActionBar();
-        
+        episodes_count = p.getCount();
         setListAdapter(new EpisodeListCursorAdapter(getApplicationContext(), p));
 		
 		final ListView listView = getListView();
 		listView.setTextFilterEnabled(true);
- 
+		registerForContextMenu(listView);
 		listView.setOnItemClickListener(new ListView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
@@ -107,6 +110,7 @@ public class HipstacastEpisodeView extends ListActivity {
 			}
 
 		});
+	
 	}
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -124,6 +128,46 @@ public class HipstacastEpisodeView extends ListActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		AdapterView.AdapterContextMenuInfo info = null;
+		try {
+		    info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+		} catch (ClassCastException e) {
+			e.printStackTrace();
+		}
+		Cursor c = (Cursor)getListAdapter().getItem(info.position);
+		menu.setHeaderTitle(c.getString(c.getColumnIndex("title")));
+		if (episodes_count > 1 && info.position > 0) {
+			menu.add(0, 1, 1, R.string.delete);
+		}
+	}
+	
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		Cursor c = (Cursor)getListAdapter().getItem(info.position);
+		
+	    switch (item.getItemId()) {
+	    	case 1:
+	    		int pid = c.getInt(c.getColumnIndex("_id"));
+	    		this.getContentResolver().delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+show_id+"/episodes"), "_id = ?", new String[] {String.valueOf(pid)});
+	    		File f = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/"+show_id+"/"+pid + ".mp3");
+	    		if (f.exists()) {
+	    			f.delete();
+	    			Intent i = new Intent(getApplicationContext(), HipstacastMain.class);
+	    			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	    			startActivity(i);
+
+	    		} 
+	    		return true;
+	    	default:
+	            return super.onContextItemSelected(item);
+	    }
+	}
+
+	
 	private class UnsubscribeTask extends AsyncTask<Integer, Void, Void> {
 	    ProgressDialog progressDialog;
 	    

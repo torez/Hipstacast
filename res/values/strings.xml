@@ -26,5 +26,6 @@
     <string name="openEpisodeWebsite">Open website</string>
     <string name="donate">Donate</string>
     <string name="unsubscribe">Unsubscribe</string>
+    <string name="delete">Delete</string>
 
 </resources>
