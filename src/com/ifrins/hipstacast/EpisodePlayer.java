@@ -249,10 +249,6 @@ public class EpisodePlayer extends Activity {
 			item.setTitle(R.string.menu_pause);
 			item.setIcon(R.drawable.ic_action_pause);
 		}
-		if (donation_url != "") {
-			MenuItem d = menu.findItem(R.id.menuPlayDonate);
-			d.setEnabled(true);
-		}
 		return true;
 	}
 
@@ -299,11 +295,14 @@ public class EpisodePlayer extends Activity {
 
 			return true;
 		case R.id.menuPlayDonate:
-			Intent donateIntent = new Intent(Intent.ACTION_VIEW);
-			donateIntent.setData(Uri.parse(donation_url));
-			startActivity(donateIntent);
+			if (donation_url.length() > 0) {
 
-			return true;
+				Intent donateIntent = new Intent(Intent.ACTION_VIEW);
+				donateIntent.setData(Uri.parse(donation_url));
+				startActivity(donateIntent);
+	
+				return true;
+			} else return false;
 		case R.id.menuPlayWebsite:
 			Intent openIntent = new Intent(Intent.ACTION_VIEW);
 			openIntent.setData(Uri.parse(url));
