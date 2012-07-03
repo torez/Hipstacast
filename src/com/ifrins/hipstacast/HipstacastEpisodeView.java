@@ -6,11 +6,14 @@ import java.io.IOException;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -23,9 +26,10 @@ import android.widget.Toast;
 
 
 public class HipstacastEpisodeView extends ListActivity {
+	int show_id;
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("HIP-EP-ID", getIntent().getExtras().getString("show_id"));
+        show_id = Integer.parseInt(getIntent().getExtras().getString("show_id"));
         
         Cursor p = managedQuery(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+getIntent().getExtras().getString("show_id")+"/episodes"), 
         						new String[] {"_id", "title", "duration", "podcast_id", "status", "position", "content_url", "content_length"}, "podcast_id = ?", new String[] {getIntent().getExtras().getString("show_id")}, null);
@@ -113,9 +117,50 @@ public class HipstacastEpisodeView extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
+		case R.id.menuEpisodeUnsubscribe:
+			new UnsubscribeTask(this).execute(show_id);
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	private class UnsubscribeTask extends AsyncTask<Integer, Void, Void> {
+	    ProgressDialog progressDialog;
+	    
+	    public UnsubscribeTask(Context c) {
+	    	progressDialog = new ProgressDialog(c);
+	        progressDialog.setCancelable(false);
+	        progressDialog.setMessage("Unsubscribing...");
+	        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+	        progressDialog.setProgress(0);
+	        progressDialog.show();
 
+	    }
+
+		@Override
+		protected Void doInBackground(Integer... params) {
+			int id = params[0];
+
+			
+			getApplicationContext().getContentResolver().delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"), "_id = ?", new String[] {String.valueOf(id)});
+			getApplicationContext().getContentResolver().delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+id+"/episodes"), "podcast_id = ?", new String[] {String.valueOf(id)});
+			File f = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/"+id);
+			if (f.isDirectory()) {
+		        String[] children = f.list();
+		        for (int i = 0; i < children.length; i++) {
+		            new File(f, children[i]).delete();
+		        }
+			}
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Void r) {
+			progressDialog.dismiss();
+			Intent i = new Intent(getApplicationContext(), HipstacastMain.class);
+			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(i);
+		}
+		
+	}
 }
