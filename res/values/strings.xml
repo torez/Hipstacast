@@ -27,5 +27,6 @@
     <string name="donate">Donate</string>
     <string name="unsubscribe">Unsubscribe</string>
     <string name="delete">Delete</string>
+    <string name="unsubscribing">Unsubscribing...</string>
 
 </resources>

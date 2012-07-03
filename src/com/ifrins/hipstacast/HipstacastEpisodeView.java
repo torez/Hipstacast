@@ -174,7 +174,7 @@ public class HipstacastEpisodeView extends ListActivity {
 	    public UnsubscribeTask(Context c) {
 	    	progressDialog = new ProgressDialog(c);
 	        progressDialog.setCancelable(false);
-	        progressDialog.setMessage("Unsubscribing...");
+	        progressDialog.setMessage(getString(R.string.unsubscribing));
 	        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 	        progressDialog.setProgress(0);
 	        progressDialog.show();
