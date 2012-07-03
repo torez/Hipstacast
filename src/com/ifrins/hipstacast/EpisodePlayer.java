@@ -179,6 +179,7 @@ public class EpisodePlayer extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		((Hipstacast)getApplicationContext()).trackPageView("/player");
 		setContentView(R.layout.player);
 		show_id = getIntent().getExtras().getInt("show_id");
 		podcast_id = getIntent().getExtras().getInt("episode_id");

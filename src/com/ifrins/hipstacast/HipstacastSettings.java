@@ -7,6 +7,9 @@ public class HipstacastSettings extends PreferenceActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		((Hipstacast)getApplicationContext()).trackPageView("/settings");
+		
 		addPreferencesFromResource(R.xml.settings);
 	}
 }

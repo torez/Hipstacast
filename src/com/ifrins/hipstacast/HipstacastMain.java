@@ -1,11 +1,9 @@
 package com.ifrins.hipstacast;
 
-import java.util.Calendar;
 
 import android.app.AlarmManager;
 import android.app.ListActivity;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -26,7 +24,9 @@ public class HipstacastMain extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
+		((Hipstacast)getApplicationContext()).trackPageView("/");
+		
 		Cursor p = managedQuery(
 				Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"),
 				new String[] { "_id", "title", "imageUrl", "author" }, null,

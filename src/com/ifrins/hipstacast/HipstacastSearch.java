@@ -43,7 +43,9 @@ public class HipstacastSearch extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
+		
+		((Hipstacast)getApplicationContext()).trackPageView("/search");
+		
 		final ListView listView = getListView();
 
 		listView.setOnItemClickListener(new ListView.OnItemClickListener() {
