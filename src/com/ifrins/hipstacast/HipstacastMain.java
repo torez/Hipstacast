@@ -27,7 +27,7 @@ public class HipstacastMain extends ListActivity {
 
 		Cursor p = managedQuery(
 				Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"),
-				new String[] { "_id", "title", "imageUrl", "author" }, null, null, null);
+				new String[] { "_id", "title", "imageUrl", "author" }, null, null, "title ASC");
 
 		setListAdapter(new PodcastMainListCursorAdapter(
 				getApplicationContext(), p));

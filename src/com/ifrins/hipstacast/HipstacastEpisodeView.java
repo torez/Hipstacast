@@ -32,7 +32,7 @@ public class HipstacastEpisodeView extends ListActivity {
         show_id = Integer.parseInt(getIntent().getExtras().getString("show_id"));
         
         Cursor p = managedQuery(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+getIntent().getExtras().getString("show_id")+"/episodes"), 
-        						new String[] {"_id", "title", "duration", "podcast_id", "status", "position", "content_url", "content_length"}, "podcast_id = ?", new String[] {getIntent().getExtras().getString("show_id")}, null);
+        						new String[] {"_id", "title", "duration", "podcast_id", "status", "position", "content_url", "content_length", "publication_date"}, "podcast_id = ?", new String[] {getIntent().getExtras().getString("show_id")}, "publication_date DESC");
         //ActionBar a = getActionBar();
         
         setListAdapter(new EpisodeListCursorAdapter(getApplicationContext(), p));
