@@ -15,5 +15,13 @@
         android:id="@+id/menuSettings"
         android:showAsAction="ifRoom|withText"
         android:title="@string/settings"/>
+    <item
+        android:id="@+id/menuImport"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/import_menu"/>
+    <item
+        android:id="@+id/menuExport"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/export"/>
 
 </menu>
