@@ -25,5 +25,6 @@
     <string name="fetchFrequencyDesc">Change this value to change the frequency of time that Hipstacast waits to look for new episodes of your subscriptions.</string>
     <string name="openEpisodeWebsite">Open website</string>
     <string name="donate">Donate</string>
+    <string name="unsubscribe">Unsubscribe</string>
 
 </resources>

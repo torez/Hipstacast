@@ -13,6 +13,9 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -101,4 +104,18 @@ public class HipstacastEpisodeView extends ListActivity {
 
 		});
 	}
+	public boolean onCreateOptionsMenu(Menu menu) {
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.menu.episodes, menu);
+		return true;
+	}
+
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// Handle item selection
+		switch (item.getItemId()) {
+		default:
+			return super.onOptionsItemSelected(item);
+		}
+	}
+
 }
