@@ -28,5 +28,11 @@
     <string name="unsubscribe">Unsubscribe</string>
     <string name="delete">Delete</string>
     <string name="unsubscribing">Unsubscribing...</string>
+    <string name="version">Version</string>
+    <string name="author">Author</string>
+    <string name="sendfeedback">Send Feedback</string>
+
+    <!-- Resources -->
+    <string name="version_number">0.8b1</string>
 
 </resources>

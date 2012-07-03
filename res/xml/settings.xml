@@ -9,5 +9,25 @@
             android:summary="@string/fetchFrequencyDesc"
             android:title="@string/fetchFrequency" />
     </PreferenceCategory>
+    <PreferenceCategory android:title="About" >
+        <Preference
+            style="?android:preferenceInformationStyle"
+            android:key="version"
+            android:summary="@string/version_number"
+            android:title="@string/version" />
+        <Preference
+            style="?android:preferenceInformationStyle"
+            android:key="author"
+            android:summary="Francesc (@ifrins)"
+            android:title="@string/author" />
+
+        <PreferenceScreen
+            android:summary=""
+            android:title="@string/sendfeedback" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="mailto:francesc@lapomacatalana.com?subject=Feedback" />
+        </PreferenceScreen>
+    </PreferenceCategory>
 
 </PreferenceScreen>
