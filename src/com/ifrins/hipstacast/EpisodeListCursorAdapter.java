@@ -32,7 +32,17 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
         else {
         	holder.name.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Medium);
         }
-        holder.duration.setText(transformToDuration(cursor.getString(cursor.getColumnIndex("duration"))));
+        if (status == 2) {
+        	int d = cursor.getInt(cursor.getColumnIndex("duration"));
+        	int p = cursor.getInt(cursor.getColumnIndex("position"));
+        	int r = d-p;
+        	holder.duration.setText("-"+transformToDuration(String.valueOf(r)));
+        } else if (status == 3) {
+        	holder.duration.setVisibility(View.INVISIBLE);
+        } else { 
+        	holder.duration.setText(transformToDuration(cursor.getString(cursor.getColumnIndex("duration"))));
+        }
+        
         //holder.status.setImageResource(R.drawable.ic_list_new);
 	}
 
