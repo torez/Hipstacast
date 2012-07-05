@@ -55,7 +55,7 @@ public class HipstacastMain extends ListActivity {
 			}
 
 		});
-
+		
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {

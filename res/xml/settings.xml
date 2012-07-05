@@ -8,6 +8,11 @@
             android:key="fetchFrequency"
             android:summary="@string/fetchFrequencyDesc"
             android:title="@string/fetchFrequency" />
+
+        <CheckBoxPreference
+            android:key="allowCellular"
+            android:summary="@string/allow_cellular_desc"
+            android:title="@string/allow_cellular" />
     </PreferenceCategory>
     <PreferenceCategory android:title="About" >
         <Preference

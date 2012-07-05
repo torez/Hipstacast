@@ -24,10 +24,12 @@ import android.app.DownloadManager;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class HipstacastSyncService extends Service {
@@ -154,11 +156,15 @@ public class HipstacastSyncService extends Service {
 																					episodeContentValues);
 					
                 	DownloadManager mgr = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
-                	Log.i("HIP-S", content_url);
-                	mgr.enqueue(new DownloadManager.Request(Uri.parse(content_url))
-                				.setTitle(title)
-                				.setDestinationInExternalFilesDir(getApplicationContext(), null, "shows/"+show_id+"/"+episodeNewUri.getLastPathSegment() + ".mp3")
-                				.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI));
+            		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+
+                	DownloadManager.Request r = new DownloadManager.Request(Uri.parse(content_url))
+                							.setTitle(title)
+                							.setDestinationInExternalFilesDir(getApplicationContext(), null, "shows/"+show_id+"/"+episodeNewUri.getLastPathSegment() + ".mp3");
+                	
+                	if (!prefs.getBoolean("allowCellular", false)) {
+                		r.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
+                	}
 
 				}
 				
