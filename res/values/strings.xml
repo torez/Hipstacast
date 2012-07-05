@@ -38,7 +38,8 @@
 	<string name="allow_cellular">Downloads over cellular data</string>
 	<string name="allow_cellular_desc">Tick te box if you allow the app to download the podcasts over cellular data. If not, the podcasts will only be downloaded over WiFi</string>
 	<string name="import_msg" formatted="false">Navigate to http://theurl/ with your computer to import your subscriptions. Use the following codes: %d and %d. When you finish tap on Import</string>
+    
     <!-- Resources -->
-    <string name="version_number">0.8b1</string>
+    <string name="version_number">0.8b2</string>
 
 </resources>
