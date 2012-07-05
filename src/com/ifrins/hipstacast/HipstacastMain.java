@@ -1,9 +1,13 @@
 package com.ifrins.hipstacast;
 
 
+import java.util.Random;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -79,6 +83,9 @@ public class HipstacastMain extends ListActivity {
 		case R.id.menuSettings:
 			startActivity(new Intent(this, HipstacastSettings.class));
 			return true;
+		case R.id.menuImport:
+			startImport();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -101,5 +108,40 @@ public class HipstacastMain extends ListActivity {
 		m.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, d,
 				Long.parseLong(prefs.getString("fetchFrequency", "86400000")),
 				contentIntent);
+	}
+	
+	private void startImport() {
+		int n = new Random().nextInt(9999);
+		int s = new Random().nextInt(9999);
+		
+		new AlertDialog.Builder(this)
+		.setTitle(R.string.import_menu)
+		.setMessage(String.format(getString(R.string.import_msg), n, s))
+		.setPositiveButton(R.string.import_menu,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,
+							int whichButton) {
+						dialog.dismiss();
+						/*
+						ProgressDialog progressDialog;
+						progressDialog = new ProgressDialog(getApplicationContext());
+						progressDialog
+								.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+						progressDialog
+								.setMessage(getString(R.string.podcast_url_alert_add_fetching));
+						progressDialog.setCancelable(false);
+						progressDialog.show();
+						*/
+
+					}
+				})
+		.setNegativeButton(R.string.cancel,
+				new DialogInterface.OnClickListener() {
+					public void onClick(DialogInterface dialog,
+							int whichButton) {
+						// Do nothing.
+					}
+				}).show();
+
 	}
 }
