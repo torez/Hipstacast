@@ -197,7 +197,7 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 				episodeContentValues.put("author", xpath.compile(AUTHOR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
 				episodeContentValues.put("description", xpath.compile(DESCR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
 				episodeContentValues.put("content_url", xpath.compile(MEDIALINK_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-				episodeContentValues.put("content_length", Integer.parseInt(xpath.compile(MEDIALENGHT_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString()));
+				episodeContentValues.put("content_length", xpath.compile(MEDIALENGHT_ITEM_XPATH).evaluate(doc, XPathConstants.NUMBER).toString());
 				episodeContentValues.put("duration", convertDurationToSeconds(xpath.compile(DURATION_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString()));
 				episodeContentValues.put("title", xpath.compile(TITLE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
 				episodeContentValues.put("guid", xpath.compile(LINK_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
