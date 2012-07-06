@@ -77,7 +77,7 @@ public class HipstacastSearch extends ListActivity {
 										progressDialog.show();
 										Log.i("HIP-POD-URL", value);
 
-										new AddPodcastProvider().execute(value,
+										new AddPodcastProvider().execute(new String[]{value},
 												progressDialog,
 												getApplicationContext());
 									}
@@ -131,7 +131,7 @@ public class HipstacastSearch extends ListActivity {
 									progressDialog.show();
 									Log.i("HIP-POD-URL", value);
 
-									new AddPodcastProvider().execute(value,
+									new AddPodcastProvider().execute(new String[]{value},
 											progressDialog,
 											getApplicationContext());
 								}
