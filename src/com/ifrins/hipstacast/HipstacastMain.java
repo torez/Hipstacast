@@ -146,7 +146,7 @@ public class HipstacastMain extends Activity {
 						progressDialog
 								.setProgressStyle(ProgressDialog.STYLE_SPINNER);
 						progressDialog
-								.setMessage(getString(R.string.podcast_url_alert_add_fetching));
+								.setMessage(getString(R.string.import_progress));
 						progressDialog.setCancelable(false);
 						progressDialog.show();
 						new ImportTask(getApplicationContext(), progressDialog).execute(n, s);

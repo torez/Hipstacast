@@ -34,10 +34,11 @@
 	<string name="import_menu">Import</string>
 	<string name="export">Export</string>
 	
-	<!-- 0.8b2 -->
+	<!-- 0.8b3 -->
 	<string name="allow_cellular">Downloads over cellular data</string>
 	<string name="allow_cellular_desc">Tick te box if you allow the app to download the podcasts over cellular data. If not, the podcasts will only be downloaded over WiFi</string>
 	<string name="import_msg" formatted="false">Go to %s with your computer to import your subscriptions. Use the following codes: %d and %d. When you finish tap on Import</string>
+    <string name="import_progress">Importing the podcasts. Please wait</string>
     
     <!-- Resources -->
     <string name="version_number">0.8b2</string>
