@@ -135,7 +135,7 @@ public class EpisodePlayer extends Activity {
 			seek.setMax(p.getInt(p.getColumnIndex("duration")) * 1000);
 
 			WebView v = (WebView) findViewById(R.id.playerEpisodeDesc);
-			v.loadData(p.getString(p.getColumnIndex("shownotes")), "text/html",
+			v.loadData(p.getString(p.getColumnIndex("shownotes")), "text/html; charset=UTF-8",
 					null);
 
 			isPlaying = false;
