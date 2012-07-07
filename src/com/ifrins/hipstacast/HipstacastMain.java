@@ -18,6 +18,7 @@ import org.json.JSONException;
 
 import com.ifrins.hipstacast.tasks.AddPodcastProvider;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -41,31 +42,31 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-public class HipstacastMain extends ListActivity {
+public class HipstacastMain extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+		setContentView(R.layout.main);
 		((Hipstacast)getApplicationContext()).trackPageView("/");
 		
 		Cursor p = managedQuery(
 				Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"),
 				new String[] { "_id", "title", "imageUrl", "author" }, null,
-				null, "title ASC");
-
-		setListAdapter(new PodcastMainListCursorAdapter(
+				null, "title ASC"); 
+		
+		ListView listView = (ListView)findViewById(R.id.mainRegularListView);
+		listView.setAdapter(new PodcastMainListCursorAdapter(
 				getApplicationContext(), p));
 
-		ListView listView = getListView();
 		listView.setTextFilterEnabled(true);
 
 		listView.setOnItemClickListener(new ListView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-
-				Cursor c = (Cursor) getListAdapter().getItem(position);
+				
+				Cursor c = (Cursor) parent.getAdapter().getItem(position);
 				Intent openIntent = new Intent(getApplicationContext(),
 						HipstacastEpisodeView.class);
 				openIntent.putExtra("show_id",
