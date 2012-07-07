@@ -31,27 +31,27 @@ import android.util.Log;
 
 public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 	
-	private static String NS = "http://www.itunes.com/dtds/podcast-1.0.dtd";
-	private static String TITLE_XPATH = "rss/channel/title/text()";
-	private static String LINK_XPATH = "rss/channel/link/text()";
-	private static String PUBDATE_XPATH = "rss/channel/pubDate/text()";
-	private static String DESC_XPATH = "rss/channel/description/text()";
-	private static String AUTHOR_XPATH = "rss/channel/author/text()";
-	private static String IMAGE_XPATH = "rss/channel/image/@href";
+	private static final String NS = "http://www.itunes.com/dtds/podcast-1.0.dtd";
+	private static final String TITLE_XPATH = "rss/channel/title/text()";
+	private static final String LINK_XPATH = "rss/channel/link/text()";
+	private static final String PUBDATE_XPATH = "rss/channel/pubDate/text()";
+	private static final String DESC_XPATH = "rss/channel/description/text()";
+	private static final String AUTHOR_XPATH = "rss/channel/author/text()";
+	private static final String IMAGE_XPATH = "rss/channel/image/@href";
 	
-	private static String TITLE_ITEM_XPATH = "rss/channel/item[position() = 1]/title/text()";
-	private static String LINK_ITEM_XPATH = "rss/channel/item[position() = 1]/link/text()";
-	private static String PUBDATE_ITEM_XPATH = "rss/channel/item[position() = 1]/pubDate/text()";
-	private static String AUTHOR_ITEM_XPATH ="rss/channel/item[position() = 1]/author/text()";
-	private static String DESCR_ITEM_XPATH = "rss/channel/item[position() = 1]/summary/text()";
-	private static String MEDIALINK_ITEM_XPATH = "rss/channel/item[position() = 1]/enclosure/@url";
-	private static String MEDIALENGHT_ITEM_XPATH = "rss/channel/item[position() = 1]/enclosure/@length";
-	private static String SHOWNOTES_ITEM_XPATH = "rss/channel/item[position() = 1]/encoded/text()";
-	private static String DURATION_ITEM_XPATH = "rss/channel/item[position() = 1]/duration/text()";
-	private static String DONATE_ITEM_XPATH = "/rss/channel/item[position() = 1]/link[@rel='payment']/@href";
+	private static final String TITLE_ITEM_XPATH = "rss/channel/item[position() = 1]/title/text()";
+	private static final String LINK_ITEM_XPATH = "rss/channel/item[position() = 1]/link/text()";
+	private static final String PUBDATE_ITEM_XPATH = "rss/channel/item[position() = 1]/pubDate/text()";
+	private static final String AUTHOR_ITEM_XPATH ="rss/channel/item[position() = 1]/author/text()";
+	private static final String DESCR_ITEM_XPATH = "rss/channel/item[position() = 1]/summary/text()";
+	private static final String MEDIALINK_ITEM_XPATH = "rss/channel/item[position() = 1]/enclosure/@url";
+	private static final String MEDIALENGHT_ITEM_XPATH = "rss/channel/item[position() = 1]/enclosure/@length";
+	private static final String SHOWNOTES_ITEM_XPATH = "rss/channel/item[position() = 1]/encoded/text()";
+	private static final String DURATION_ITEM_XPATH = "rss/channel/item[position() = 1]/duration/text()";
+	private static final String DONATE_ITEM_XPATH = "/rss/channel/item[position() = 1]/link[@rel='payment']/@href";
 	
-	private static String START_HTML = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><style>body{background-color:#000;color:#fff;}body a{color:#33b5e5;}</style></head><body>";
-	private static String END_HTML = "</body></html>";
+	private static final String START_HTML = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><style>body{background-color:#000;color:#fff;}body a{color:#33b5e5;}</style></head><body>";
+	private static final String END_HTML = "</body></html>";
 	
 	private String storeImage (String imageUrl) {
 		Log.d("HIP-URL", "The image url is " + imageUrl);

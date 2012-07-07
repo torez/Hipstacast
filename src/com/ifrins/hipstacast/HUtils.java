@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 
 public class HUtils {
-	public static int getScreenCategory(Context c) {
+	public static final int getScreenCategory(Context c) {
 		switch (c.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) {
 			case Configuration.SCREENLAYOUT_SIZE_SMALL:
 				return 1;

@@ -13,7 +13,7 @@ import android.net.Uri;
 public class HipstacastContentProvider extends ContentProvider {
 
 	private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-	private static String AUTHORITY = "com.ifrins.hipstacast.provider.HipstacastContentProvider";
+	private static final String AUTHORITY = "com.ifrins.hipstacast.provider.HipstacastContentProvider";
 	private static final Uri URI = Uri.parse("content://" + AUTHORITY);
 	
 	private static final int PODCASTS = 100;
