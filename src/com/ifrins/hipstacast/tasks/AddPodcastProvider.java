@@ -141,7 +141,8 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 		ProgressDialog c = (ProgressDialog)obj[1];
 		Context ct = (Context)obj[2];
 		if (url == null) return null;
-		for (int i = 0; i < url.length; i++) {
+		int len = url.length;
+		for (int i = 0; i < len; i++) {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(false);
 			DocumentBuilder builder = null;

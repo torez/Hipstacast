@@ -207,7 +207,8 @@ public class HipstacastMain extends Activity {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			for (int i = 0; i < a.length(); i++) {
+			int len = a.length();
+			for (int i = 0; i < len; i++) {
 				try {
 					urls.add(a.getString(i));
 				} catch (JSONException e) {

@@ -195,7 +195,8 @@ public class HipstacastEpisodeView extends ListActivity {
 			File f = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/"+id);
 			if (f.isDirectory()) {
 		        String[] children = f.list();
-		        for (int i = 0; i < children.length; i++) {
+		        int len = children.length;
+		        for (int i = 0; i < len; i++) {
 		            new File(f, children[i]).delete();
 		        }
 			}
