@@ -96,7 +96,7 @@ public class HipstacastEpisodeView extends ListActivity {
 					 ContentValues up = new ContentValues();
 					 up.put("status", 1);
 					 int r = getContentResolver().update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+getIntent().getExtras().getString("show_id")+"/episodes/"+episode_id), 
-							 up, "podcast_id = ?", new String[] {getIntent().getExtras().getString("show_id")});
+							 up, "_id = ?", new String[] {String.valueOf(episode_id)});
 					 Intent openIntent = new Intent(getApplicationContext(), EpisodePlayer.class);
 					 openIntent.putExtra("show_id", Integer.parseInt(getIntent().getExtras().getString("show_id")));
 					 openIntent.putExtra("episode_id", episode_id);
