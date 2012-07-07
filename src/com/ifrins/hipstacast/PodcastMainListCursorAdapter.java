@@ -12,18 +12,35 @@ import android.widget.TextView;
 
 public class PodcastMainListCursorAdapter extends CursorAdapter {
 
+	Context ctx;
+
 	public PodcastMainListCursorAdapter(Context context, Cursor c) {
 		super(context, c);
+		ctx = context;
 	}
 
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
-        Holder holder = (Holder) view.getTag();
-        String title = cursor.getString(cursor.getColumnIndex("title"));
-        holder.name.setText(title);
-        holder.image.setImageURI(Uri.parse(cursor.getString(cursor.getColumnIndex("imageUrl"))));
-        holder.author.setText(cursor.getString(cursor.getColumnIndex("author")));
-
+		Holder holder = (Holder) view.getTag();
+		int show = cursor.getInt(cursor.getColumnIndex("_id"));
+		String title = cursor.getString(cursor.getColumnIndex("title"));
+		holder.name.setText(title);
+		holder.image.setImageURI(Uri.parse(cursor.getString(cursor
+				.getColumnIndex("imageUrl"))));
+		holder.author
+				.setText(cursor.getString(cursor.getColumnIndex("author")));
+		Cursor cur =  context.getContentResolver()
+				.query(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
+						+ show + "/episodes"),
+						new String[] { "_id", "status" },
+						"podcast_id = ? AND status != ? ",
+						new String[] { String.valueOf(show), "3"}, null);
+		int c = cur.getCount();
+		cur.close();
+		if (c > 0) {
+			holder.listenCount.setText(String.format(ctx.getString(R.string.unlistened_count), c));
+		}
+		
 	}
 
 	@Override
@@ -31,24 +48,25 @@ public class PodcastMainListCursorAdapter extends CursorAdapter {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View v = inflater.inflate(
-                R.layout.podcasts_list, null);
+		View v = inflater.inflate(R.layout.podcasts_list, null);
 
-        Holder holder = new Holder();
+		Holder holder = new Holder();
 
-        holder.name = (TextView) v.findViewById(R.id.podcastTitle);
-        holder.image= (ImageView) v.findViewById(R.id.podcastLogo);
-        holder.author = (TextView) v.findViewById(R.id.podcastAuthor);
+		holder.name = (TextView) v.findViewById(R.id.podcastTitle);
+		holder.image = (ImageView) v.findViewById(R.id.podcastLogo);
+		holder.author = (TextView) v.findViewById(R.id.podcastAuthor);
+		holder.listenCount = (TextView) v
+				.findViewById(R.id.podcastUnlistenedCount);
 
-        v.setTag(holder);
-        return v;
+		v.setTag(holder);
+		return v;
 
-		
 	}
-	
+
 	private class Holder {
-        TextView name;
-        TextView author;
-        ImageView image;
-    }
+		TextView name;
+		TextView author;
+		TextView listenCount;
+		ImageView image;
+	}
 }
