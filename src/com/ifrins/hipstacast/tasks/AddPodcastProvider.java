@@ -43,7 +43,7 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 	private static final String LINK_ITEM_XPATH = "rss/channel/item[position() = 1]/link/text()";
 	private static final String PUBDATE_ITEM_XPATH = "rss/channel/item[position() = 1]/pubDate/text()";
 	private static final String AUTHOR_ITEM_XPATH ="rss/channel/item[position() = 1]/author/text()";
-	private static final String DESCR_ITEM_XPATH = "rss/channel/item[position() = 1]/summary/text()";
+	private static final String DESCR_ITEM_XPATH = "rss/channel/item[position() = 1]/description/text()";
 	private static final String MEDIALINK_ITEM_XPATH = "rss/channel/item[position() = 1]/enclosure/@url";
 	private static final String MEDIALENGHT_ITEM_XPATH = "rss/channel/item[position() = 1]/enclosure/@length";
 	private static final String SHOWNOTES_ITEM_XPATH = "rss/channel/item[position() = 1]/encoded/text()";
@@ -172,6 +172,7 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 				String feed_link = url[i];
 				String author = xpath.compile(AUTHOR_XPATH).evaluate(doc, XPathConstants.STRING).toString();
 				String description = xpath.compile(DESC_XPATH).evaluate(doc, XPathConstants.STRING).toString();
+				long itemPubDate = convertTimeStrToTimestamp(xpath.compile(PUBDATE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
 				Log.d("HIP-IMG-RAW", xpath.compile(IMAGE_XPATH).evaluate(doc, XPathConstants.STRING).toString());
 				String imageUrl = storeImage(xpath.compile(IMAGE_XPATH).evaluate(doc, XPathConstants.STRING).toString());
 				long d2 = System.currentTimeMillis();
@@ -188,13 +189,13 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 				mNewValues.put("description", description);
 				mNewValues.put("imageUrl", imageUrl);
 				mNewValues.put("last_check", System.currentTimeMillis()/1000);
-				mNewValues.put("last_update", System.currentTimeMillis()/1000);
+				mNewValues.put("last_update", itemPubDate);
 				Uri mNewUri = c.getContext().getContentResolver().insert(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"), mNewValues);
 	
 				ContentValues episodeContentValues = new ContentValues();
 				String shownotes = xpath.compile(SHOWNOTES_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString();
 				episodeContentValues.put("podcast_id", Integer.parseInt(mNewUri.getLastPathSegment()));
-				episodeContentValues.put("publication_date", convertTimeStrToTimestamp(xpath.compile(PUBDATE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString()));
+				episodeContentValues.put("publication_date", itemPubDate);
 				episodeContentValues.put("author", xpath.compile(AUTHOR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
 				episodeContentValues.put("description", xpath.compile(DESCR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
 				episodeContentValues.put("content_url", xpath.compile(MEDIALINK_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
