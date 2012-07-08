@@ -37,8 +37,12 @@ public class PodcastMainListCursorAdapter extends CursorAdapter {
 						new String[] { String.valueOf(show), "3"}, null);
 		int c = cur.getCount();
 		cur.close();
-		if (c > 0) {
-			holder.listenCount.setText(String.format(ctx.getString(R.string.unlistened_count), c));
+		if (c > 0 && c < 10) {
+			holder.listenCount.setText(String.valueOf(c));
+		} else if (c > 9) {
+			holder.listenCount.setText("9+");
+		} else {
+			holder.listenCount.setVisibility(View.GONE);
 		}
 		
 	}
