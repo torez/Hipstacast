@@ -42,6 +42,7 @@ public class ShowsSearchCursorAdapter extends ArrayAdapter<Object> {
 		textView.setText(((Podcast) podcsts[position]).title);
 		UrlImageViewHelper.setUrlDrawable(imageView,
 				((Podcast) podcsts[position]).imageUrl);
+		((TextView)rowView.findViewById(R.id.podcastUnlistenedCount)).setVisibility(View.GONE);
 
 		return rowView;
 	}
