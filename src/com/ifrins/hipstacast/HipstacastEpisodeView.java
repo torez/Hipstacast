@@ -35,8 +35,7 @@ public class HipstacastEpisodeView extends ListActivity {
         super.onCreate(savedInstanceState);
         ((Hipstacast)getApplicationContext()).trackPageView("/episodes");
         show_id = Integer.parseInt(getIntent().getExtras().getString("show_id"));
-        
-        Cursor p = managedQuery(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+getIntent().getExtras().getString("show_id")+"/episodes"), 
+        Cursor p = getContentResolver().query(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+getIntent().getExtras().getString("show_id")+"/episodes"), 
         						new String[] {"_id", "title", "duration", "podcast_id", "status", "position", "content_url", "content_length", "publication_date"}, "podcast_id = ?", new String[] {getIntent().getExtras().getString("show_id")}, "publication_date DESC");
         episodes_count = p.getCount();
         setListAdapter(new EpisodeListCursorAdapter(getApplicationContext(), p));
@@ -95,7 +94,7 @@ public class HipstacastEpisodeView extends ListActivity {
 				 else if (status == 0 && f.exists()) {
 					 ContentValues up = new ContentValues();
 					 up.put("status", 1);
-					 int r = getContentResolver().update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+getIntent().getExtras().getString("show_id")+"/episodes/"+episode_id), 
+					 getContentResolver().update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+getIntent().getExtras().getString("show_id")+"/episodes/"+episode_id), 
 							 up, "_id = ?", new String[] {String.valueOf(episode_id)});
 					 Intent openIntent = new Intent(getApplicationContext(), EpisodePlayer.class);
 					 openIntent.putExtra("show_id", Integer.parseInt(getIntent().getExtras().getString("show_id")));
@@ -114,7 +113,6 @@ public class HipstacastEpisodeView extends ListActivity {
 			}
 
 		});
-	
 	}
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
@@ -189,7 +187,6 @@ public class HipstacastEpisodeView extends ListActivity {
 		protected Void doInBackground(Integer... params) {
 			int id = params[0];
 
-			
 			getApplicationContext().getContentResolver().delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"), "_id = ?", new String[] {String.valueOf(id)});
 			getApplicationContext().getContentResolver().delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+id+"/episodes"), "podcast_id = ?", new String[] {String.valueOf(id)});
 			File f = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/"+id);

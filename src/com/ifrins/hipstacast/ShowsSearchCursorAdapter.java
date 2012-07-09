@@ -1,19 +1,12 @@
 package com.ifrins.hipstacast;
 
-import java.util.List;
 import com.ifrins.hipstacast.model.Podcast;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
-
 import android.content.Context;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 

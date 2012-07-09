@@ -31,10 +31,8 @@ import android.util.Log;
 
 public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 	
-	private static final String NS = "http://www.itunes.com/dtds/podcast-1.0.dtd";
 	private static final String TITLE_XPATH = "rss/channel/title/text()";
 	private static final String LINK_XPATH = "rss/channel/link/text()";
-	private static final String PUBDATE_XPATH = "rss/channel/pubDate/text()";
 	private static final String DESC_XPATH = "rss/channel/description/text()";
 	private static final String AUTHOR_XPATH = "rss/channel/author/text()";
 	private static final String IMAGE_XPATH = "rss/channel/image/@href";

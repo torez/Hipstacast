@@ -14,7 +14,6 @@ public class HipstacastContentProvider extends ContentProvider {
 
 	private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
 	private static final String AUTHORITY = "com.ifrins.hipstacast.provider.HipstacastContentProvider";
-	private static final Uri URI = Uri.parse("content://" + AUTHORITY);
 	
 	private static final int PODCASTS = 100;
 	private static final int PODCASTS_ID = 101;
