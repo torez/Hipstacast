@@ -77,6 +77,8 @@ public class EpisodePlayer extends Activity {
 			if (fromUser && isPlaying) {
 				player.mediaPlayer.seekTo(progress);
 				seekBar.setProgress(progress);
+			} else if (!fromUser) {
+				seekBar.setProgress(progress);
 			}
 		}
 
@@ -123,16 +125,16 @@ public class EpisodePlayer extends Activity {
 							new String[] { String.valueOf(podcast_id) }, null);
 			p.moveToFirst();
 			seek = (SeekBar) findViewById(R.id.playerSeekBar);
+			seek.setMax(p.getInt(p.getColumnIndex("duration")) * 1000);
 
 			if (!fromNotification) {
 				start_position = p.getInt(p.getColumnIndex("position")) * 1000;
-				seek.setProgress(start_position);
 				seek.setOnSeekBarChangeListener(chl);
+				seek.setProgress(start_position);
 			}
 			TextView title = ((TextView) findViewById(R.id.playerEpisodeName));
 			title.setText(p.getString(p.getColumnIndex("title")));
 			title.setSelected(true);
-			seek.setMax(p.getInt(p.getColumnIndex("duration")) * 1000);
 
 			WebView v = (WebView) findViewById(R.id.playerEpisodeDesc);
 			v.loadData(p.getString(p.getColumnIndex("shownotes")), "text/html; charset=UTF-8",
