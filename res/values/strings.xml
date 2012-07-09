@@ -42,6 +42,6 @@
     <string name="unlistened_count">%d unlistened episodes</string>
     
     <!-- Resources -->
-    <string name="version_number">0.8b2</string>
+    <string name="version_number">0.8b3</string>
 
 </resources>
