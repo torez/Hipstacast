@@ -120,8 +120,8 @@ public class EpisodePlayer extends Activity {
 							+ show_id + "/episodes"),
 							new String[] { "_id", "title", "duration",
 									"podcast_id", "status", "position",
-									"content_url", "shownotes", "guid", "donation_url" },
-							"_id = ?",
+									"content_url", "shownotes", "guid",
+									"donation_url" }, "_id = ?",
 							new String[] { String.valueOf(podcast_id) }, null);
 			p.moveToFirst();
 			seek = (SeekBar) findViewById(R.id.playerSeekBar);
@@ -137,8 +137,8 @@ public class EpisodePlayer extends Activity {
 			title.setSelected(true);
 
 			WebView v = (WebView) findViewById(R.id.playerEpisodeDesc);
-			v.loadData(p.getString(p.getColumnIndex("shownotes")), "text/html; charset=UTF-8",
-					null);
+			v.loadData(p.getString(p.getColumnIndex("shownotes")),
+					"text/html; charset=UTF-8", null);
 
 			isPlaying = false;
 			name = p.getString(p.getColumnIndex("title"));
@@ -181,7 +181,7 @@ public class EpisodePlayer extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		((Hipstacast)getApplicationContext()).trackPageView("/player");
+		((Hipstacast) getApplicationContext()).trackPageView("/player");
 		setContentView(R.layout.player);
 		show_id = getIntent().getExtras().getInt("show_id");
 		podcast_id = getIntent().getExtras().getInt("episode_id");
@@ -252,6 +252,8 @@ public class EpisodePlayer extends Activity {
 			item.setTitle(R.string.menu_pause);
 			item.setIcon(R.drawable.ic_action_pause);
 		}
+		if (!HUtils.hasBeatsSoundConfig(getApplicationContext()))
+			menu.findItem(R.id.menuPlaySoundConfig).setVisible(false);
 		return true;
 	}
 
@@ -303,13 +305,19 @@ public class EpisodePlayer extends Activity {
 				Intent donateIntent = new Intent(Intent.ACTION_VIEW);
 				donateIntent.setData(Uri.parse(donation_url));
 				startActivity(donateIntent);
-	
+
 				return true;
-			} else return false;
+			} else
+				return false;
 		case R.id.menuPlayWebsite:
 			Intent openIntent = new Intent(Intent.ACTION_VIEW);
 			openIntent.setData(Uri.parse(url));
 			startActivity(openIntent);
+			return true;
+		case R.id.menuPlaySoundConfig:
+			final Intent enhanceSoundIntent = new Intent(
+					"com.htc.HtcSoundEnhancerSetting.ShowSettingPage");
+			startActivity(enhanceSoundIntent);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);

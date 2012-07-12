@@ -40,6 +40,7 @@
 	<string name="import_msg" formatted="false">Go to %s with your computer to import your subscriptions. Use the following codes: %d and %d. When you finish tap on Import</string>
     <string name="import_progress">Importing the podcasts. Please wait</string>
     <string name="unlistened_count">%d unlistened episodes</string>
+    <string name="soundConfig">Sound settings</string>
     
     <!-- Resources -->
     <string name="version_number">0.8b3</string>
