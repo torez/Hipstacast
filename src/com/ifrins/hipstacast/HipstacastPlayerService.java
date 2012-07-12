@@ -7,10 +7,12 @@ import java.io.IOException;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
@@ -90,8 +92,7 @@ public class HipstacastPlayerService extends Service implements
 		case AudioManager.AUDIOFOCUS_LOSS:
 			if (mediaPlayer.isPlaying())
 				mediaPlayer.stop();
-			mediaPlayer.release();
-			mediaPlayer = null;
+			destroy();
 			break;
 		case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
 			if (mediaPlayer.isPlaying())
@@ -107,10 +108,6 @@ public class HipstacastPlayerService extends Service implements
 	@Override
 	public IBinder onBind(Intent intent) {
 		return mBinder;
-	}
-
-	public void openFile(String path) {
-
 	}
 
 	public boolean isPlaying() {
@@ -147,10 +144,21 @@ public class HipstacastPlayerService extends Service implements
 				.cancel(podcast_id);
 	}
 
-	public void seek(long pos) {
+	private void destroy() {
+		ContentValues c = new ContentValues();
+		c.put("position", (int) mediaPlayer.getCurrentPosition() / 1000);
+		c.put("status", 2);
+		getContentResolver()
+				.update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
+						+ show_id + "/episodes/" + podcast_id), c, "_id = ?",
+						new String[] { String.valueOf(podcast_id) });
+
+		start_position = mediaPlayer.getCurrentPosition();
+		mediaPlayer.release();
+		mediaPlayer = null;
+
 
 	}
-
 	public void clean() {
 		if (mediaPlayer != null) {
 			mediaPlayer.reset();
