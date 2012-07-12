@@ -7,15 +7,18 @@ import java.io.IOException;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.util.Log;
 
 public class HipstacastPlayerService extends Service implements
 		AudioManager.OnAudioFocusChangeListener {
@@ -27,6 +30,28 @@ public class HipstacastPlayerService extends Service implements
 	public int show_id;
 	public int podcast_id;
 	public Notification n;
+	private final BroadcastReceiver brodcastReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if (intent.getAction().equals(
+					android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
+				Log.d("HIP-MUSIC", "Audio becoming noisy");
+				if (mediaPlayer.isPlaying())
+					mediaPlayer.stop();
+				destroy();
+			}
+		}
+	};
+
+	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		IntentFilter fAudio = new IntentFilter(
+				android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+		this.registerReceiver(brodcastReceiver, fAudio);
+		return startId;
+
+	}
 
 	public class LocalBinder extends Binder {
 		HipstacastPlayerService getService() {
@@ -53,8 +78,7 @@ public class HipstacastPlayerService extends Service implements
 		try {
 			if (fileInputStream != null) {
 				mediaPlayer.setDataSource(fileInputStream.getFD());
-			}
-			else {
+			} else {
 			}
 		} catch (IllegalArgumentException e1) {
 			// TODO Auto-generated catch block
@@ -118,7 +142,8 @@ public class HipstacastPlayerService extends Service implements
 	}
 
 	public void stop() {
-		if (mediaPlayer != null) mediaPlayer.pause();
+		if (mediaPlayer != null)
+			mediaPlayer.pause();
 	}
 
 	public void play() {
@@ -157,8 +182,8 @@ public class HipstacastPlayerService extends Service implements
 		mediaPlayer.release();
 		mediaPlayer = null;
 
-
 	}
+
 	public void clean() {
 		if (mediaPlayer != null) {
 			mediaPlayer.reset();
