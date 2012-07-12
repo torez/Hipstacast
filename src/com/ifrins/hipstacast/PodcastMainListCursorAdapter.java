@@ -3,6 +3,7 @@ package com.ifrins.hipstacast;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +26,7 @@ public class PodcastMainListCursorAdapter extends CursorAdapter {
 		int show = cursor.getInt(cursor.getColumnIndex("_id"));
 		String title = cursor.getString(cursor.getColumnIndex("title"));
 		holder.name.setText(title);
-		holder.image.setImageURI(Uri.parse(cursor.getString(cursor
-				.getColumnIndex("imageUrl"))));
+		new ThumbnailTask(holder.image).execute(cursor.getString(cursor.getColumnIndex("imageUrl")));
 		holder.author
 				.setText(cursor.getString(cursor.getColumnIndex("author")));
 		Cursor cur =  context.getContentResolver()
@@ -72,5 +72,18 @@ public class PodcastMainListCursorAdapter extends CursorAdapter {
 		TextView author;
 		TextView listenCount;
 		ImageView image;
+	}
+	private class ThumbnailTask extends AsyncTask<String, Void, Void> {
+		ImageView target;
+		public ThumbnailTask(ImageView i) {
+			target = i;
+		}
+		@Override
+		protected Void doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			target.setImageURI(Uri.parse(params[0]));
+			return null;
+		}
+		
 	}
 }
