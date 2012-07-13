@@ -44,6 +44,7 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 	private static final String DESCR_ITEM_XPATH = "rss/channel/item[position() = 1]/description/text()";
 	private static final String MEDIALINK_ITEM_XPATH = "rss/channel/item[position() = 1]/enclosure/@url";
 	private static final String MEDIALENGHT_ITEM_XPATH = "rss/channel/item[position() = 1]/enclosure/@length";
+	private static final String MEDIATYPE_ITEM_XPATH = "rss/channel/item[position() = 1]/enclosure/@type";
 	private static final String SHOWNOTES_ITEM_XPATH = "rss/channel/item[position() = 1]/encoded/text()";
 	private static final String DURATION_ITEM_XPATH = "rss/channel/item[position() = 1]/duration/text()";
 	private static final String DONATE_ITEM_XPATH = "/rss/channel/item[position() = 1]/link[@rel='payment']/@href";
@@ -129,6 +130,8 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 			hours = Integer.parseInt(tokens[0]);
 			minutes = Integer.parseInt(tokens[1]);
 			seconds = Integer.parseInt(tokens[2]);
+		} else if (tokens.length == 0) {
+			seconds = Integer.parseInt(duration);
 		}
 		return (3600 * hours) + (60 * minutes) + seconds;
 	}
@@ -209,13 +212,16 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 				} else {
 					episodeContentValues.put("shownotes", START_HTML + shownotes + END_HTML);
 				}
+				String mediaType = xpath.compile(MEDIATYPE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString().substring(0, 5);
+				if (mediaType.equals("video")) {
+					episodeContentValues.put("type", 1);
+				} else {
+					episodeContentValues.put("type", 0);
+				}				
 				
 				Uri episodeNewUri = c.getContext().getContentResolver().insert(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/" + mNewUri.getLastPathSegment() + "/episodes"),
 																				episodeContentValues);
-				
-				Log.d("HIP-URL", episodeNewUri.toString());
-				Log.d("HIP-URL", mNewUri.toString());
-	
+					
 				
 			} catch (XPathExpressionException e) {
 				// TODO Auto-generated catch block

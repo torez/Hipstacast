@@ -56,6 +56,7 @@ public class HipstacastSyncService extends Service {
 		private static final String DESCR_ITEM_XPATH = "rss/channel/item[position() = %d]/description/text()";
 		private static final String MEDIALINK_ITEM_XPATH = "rss/channel/item[position() = %d]/enclosure/@url";
 		private static final String MEDIALENGHT_ITEM_XPATH = "rss/channel/item[position() = %d]/enclosure/@length";
+		private static final String MEDIATYPE_ITEM_XPATH = "rss/channel/item[position() = %d]/enclosure/@type";
 		private static final String SHOWNOTES_ITEM_XPATH = "rss/channel/item[position() = %d]/encoded/text()";
 		private static final String DURATION_ITEM_XPATH = "rss/channel/item[position() = %d]/duration/text()";
 		private static final String DONATE_ITEM_XPATH = "rss/channel/item[position() = %d]/link[@rel='payment']/@href";
@@ -87,17 +88,18 @@ public class HipstacastSyncService extends Service {
 		
 		private int convertDurationToSeconds(String duration) {
 			String[] tokens = duration.split(":");
-			int len = tokens.length;
 			int hours = 0;
 			int minutes = 0;
 			int seconds = 0;
-			if (len == 2) {
+			if (tokens.length == 2) {
 				minutes = Integer.parseInt(tokens[0]);
 				seconds = Integer.parseInt(tokens[1]);
-			} else if (len == 3) {
+			} else if (tokens.length == 3) {
 				hours = Integer.parseInt(tokens[0]);
 				minutes = Integer.parseInt(tokens[1]);
 				seconds = Integer.parseInt(tokens[2]);
+			} else if (tokens.length == 0) {
+				seconds = Integer.parseInt(duration);
 			}
 			return (3600 * hours) + (60 * minutes) + seconds;
 		}
@@ -154,6 +156,7 @@ public class HipstacastSyncService extends Service {
 						String shownotes = xpath.compile(String.format(SHOWNOTES_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
 						String content_url = xpath.compile(String.format(MEDIALINK_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
 						String title = xpath.compile(String.format(TITLE_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
+						String mediaType = xpath.compile(String.format(MEDIATYPE_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString().substring(0, 5);
 						episodeContentValues.put("podcast_id", show_id);
 						episodeContentValues.put("publication_date", ciPubDate);
 						episodeContentValues.put("author", xpath.compile(String.format(AUTHOR_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString());
@@ -171,6 +174,12 @@ public class HipstacastSyncService extends Service {
 						} else {
 							episodeContentValues.put("shownotes", START_HTML + shownotes + END_HTML);
 						}
+						if (mediaType.equals("video")) {
+							episodeContentValues.put("type", 1);
+						} else {
+							episodeContentValues.put("type", 0);
+						}				
+
 						Uri episodeNewUri = context.getContentResolver().insert(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/" + show_id + "/episodes"),
 								episodeContentValues);
 

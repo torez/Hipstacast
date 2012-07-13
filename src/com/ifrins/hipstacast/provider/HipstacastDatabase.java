@@ -24,7 +24,7 @@ public class HipstacastDatabase extends SQLiteOpenHelper {
 		db.execSQL("CREATE TABLE \"episodes\" (\"_id\" INTEGER PRIMARY KEY  AUTOINCREMENT  NOT NULL  UNIQUE , \"podcast_id\" INTEGER NOT NULL , \"guid\" VARCHAR NOT NULL , " +
 				"\"publication_date\" DATETIME NOT NULL , \"author\" VARCHAR NOT NULL , \"description\" VARCHAR NOT NULL , \"content_url\" VARCHAR NOT NULL , " +
 				"\"content_length\" INTEGER NOT NULL ,  \"donation_url\" VARCHAR , \"duration\" INTEGER NOT NULL , \"title\" VARCHAR, " +
-				"\"shownotes\" VARCHAR, \"status\" INTEGER, \"position\" INTEGER)");
+				"\"shownotes\" VARCHAR, \"status\" INTEGER, \"position\" INTEGER ,\"type\" INTEGER NOT NULL)");
 		
 
 	}
