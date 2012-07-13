@@ -30,6 +30,8 @@ public class EpisodePlayer extends Activity {
 	int show_id;
 	int podcast_id;
 	int start_position;
+	int type;
+	int duration;
 	Boolean complete = false;
 	Boolean fromNotification = false;
 	SeekBar seek;
@@ -121,11 +123,13 @@ public class EpisodePlayer extends Activity {
 							new String[] { "_id", "title", "duration",
 									"podcast_id", "status", "position",
 									"content_url", "shownotes", "guid",
-									"donation_url" }, "_id = ?",
+									"donation_url", "type" }, "_id = ?",
 							new String[] { String.valueOf(podcast_id) }, null);
 			p.moveToFirst();
+			duration = p.getInt(p.getColumnIndex("duration"));
+			type = p.getInt(p.getColumnIndex("type"));
 			seek = (SeekBar) findViewById(R.id.playerSeekBar);
-			seek.setMax(p.getInt(p.getColumnIndex("duration")) * 1000);
+			seek.setMax(duration * 1000);
 
 			if (!fromNotification) {
 				start_position = p.getInt(p.getColumnIndex("position")) * 1000;
@@ -151,6 +155,20 @@ public class EpisodePlayer extends Activity {
 			if (!fromNotification)
 				complete = true;
 		}
+	}
+
+	private void fixDuration() {
+		ContentValues c = new ContentValues();
+		int newDuration = (int)player.mediaPlayer.getDuration() / 1000;
+		c.put("duration", newDuration);
+		getContentResolver()
+				.update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
+						+ show_id + "/episodes/" + podcast_id), c, "_id = ?",
+						new String[] { String.valueOf(player.podcast_id) });
+		SeekBar seek = (SeekBar)findViewById(R.id.playerSeekBar);
+		seek.setMax(newDuration*1000);
+		duration = newDuration;
+		
 	}
 
 	private void setEpisodeAsListened() {
@@ -185,7 +203,7 @@ public class EpisodePlayer extends Activity {
 		setContentView(R.layout.player);
 		show_id = getIntent().getExtras().getInt("show_id");
 		podcast_id = getIntent().getExtras().getInt("episode_id");
-	}
+	} 
 
 	@Override
 	protected void onStart() {
@@ -277,6 +295,7 @@ public class EpisodePlayer extends Activity {
 				player.start_position = start_position;
 				player.play();
 				isPlaying = true;
+				if (duration == 0) fixDuration();
 				Log.d("HIP-STATUS", "Should start");
 			} else if (player.isPlaying() && complete) {
 				item.setTitle(R.string.menu_play);

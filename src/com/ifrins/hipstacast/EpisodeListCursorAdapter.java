@@ -42,7 +42,9 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
         } else { 
         	holder.duration.setText(transformToDuration(cursor.getString(cursor.getColumnIndex("duration"))));
         }
-        
+        if (cursor.getInt(cursor.getColumnIndex("duration")) == 0) {
+        	holder.duration.setText("-:--:--");
+        }
         //holder.status.setImageResource(R.drawable.ic_list_new);
 	}
 
