@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,6 +19,10 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SurfaceView;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -127,7 +132,6 @@ public class EpisodePlayer extends Activity {
 							new String[] { String.valueOf(podcast_id) }, null);
 			p.moveToFirst();
 			duration = p.getInt(p.getColumnIndex("duration"));
-			type = p.getInt(p.getColumnIndex("type"));
 			seek = (SeekBar) findViewById(R.id.playerSeekBar);
 			seek.setMax(duration * 1000);
 
@@ -136,14 +140,15 @@ public class EpisodePlayer extends Activity {
 				seek.setOnSeekBarChangeListener(chl);
 				seek.setProgress(start_position);
 			}
-			TextView title = ((TextView) findViewById(R.id.playerEpisodeName));
-			title.setText(p.getString(p.getColumnIndex("title")));
-			title.setSelected(true);
+			if (type == 0) {
+				TextView title = ((TextView) findViewById(R.id.playerEpisodeName));
+				title.setText(p.getString(p.getColumnIndex("title")));
+				title.setSelected(true);
 
-			WebView v = (WebView) findViewById(R.id.playerEpisodeDesc);
-			v.loadData(p.getString(p.getColumnIndex("shownotes")),
-					"text/html; charset=UTF-8", null);
-
+				WebView v = (WebView) findViewById(R.id.playerEpisodeDesc);
+				v.loadData(p.getString(p.getColumnIndex("shownotes")),
+						"text/html; charset=UTF-8", null);
+			}
 			isPlaying = false;
 			name = p.getString(p.getColumnIndex("title"));
 			url = p.getString(p.getColumnIndex("guid"));
@@ -159,16 +164,16 @@ public class EpisodePlayer extends Activity {
 
 	private void fixDuration() {
 		ContentValues c = new ContentValues();
-		int newDuration = (int)player.mediaPlayer.getDuration() / 1000;
+		int newDuration = (int) player.mediaPlayer.getDuration() / 1000;
 		c.put("duration", newDuration);
 		getContentResolver()
 				.update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
 						+ show_id + "/episodes/" + podcast_id), c, "_id = ?",
 						new String[] { String.valueOf(player.podcast_id) });
-		SeekBar seek = (SeekBar)findViewById(R.id.playerSeekBar);
-		seek.setMax(newDuration*1000);
+		SeekBar seek = (SeekBar) findViewById(R.id.playerSeekBar);
+		seek.setMax(newDuration * 1000);
 		duration = newDuration;
-		
+
 	}
 
 	private void setEpisodeAsListened() {
@@ -200,10 +205,19 @@ public class EpisodePlayer extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		((Hipstacast) getApplicationContext()).trackPageView("/player");
-		setContentView(R.layout.player);
 		show_id = getIntent().getExtras().getInt("show_id");
 		podcast_id = getIntent().getExtras().getInt("episode_id");
-	} 
+		type = getIntent().getExtras().getInt("type");
+		if (type == 0) {
+			setContentView(R.layout.player);
+		} else if (type == 1) {
+			setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+			getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			setTheme(android.R.style.Theme_Holo_NoActionBar_Fullscreen);
+			setContentView(R.layout.player_video);
+		}
+
+	}
 
 	@Override
 	protected void onStart() {
@@ -275,35 +289,62 @@ public class EpisodePlayer extends Activity {
 		return true;
 	}
 
+	private void startPlaying() {
+		player.clean();
+		player.podcastToPlayUrl = android.os.Environment
+				.getExternalStorageDirectory().getAbsolutePath()
+				+ "/Android/data/com.ifrins.hipstacast/files/shows/"
+				+ show_id
+				+ "/" + podcast_id + ".mp3";
+		player.type = type;
+		if (type == 1) {
+			player.surface = ((SurfaceView) findViewById(R.id.videoPlayer))
+					.getHolder();
+		}
+		player.podcast_id = podcast_id;
+		player.show_id = show_id;
+		player.n = n;
+		Log.d("HIP-NW-SP", String.valueOf(start_position));
+		player.start_position = start_position;
+		player.play();
+		isPlaying = true;
+		if (duration == 0)
+			fixDuration();
+		Log.d("HIP-STATUS", "Should start");
+	}
+
+	public void startStopVideoToggle(View v) {
+		Button button = (Button) v;
+		if (!player.isPlaying() && complete) {
+			button.setText(R.string.menu_pause);
+			startPlaying();
+		} else if (player.isPlaying() && complete) {
+			button.setText(R.string.menu_play);
+			stopPlaying();
+		}
+
+	}
+
+	private void stopPlaying() {
+		player.pause();
+		savePosition();
+		isPlaying = false;
+		Log.d("HIP-STATUS", "Should stop");
+	}
+
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.menuPlayToggle:
 			Log.d("HIP-DEB", "player.isPlaying() = ");
 			if (!player.isPlaying() && complete) {
-				player.clean();
 				item.setTitle(R.string.menu_pause);
 				item.setIcon(R.drawable.ic_action_pause);
-				player.podcastToPlayUrl = android.os.Environment
-						.getExternalStorageDirectory().getAbsolutePath()
-						+ "/Android/data/com.ifrins.hipstacast/files/shows/"
-						+ show_id + "/" + podcast_id + ".mp3";
-				player.podcast_id = podcast_id;
-				player.show_id = show_id;
-				player.n = n;
-				Log.d("HIP-NW-SP", String.valueOf(start_position));
-				player.start_position = start_position;
-				player.play();
-				isPlaying = true;
-				if (duration == 0) fixDuration();
-				Log.d("HIP-STATUS", "Should start");
+				startPlaying();
 			} else if (player.isPlaying() && complete) {
 				item.setTitle(R.string.menu_play);
 				item.setIcon(R.drawable.ic_action_play);
-				player.pause();
-				savePosition();
-				isPlaying = false;
-				Log.d("HIP-STATUS", "Should stop");
+				stopPlaying();
 			}
 
 			return true;

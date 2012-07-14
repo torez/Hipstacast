@@ -27,16 +27,16 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.Toast;
 
-
 public class HipstacastEpisodeView extends ListActivity {
 	int show_id;
 	int episodes_count;
+
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((Hipstacast)getApplicationContext()).trackPageView("/episodes");
         show_id = Integer.parseInt(getIntent().getExtras().getString("show_id"));
         Cursor p = getContentResolver().query(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+getIntent().getExtras().getString("show_id")+"/episodes"), 
-        						new String[] {"_id", "title", "duration", "podcast_id", "status", "position", "content_url", "content_length", "publication_date"}, "podcast_id = ?", new String[] {getIntent().getExtras().getString("show_id")}, "publication_date DESC");
+        						new String[] {"_id", "title", "duration", "podcast_id", "status", "position", "content_url", "content_length", "publication_date", "type"}, "podcast_id = ?", new String[] {getIntent().getExtras().getString("show_id")}, "publication_date DESC");
         episodes_count = p.getCount();
         setListAdapter(new EpisodeListCursorAdapter(getApplicationContext(), p));
 		
@@ -55,6 +55,7 @@ public class HipstacastEpisodeView extends ListActivity {
 				 final String content_url = c.getString(c.getColumnIndex("content_url"));
 				 final String title = c.getString(c.getColumnIndex("title"));
 				 final long content_length = c.getLong(c.getColumnIndex("content_length"));
+				 final int content_type = c.getInt(c.getColumnIndex("type"));
 				 
 				 File f = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/"+podcast_id+"/"+episode_id + ".mp3");
 				 File _f = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/.nomedia");
@@ -99,6 +100,7 @@ public class HipstacastEpisodeView extends ListActivity {
 					 Intent openIntent = new Intent(getApplicationContext(), EpisodePlayer.class);
 					 openIntent.putExtra("show_id", Integer.parseInt(getIntent().getExtras().getString("show_id")));
 					 openIntent.putExtra("episode_id", episode_id);
+					 openIntent.putExtra("type", content_type);
 					 startActivity(openIntent);
 
 				 }
@@ -107,6 +109,7 @@ public class HipstacastEpisodeView extends ListActivity {
 					 Intent openIntent = new Intent(getApplicationContext(), EpisodePlayer.class);
 					 openIntent.putExtra("show_id", Integer.parseInt(getIntent().getExtras().getString("show_id")));
 					 openIntent.putExtra("episode_id", episode_id);
+					 openIntent.putExtra("type", content_type);
 					 startActivity(openIntent);
 				 }
 				 
@@ -114,6 +117,7 @@ public class HipstacastEpisodeView extends ListActivity {
 
 		});
 	}
+
 	public boolean onCreateOptionsMenu(Menu menu) {
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.episodes, menu);
@@ -130,76 +134,95 @@ public class HipstacastEpisodeView extends ListActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
-	
+
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(ContextMenu menu, View v,
+			ContextMenuInfo menuInfo) {
 		AdapterView.AdapterContextMenuInfo info = null;
 		try {
-		    info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
 		} catch (ClassCastException e) {
 			e.printStackTrace();
 		}
-		Cursor c = (Cursor)getListAdapter().getItem(info.position);
+		Cursor c = (Cursor) getListAdapter().getItem(info.position);
 		menu.setHeaderTitle(c.getString(c.getColumnIndex("title")));
-		if (episodes_count > 1 && info.position > 0 && c.getInt(c.getColumnIndex("string")) > 0) {
+		if (episodes_count > 1 && info.position > 0
+				&& c.getInt(c.getColumnIndex("string")) > 0) {
 			menu.add(0, 1, 1, R.string.delete);
 		}
 	}
-	
+
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
-	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-		Cursor c = (Cursor)getListAdapter().getItem(info.position);
-		
-	    switch (item.getItemId()) {
-	    	case 1:
-	    		int pid = c.getInt(c.getColumnIndex("_id"));
-	    		this.getContentResolver().delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+show_id+"/episodes"), "_id = ?", new String[] {String.valueOf(pid)});
-	    		File f = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/"+show_id+"/"+pid + ".mp3");
-	    		if (f.exists()) {
-	    			f.delete();
-	    			Intent i = new Intent(getApplicationContext(), HipstacastMain.class);
-	    			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	    			startActivity(i);
+		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
+				.getMenuInfo();
+		Cursor c = (Cursor) getListAdapter().getItem(info.position);
 
-	    		} 
-	    		return true;
-	    	default:
-	            return super.onContextItemSelected(item);
-	    }
+		switch (item.getItemId()) {
+		case 1:
+			int pid = c.getInt(c.getColumnIndex("_id"));
+			this.getContentResolver()
+					.delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
+							+ show_id + "/episodes"), "_id = ?",
+							new String[] { String.valueOf(pid) });
+			File f = new File(android.os.Environment
+					.getExternalStorageDirectory().getAbsolutePath()
+					+ "/Android/data/com.ifrins.hipstacast/files/shows/"
+					+ show_id + "/" + pid + ".mp3");
+			if (f.exists()) {
+				f.delete();
+				Intent i = new Intent(getApplicationContext(),
+						HipstacastMain.class);
+				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+				startActivity(i);
+
+			}
+			return true;
+		default:
+			return super.onContextItemSelected(item);
+		}
 	}
 
-	
 	private class UnsubscribeTask extends AsyncTask<Integer, Void, Void> {
-	    ProgressDialog progressDialog;
-	    
-	    public UnsubscribeTask(Context c) {
-	    	progressDialog = new ProgressDialog(c);
-	        progressDialog.setCancelable(false);
-	        progressDialog.setMessage(getString(R.string.unsubscribing));
-	        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-	        progressDialog.setProgress(0);
-	        progressDialog.show();
+		ProgressDialog progressDialog;
 
-	    }
+		public UnsubscribeTask(Context c) {
+			progressDialog = new ProgressDialog(c);
+			progressDialog.setCancelable(false);
+			progressDialog.setMessage(getString(R.string.unsubscribing));
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+			progressDialog.setProgress(0);
+			progressDialog.show();
+
+		}
 
 		@Override
 		protected Void doInBackground(Integer... params) {
 			int id = params[0];
 
-			getApplicationContext().getContentResolver().delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"), "_id = ?", new String[] {String.valueOf(id)});
-			getApplicationContext().getContentResolver().delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+id+"/episodes"), "podcast_id = ?", new String[] {String.valueOf(id)});
-			File f = new File(android.os.Environment.getExternalStorageDirectory().getAbsolutePath()+"/Android/data/com.ifrins.hipstacast/files/shows/"+id);
+			getApplicationContext()
+					.getContentResolver()
+					.delete(Uri
+							.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"),
+							"_id = ?", new String[] { String.valueOf(id) });
+			getApplicationContext()
+					.getContentResolver()
+					.delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
+							+ id + "/episodes"), "podcast_id = ?",
+							new String[] { String.valueOf(id) });
+			File f = new File(android.os.Environment
+					.getExternalStorageDirectory().getAbsolutePath()
+					+ "/Android/data/com.ifrins.hipstacast/files/shows/" + id);
 			if (f.isDirectory()) {
-		        String[] children = f.list();
-		        int len = children.length;
-		        for (int i = 0; i < len; i++) {
-		            new File(f, children[i]).delete();
-		        }
+				String[] children = f.list();
+				int len = children.length;
+				for (int i = 0; i < len; i++) {
+					new File(f, children[i]).delete();
+				}
 			}
 			return null;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Void r) {
 			progressDialog.dismiss();
@@ -207,6 +230,6 @@ public class HipstacastEpisodeView extends ListActivity {
 			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 			startActivity(i);
 		}
-		
+
 	}
 }

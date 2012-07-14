@@ -19,6 +19,7 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.SurfaceHolder;
 
 public class HipstacastPlayerService extends Service implements
 		AudioManager.OnAudioFocusChangeListener {
@@ -29,6 +30,8 @@ public class HipstacastPlayerService extends Service implements
 	public int start_position;
 	public int show_id;
 	public int podcast_id;
+	public int type;
+	public SurfaceHolder surface;
 	public Notification n;
 	private final BroadcastReceiver brodcastReceiver = new BroadcastReceiver() {
 
@@ -66,7 +69,9 @@ public class HipstacastPlayerService extends Service implements
 		mediaPlayer.setWakeMode(getApplicationContext(),
 				PowerManager.PARTIAL_WAKE_LOCK);
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		// Log.d("HIP-LOCAL-FILE", podcastToPlayUrl);
+		if (type == 1) {
+			mediaPlayer.setDisplay(surface);
+		}
 		FileInputStream fileInputStream = null;
 		try {
 			fileInputStream = new FileInputStream(podcastToPlayUrl);
