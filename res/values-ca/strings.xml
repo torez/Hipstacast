@@ -13,7 +13,7 @@
     <string name="episode_not_downloaded">Aquest episodi no està baixat (%d MB). El vols baixar ara?</string>
     <string name="podcast_subscribe">Et vols subscriure a "%s"?</string>
     <string name="cancel">Cancel·lar</string>
-    <string name="subscribe">Subscriure\'s-hi</string>
+    <string name="subscribe">Subscriure\'t-hi</string>
     <string name="download">Baixar</string>
     <string name="menu_play">Reproduir</string>
     <string name="menu_pause">Pausa</string>
