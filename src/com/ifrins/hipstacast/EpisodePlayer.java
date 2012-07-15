@@ -103,14 +103,14 @@ public class EpisodePlayer extends Activity {
 		}
 
 	};
-	
+
 	private View.OnClickListener videoPanelToggle = new View.OnClickListener() {
-		
+
 		@Override
 		public void onClick(View v) {
 			View v1 = findViewById(R.id.viewVideoTop);
 			View v2 = findViewById(R.id.viewVideoBottom);
-			
+
 			if (videoShowingControls && player.isPlaying()) {
 				v1.animate().alpha(0.0f).start();
 				v2.animate().alpha(0.0f).start();
@@ -119,7 +119,7 @@ public class EpisodePlayer extends Activity {
 				v1.animate().alpha(1f).start();
 				v2.animate().alpha(1f).start();
 				videoShowingControls = true;
-			}			
+			}
 		}
 	};
 
@@ -310,6 +310,8 @@ public class EpisodePlayer extends Activity {
 		}
 		if (!HUtils.hasBeatsSoundConfig(getApplicationContext()))
 			menu.findItem(R.id.menuPlaySoundConfig).setVisible(false);
+		if (type == 1)
+			menu.findItem(R.id.menuPlayToggle).setVisible(false);
 		return true;
 	}
 
@@ -408,4 +410,12 @@ public class EpisodePlayer extends Activity {
 		}
 	}
 
+	@Override
+	protected void onDestroy() {
+		Log.d("HIP-DS", "On Destroy");
+		if (player != null && !player.isPlaying())
+			player.destroy();
+		unbindService(mConnection);
+		super.onDestroy();
+	}
 }

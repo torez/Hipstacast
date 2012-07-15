@@ -174,18 +174,21 @@ public class HipstacastPlayerService extends Service implements
 				.cancel(podcast_id);
 	}
 
-	private void destroy() {
-		ContentValues c = new ContentValues();
-		c.put("position", (int) mediaPlayer.getCurrentPosition() / 1000);
-		c.put("status", 2);
-		getContentResolver()
-				.update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
-						+ show_id + "/episodes/" + podcast_id), c, "_id = ?",
-						new String[] { String.valueOf(podcast_id) });
+	public void destroy() {
+		if (mediaPlayer != null) {
+			ContentValues c = new ContentValues();
+			c.put("position", (int) mediaPlayer.getCurrentPosition() / 1000);
+			c.put("status", 2);
+			getContentResolver()
+					.update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
+							+ show_id + "/episodes/" + podcast_id), c,
+							"_id = ?",
+							new String[] { String.valueOf(podcast_id) });
 
-		start_position = mediaPlayer.getCurrentPosition();
-		mediaPlayer.release();
-		mediaPlayer = null;
+			start_position = mediaPlayer.getCurrentPosition();
+			mediaPlayer.release();
+			mediaPlayer = null;
+		}
 
 	}
 
