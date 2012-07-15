@@ -72,7 +72,7 @@ public class EpisodePlayer extends Activity {
 				}
 				mHandler.postDelayed(this, 1000);
 			} else {
-				mHandler.postDelayed(this, 1000);
+				mHandler.postDelayed(this, 3000);
 			}
 		}
 	};

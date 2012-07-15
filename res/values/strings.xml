@@ -42,7 +42,9 @@
     <string name="unlistened_count">%d unlistened episodes</string>
     <string name="soundConfig">Sound settings</string>
     
+    <!-- 0.8b4 -->
+    
     <!-- Resources -->
-    <string name="version_number">0.8b3</string>
+    <string name="version_number">0.8b4</string>
 
 </resources>

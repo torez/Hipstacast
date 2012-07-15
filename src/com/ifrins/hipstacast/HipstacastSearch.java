@@ -209,6 +209,7 @@ public class HipstacastSearch extends ListActivity {
 			try {
 				HttpURLConnection urlConnection = (HttpURLConnection) url
 						.openConnection();
+				
 				InputStream in = new BufferedInputStream(
 						urlConnection.getInputStream());
 				response = IOUtils.toString(in);
