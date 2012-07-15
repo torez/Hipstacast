@@ -68,6 +68,7 @@ public class HipstacastMain extends Activity {
 						c.getString(c.getColumnIndex("_id")));
 				openIntent.putExtra("img_url",
 						c.getString(c.getColumnIndex("imageUrl")));
+				openIntent.putExtra("show_title", c.getString(c.getColumnIndex("title")));
 				startActivity(openIntent);
 				// c.close();
 			}

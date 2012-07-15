@@ -34,6 +34,7 @@ public class HipstacastEpisodeView extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         ((Hipstacast)getApplicationContext()).trackPageView("/episodes");
+        getActionBar().setTitle(getIntent().getExtras().getString("show_title"));
         show_id = Integer.parseInt(getIntent().getExtras().getString("show_id"));
         Cursor p = getContentResolver().query(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"+getIntent().getExtras().getString("show_id")+"/episodes"), 
         						new String[] {"_id", "title", "duration", "podcast_id", "status", "position", "content_url", "content_length", "publication_date", "type"}, "podcast_id = ?", new String[] {getIntent().getExtras().getString("show_id")}, "publication_date DESC");
