@@ -9,8 +9,8 @@
     <string name="menu_add_URL">Afegeix URL</string>
     <string name="podcast_add_title">Afegeix un podcast</string>
     <string name="podcast_url_alert_add_msg">Enganxa la URL del feed d\'un podcast al camp</string>
-    <string name="podcast_url_alert_add_fetching">Comprovant el podcast. Esperi\'s</string>
-    <string name="episode_not_downloaded">Aquest episodi no està baixat (%d MB). El vol baixar ara?</string>
+    <string name="podcast_url_alert_add_fetching">Comprovant el podcast. Espera\'t</string>
+    <string name="episode_not_downloaded">Aquest episodi no està baixat (%d MB). El vols baixar ara?</string>
     <string name="podcast_subscribe">Et vols subscriure a "%s"?</string>
     <string name="cancel">Cancel·lar</string>
     <string name="subscribe">Subscriure\'s-hi</string>
@@ -31,7 +31,15 @@
     <string name="version">Versió</string>
     <string name="author">Autor</string>
     <string name="sendfeedback">Envia comentaris</string>
-	<string name="import_menu">Importar</string>
-	<string name="export">Exportar</string>
+    <string name="import_menu">Importar</string>
+    <string name="export">Exportar</string>
+
+    <!-- 0.8b3 -->
+    <string name="allow_cellular">Baixa a través de la xarxa mòbil</string>
+    <string name="allow_cellular_desc">Marca\'l si permets que l\'app baixi podcasts a través de la xarxa de dades mòbils. Sinó, només es baixaran a través de WiFi</string>
+    <string name="import_msg" formatted="false">Vés a %s amb el teu ordinador per importar les subscripccions. Fes servir els codis següents: %d i %d. Quan acabis, prem Importar</string>
+    <string name="import_progress">Important els podcasts. Espera\'t</string>
+    <string name="unlistened_count">%d episodis sense escoltar</string>
+    <string name="soundConfig">Configuració del so</string>
 
 </resources>
