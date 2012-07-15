@@ -45,6 +45,7 @@ public class EpisodePlayer extends Activity {
 	String donation_url;
 	private Handler mHandler = new Handler();
 	Notification n;
+	Boolean videoShowingControls = true;
 
 	private Runnable mUpdateTimeTask = new Runnable() {
 		public void run() {
@@ -102,12 +103,32 @@ public class EpisodePlayer extends Activity {
 		}
 
 	};
+	
+	private View.OnClickListener videoPanelToggle = new View.OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			View v1 = findViewById(R.id.viewVideoTop);
+			View v2 = findViewById(R.id.viewVideoBottom);
+			
+			if (videoShowingControls && player.isPlaying()) {
+				v1.animate().alpha(0.0f).start();
+				v2.animate().alpha(0.0f).start();
+				videoShowingControls = false;
+			} else if (!videoShowingControls && player.isPlaying()) {
+				v1.animate().alpha(1f).start();
+				v2.animate().alpha(1f).start();
+				videoShowingControls = true;
+			}			
+		}
+	};
 
 	private void buildNotification(String title) {
 		Intent newIntent = new Intent(this, EpisodePlayer.class);
 		newIntent.putExtra("from_notif", true);
 		newIntent.putExtra("show_id", show_id);
 		newIntent.putExtra("episode_id", podcast_id);
+		newIntent.putExtra("type", type);
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 				newIntent, 0);
 
@@ -148,6 +169,9 @@ public class EpisodePlayer extends Activity {
 				WebView v = (WebView) findViewById(R.id.playerEpisodeDesc);
 				v.loadData(p.getString(p.getColumnIndex("shownotes")),
 						"text/html; charset=UTF-8", null);
+			} else if (type == 1) {
+				SurfaceView s = (SurfaceView) findViewById(R.id.videoPlayer);
+				s.setOnClickListener(videoPanelToggle);
 			}
 			isPlaying = false;
 			name = p.getString(p.getColumnIndex("title"));
