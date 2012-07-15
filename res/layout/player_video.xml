@@ -10,11 +10,11 @@
         android:layout_gravity="top" />
 
     <LinearLayout
+        android:id="@+id/viewVideoTop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top"
-        android:orientation="vertical" 
-        android:id="@+id/viewVideoTop">
+        android:orientation="vertical" >
 
         <SeekBar
             android:id="@id/playerSeekBar"
@@ -23,18 +23,21 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/viewVideoBottom"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:orientation="vertical" 
-        android:id="@+id/viewVideoBottom">
+        android:orientation="vertical" >
 
         <Button
             android:id="@+id/button1"
+            style="@android:style/Holo.ButtonBar.AlertDialog"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
             android:onClick="startStopVideoToggle"
-            android:text="@string/menu_play" />
+            android:text="@string/menu_play"
+            android:textStyle="bold" />
     </LinearLayout>
 
 </FrameLayout>
