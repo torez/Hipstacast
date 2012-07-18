@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<IdleScreen>
+    <preview_service></preview_service> 
+    <description>@string/app_name</description> 
+    <author>Francesc Bruguera Moriscot</author> 
+    <thumbnail>@drawable/ic_launcher</thumbnail> 
+</IdleScreen>
