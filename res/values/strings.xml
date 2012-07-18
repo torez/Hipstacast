@@ -43,7 +43,8 @@
     <string name="soundConfig">Sound settings</string>
     
     <!-- 0.8b4 -->
-    
+    <string name="export_done" formatted="false">Go to %s with your computer to download your subscriptions. Use the following codes: %d and %d.</string>
+    <string name="done">Done</string>
     <!-- Resources -->
     <string name="version_number">0.8b4</string>
 
