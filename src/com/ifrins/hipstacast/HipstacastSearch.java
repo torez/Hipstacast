@@ -1,24 +1,10 @@
 package com.ifrins.hipstacast;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.commons.io.IOUtils;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -29,7 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-
+import com.ifrins.hipstacast.tasks.ITunesStoreSearchTask;
 import com.ifrins.hipstacast.model.Podcast;
 import com.ifrins.hipstacast.tasks.AddPodcastProvider;
 
@@ -142,8 +128,8 @@ public class HipstacastSearch extends ListActivity {
 			return true;
 		case R.id.menuSearch:
 			final EditText searchInput = new EditText(this);
-
-			new AlertDialog.Builder(this)
+			final Context c = this;
+			new AlertDialog.Builder(c)
 					.setTitle(R.string.menu_search)
 					.setView(searchInput)
 					.setPositiveButton("Ok",
@@ -154,7 +140,7 @@ public class HipstacastSearch extends ListActivity {
 											.toString();
 
 									dialog.dismiss();
-									new ITunesStoreSearch().execute(value);
+									new ITunesStoreSearchTask(c).execute(value);
 								}
 							})
 					.setNegativeButton("Cancel",
@@ -174,90 +160,8 @@ public class HipstacastSearch extends ListActivity {
 	public void startSearch(View view) {
 		EditText input = (EditText) findViewById(R.id.podcastSearchField);
 		Log.d("HIP-SEARCH", input.getText().toString());
-		new ITunesStoreSearch().execute(input.getText().toString());
+		new ITunesStoreSearchTask(this).execute(input.getText().toString());
 	}
 
-	public class ITunesStoreSearch extends
-			AsyncTask<String, Void, List<Podcast>> {
-
-		@Override
-		protected List<Podcast> doInBackground(String... params) {
-
-			String query = params[0];
-			String _url;
-			String response = null;
-
-			try {
-				_url = "http://itunes.apple.com/search?country=US&media=podcast&limit=10&term="
-						+ URLEncoder.encode(query, "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				_url = "http://itunes.apple.com/search?country=US&media=podcast&limit=10&term="
-						+ query;
-				e.printStackTrace();
-			}
-
-			Log.d("HIP-S-URL", _url);
-
-			URL url = null;
-			try {
-				url = new URL(_url);
-			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-			try {
-				HttpURLConnection urlConnection = (HttpURLConnection) url
-						.openConnection();
-				
-				InputStream in = new BufferedInputStream(
-						urlConnection.getInputStream());
-				response = IOUtils.toString(in);
-				urlConnection.disconnect();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-
-			List<Podcast> presp = new ArrayList<Podcast>();
-
-			if (response != null) {
-				try {
-					JSONObject r = new JSONObject(response);
-					JSONArray a = r.getJSONArray("results");
-					for (int i = 0; i < a.length(); i++) {
-						JSONObject c = a.getJSONObject(i);
-						Log.d("HIP_P", c.getString("artworkUrl600"));
-						Podcast t = new Podcast(c.getString("collectionName"),
-								c.getString("feedUrl"),
-								c.getString("artistName"),
-								c.getString("artworkUrl600"));
-						presp.add(t);
-					}
-
-				} catch (JSONException e) {
-					return null;
-				}
-				Log.d("HIP_SEARCH_R", String.valueOf(presp.size()));
-				return presp;
-			} else {
-				return null;
-			}
-		}
-
-		@Override
-		protected void onPostExecute(List<Podcast> result) {
-			Log.d("HIP", String.valueOf(result.size()));
-
-			Object[] r = result.toArray();
-			ShowsSearchCursorAdapter a = new ShowsSearchCursorAdapter(
-					getApplicationContext(), r);
-			a.notifyDataSetChanged();
-			setListAdapter(a);
-			ListView listView = getListView();
-			listView.setTextFilterEnabled(true);
-
-		}
-	}
 
 }

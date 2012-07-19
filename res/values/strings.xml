@@ -45,6 +45,8 @@
     <!-- 0.8b4 -->
     <string name="export_done" formatted="false">Go to %s with your computer to download your subscriptions. Use the following codes: %d and %d.</string>
     <string name="done">Done</string>
+    <!-- 0.8b5 -->
+    <string name="search_title">Search &#8212; &#8220;%s&#8221;</string>
     <!-- Resources -->
     <string name="version_number">0.8b4</string>
 
