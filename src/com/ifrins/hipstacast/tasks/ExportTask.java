@@ -39,7 +39,7 @@ public class ExportTask extends AsyncTask<Integer, Void, Void> {
 		List<String> urls = new ArrayList<String>();
 
 		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost("http://10.0.2.2:8080/api/export");
+		HttpPost httppost = new HttpPost("https://hipstacast.appspot.com/api/export");
 		Cursor c = context
 				.getContentResolver()
 				.query(Uri
