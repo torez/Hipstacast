@@ -157,12 +157,13 @@ public class HipstacastSyncService extends Service {
 						String content_url = xpath.compile(String.format(MEDIALINK_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
 						String title = xpath.compile(String.format(TITLE_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
 						String mediaType = xpath.compile(String.format(MEDIATYPE_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString().substring(0, 5);
+						int content_length = (Integer) xpath.compile(String.format(MEDIALENGHT_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.NUMBER);
 						episodeContentValues.put("podcast_id", show_id);
 						episodeContentValues.put("publication_date", ciPubDate);
 						episodeContentValues.put("author", xpath.compile(String.format(AUTHOR_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString());
 						episodeContentValues.put("description", xpath.compile(String.format(DESCR_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString());
 						episodeContentValues.put("content_url", content_url);
-						episodeContentValues.put("content_length", xpath.compile(String.format(MEDIALENGHT_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString());
+						episodeContentValues.put("content_length", content_length);
 						episodeContentValues.put("duration", convertDurationToSeconds(xpath.compile(String.format(DURATION_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString()));
 						episodeContentValues.put("title", title);
 						episodeContentValues.put("guid", xpath.compile(String.format(LINK_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString());
@@ -190,7 +191,7 @@ public class HipstacastSyncService extends Service {
 													.setTitle(title)
 													.setDestinationInExternalFilesDir(getApplicationContext(), null, "shows/"+show_id+"/"+episodeNewUri.getLastPathSegment() + ".mp3");
 						
-						if (!prefs.getBoolean("allowCellular", false)) {
+						if (!prefs.getBoolean("allowCellular", false) || content_length == 0 || content_length >= (30*1024*1024)) {
 							r.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI);
 						}
 						mgr.enqueue(r);
