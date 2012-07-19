@@ -2,7 +2,6 @@ package com.ifrins.hipstacast;
 
 import java.io.File;
 import java.io.IOException;
-
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.app.ListActivity;
@@ -15,7 +14,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -25,7 +23,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class HipstacastEpisodeView extends ListActivity {
 	int show_id;

@@ -28,7 +28,6 @@ import android.graphics.drawable.Drawable;
 import android.net.http.AndroidHttpClient;
 import android.os.AsyncTask;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.widget.ImageView;
 
 public final class UrlImageViewHelper {

@@ -35,7 +35,7 @@ public class ImportTask extends AsyncTask<Integer, Void, Void> {
 		
 		URL url = null;
 		try {
-			url = new URL("http://hipstacast.appspot.com/api/import?sn1="+sn1+"&sn2="+sn2);
+			url = new URL("https://hipstacast.appspot.com/api/import?sn1="+sn1+"&sn2="+sn2);
 		} catch (MalformedURLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

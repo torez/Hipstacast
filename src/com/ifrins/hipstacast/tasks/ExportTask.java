@@ -3,7 +3,6 @@ package com.ifrins.hipstacast.tasks;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
@@ -13,10 +12,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
-
 import com.ifrins.hipstacast.R;
-import com.ifrins.hipstacast.model.Podcast;
-
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;

@@ -24,7 +24,6 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
-import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -140,7 +139,6 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 	protected ContentValues doInBackground(Object... obj) {
 		String[] url = (String[])obj[0];
 		ProgressDialog c = (ProgressDialog)obj[1];
-		Context ct = (Context)obj[2];
 		if (url == null) return null;
 		int len = url.length;
 		for (int i = 0; i < len; i++) {
@@ -219,7 +217,7 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 					episodeContentValues.put("type", 0);
 				}				
 				
-				Uri episodeNewUri = c.getContext().getContentResolver().insert(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/" + mNewUri.getLastPathSegment() + "/episodes"),
+				c.getContext().getContentResolver().insert(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/" + mNewUri.getLastPathSegment() + "/episodes"),
 																				episodeContentValues);
 					
 				
