@@ -19,6 +19,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.util.Log;
 
 public class CheckForUpdates extends AsyncTask<Void, Void, Boolean> {
 	private final Context context;
@@ -28,6 +29,7 @@ public class CheckForUpdates extends AsyncTask<Void, Void, Boolean> {
 		context = ctx;
 		sharedPreferences = ctx.getSharedPreferences("HIP_UPDATE",
 				Context.MODE_PRIVATE);
+		Log.d("HIP-UPD", "Init");
 	}
 
 	@Override
@@ -41,23 +43,25 @@ public class CheckForUpdates extends AsyncTask<Void, Void, Boolean> {
 			e.printStackTrace();
 		}
 		if (shouldCheckForUpdates()) {
+			Log.d("HIP-UPD", "Checking");
 			int servervc = getServerVersionCode();
+			updateLastCheck();
 			if (servervc > currentvc) {
 				return Boolean.TRUE;
 			} else {
 				return Boolean.FALSE;
 			}
 		}
-		return Boolean.FALSE;
-
+		return false;
+ 
 		
 	}
 	@Override
 	protected void onPostExecute(Boolean p) {
 		if (p) {
 			showUpdateNotification();
-			updateLastCheck();
 		}
+		
 	}
 
 	private int getServerVersionCode() {
@@ -88,6 +92,7 @@ public class CheckForUpdates extends AsyncTask<Void, Void, Boolean> {
 
 	private Boolean shouldCheckForUpdates() {
 		long lastCheck = sharedPreferences.getLong("last_check", 0);
+		Log.d("HIP-UPD-LC", String.valueOf(lastCheck)); 
 		NetworkInfo info = (NetworkInfo) ((ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE))
 				.getActiveNetworkInfo();
@@ -100,9 +105,11 @@ public class CheckForUpdates extends AsyncTask<Void, Void, Boolean> {
 		}
 
 	}
-
+ 
 	private void updateLastCheck() {
+		Log.d("HIP-PREF-SAVE", "THIS SHOULD BE SAVED");
 		Editor edit = sharedPreferences.edit();
+		edit.clear();
 		edit.putLong("last_check", System.currentTimeMillis());
 		edit.commit();
 	}
