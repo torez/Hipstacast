@@ -10,7 +10,7 @@
     <string name="podcast_add_title">Afegeix un podcast</string>
     <string name="podcast_url_alert_add_msg">Enganxa la URL del feed d\'un podcast al camp</string>
     <string name="podcast_url_alert_add_fetching">Comprovant el podcast. Espera\'t</string>
-    <string name="episode_not_downloaded">Aquest episodi no està baixat (%d MB). El vols baixar ara?</string>
+    <string name="episode_not_downloaded">Aquest episodi no està baixat (%s MB). El vols baixar ara?</string>
     <string name="podcast_subscribe">Et vols subscriure a "%s"?</string>
     <string name="cancel">Cancel·lar</string>
     <string name="subscribe">Subscriure\'t-hi</string>
