@@ -204,10 +204,7 @@ public class HipstacastEpisodeView extends ListActivity {
 		}
 		Cursor c = (Cursor) getListAdapter().getItem(info.position);
 		menu.setHeaderTitle(c.getString(c.getColumnIndex("title")));
-		if (episodes_count > 1 && info.position > 0
-				&& c.getInt(c.getColumnIndex("string")) > 0) {
-			menu.add(0, 1, 1, R.string.delete);
-		}
+		menu.add(0, 1, 1, R.string.delete);
 	}
 
 	@Override
