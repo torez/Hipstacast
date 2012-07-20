@@ -47,6 +47,10 @@
     <string name="done">Done</string>
     <!-- 0.8b5 -->
     <string name="search_title">Search &#8212; &#8220;%s&#8221;</string>
+    <!-- 0.8b6 -->
+    <string name="update_title">Software update</string>
+    <string name="update_msg">A newer version of Hipstacast is available for your device. The update brings bugfixes, stability improvements along other features.</string>
+    <string name="update">Update</string>
     <!-- Resources -->
     <string name="version_number">0.8b4</string>
 

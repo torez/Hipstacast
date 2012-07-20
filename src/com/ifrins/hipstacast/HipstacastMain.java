@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.ifrins.hipstacast.tasks.CheckForUpdates;
 import com.ifrins.hipstacast.tasks.ExportTask;
 import com.ifrins.hipstacast.tasks.ImportTask;
 
@@ -115,6 +116,8 @@ public class HipstacastMain extends Activity {
 		m.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, d,
 				Long.parseLong(prefs.getString("fetchFrequency", "86400000")),
 				contentIntent);
+		new CheckForUpdates(this).execute();
+		
 	}
 	private void startExport() {
 		final int n = new Random().nextInt(9999);
