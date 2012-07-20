@@ -157,7 +157,7 @@ public class HipstacastSyncService extends Service {
 						String content_url = xpath.compile(String.format(MEDIALINK_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
 						String title = xpath.compile(String.format(TITLE_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
 						String mediaType = xpath.compile(String.format(MEDIATYPE_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString().substring(0, 5);
-						int content_length = (Integer) xpath.compile(String.format(MEDIALENGHT_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.NUMBER);
+						double content_length = (Double) xpath.compile(String.format(MEDIALENGHT_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.NUMBER);
 						episodeContentValues.put("podcast_id", show_id);
 						episodeContentValues.put("publication_date", ciPubDate);
 						episodeContentValues.put("author", xpath.compile(String.format(AUTHOR_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString());
