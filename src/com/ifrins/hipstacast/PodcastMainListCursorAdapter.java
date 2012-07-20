@@ -39,8 +39,10 @@ public class PodcastMainListCursorAdapter extends CursorAdapter {
 		cur.close();
 		if (c > 0 && c < 10) {
 			holder.listenCount.setText(String.valueOf(c));
+			holder.listenCount.setVisibility(View.VISIBLE);
 		} else if (c > 9) {
 			holder.listenCount.setText("9+");
+			holder.listenCount.setVisibility(View.VISIBLE);
 		} else {
 			holder.listenCount.setVisibility(View.GONE);
 		}
