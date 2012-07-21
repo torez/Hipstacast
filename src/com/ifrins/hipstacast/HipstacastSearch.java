@@ -138,7 +138,7 @@ public class HipstacastSearch extends ListActivity {
 										int whichButton) {
 									String value = searchInput.getText()
 											.toString();
-
+		
 									dialog.dismiss();
 									new ITunesStoreSearchTask(c).execute(value);
 								}

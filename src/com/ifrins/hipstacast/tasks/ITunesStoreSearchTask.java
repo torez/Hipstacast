@@ -15,9 +15,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import android.app.ListActivity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.ListView;
+import android.widget.Toast;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.ShowsSearchCursorAdapter;
 import com.ifrins.hipstacast.model.Podcast;
@@ -27,9 +29,20 @@ public class ITunesStoreSearchTask extends
 
 	String query;
 	Context context;
+	ProgressDialog progressDialog;
 
 	public ITunesStoreSearchTask(Context ctx) {
 		context = ctx;
+	}
+
+	@Override
+	protected void onPreExecute() {
+		progressDialog = new ProgressDialog(context);
+		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+		progressDialog.setMessage(context.getString(R.string.search_progress));
+		progressDialog.setCancelable(false);
+		progressDialog.show();
+
 	}
 
 	@Override
@@ -64,7 +77,7 @@ public class ITunesStoreSearchTask extends
 			response = IOUtils.toString(in);
 			urlConnection.disconnect();
 		} catch (IOException e) {
-			e.printStackTrace();
+
 		}
 
 		List<Podcast> presp = new ArrayList<Podcast>();
@@ -92,14 +105,21 @@ public class ITunesStoreSearchTask extends
 
 	@Override
 	protected void onPostExecute(List<Podcast> result) {
-		Object[] r = result.toArray();
-		ShowsSearchCursorAdapter adapter = new ShowsSearchCursorAdapter(
-				context, r);
-		adapter.notifyDataSetChanged();
-		ListActivity act = (ListActivity)context;
-		act.setListAdapter(adapter);
-		ListView listView = act.getListView();
-		listView.setTextFilterEnabled(true);
-		act.getActionBar().setTitle(String.format(act.getString(R.string.search_title), query));
+		progressDialog.dismiss();
+		if (result != null) {
+			Object[] r = result.toArray();
+			ShowsSearchCursorAdapter adapter = new ShowsSearchCursorAdapter(
+					context, r);
+			adapter.notifyDataSetChanged();
+			ListActivity act = (ListActivity) context;
+			act.setListAdapter(adapter);
+			ListView listView = act.getListView();
+			listView.setTextFilterEnabled(true);
+			act.getActionBar().setTitle(
+					String.format(act.getString(R.string.search_title), query));
+		} else {
+			Toast.makeText(context, R.string.search_error, Toast.LENGTH_SHORT)
+					.show();
+		}
 	}
 }

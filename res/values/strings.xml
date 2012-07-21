@@ -51,6 +51,8 @@
     <string name="update_title">Software update</string>
     <string name="update_msg">A newer version of Hipstacast is available for your device. The update brings bugfixes, stability improvements along other features.</string>
     <string name="update">Update</string>
+    <string name="search_error">An error ocurred while searching. Try again later.</string>
+    <string name="search_progress">Searching&#8230;</string>
     <!-- Resources -->
     <string name="version_number">0.8b4</string>
 
