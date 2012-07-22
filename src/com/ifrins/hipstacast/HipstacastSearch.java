@@ -1,6 +1,7 @@
 package com.ifrins.hipstacast;
 
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -12,15 +13,53 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.URLUtil;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+
 import com.ifrins.hipstacast.tasks.ITunesStoreSearchTask;
 import com.ifrins.hipstacast.model.Podcast;
 import com.ifrins.hipstacast.tasks.AddPodcastProvider;
 
 public class HipstacastSearch extends ListActivity {
+	
+	class CustomURLClickListener implements View.OnClickListener {
+	    private final AlertDialog dialog;
+	    private final EditText input;
+	    public CustomURLClickListener(AlertDialog dialog, EditText input) {
+	        this.dialog = dialog;
+	        this.input = input;
+	    }
+	    @Override
+	    public void onClick(View v) {
+	    	
+			String value = input.getText().toString();
+			if (URLUtil.isValidUrl(value)) {
+				dialog.dismiss();
+				ProgressDialog progressDialog;
+				progressDialog = new ProgressDialog(input
+						.getContext());
+				progressDialog
+						.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+				progressDialog
+						.setMessage(getString(R.string.podcast_url_alert_add_fetching));
+				progressDialog.setCancelable(false);
+				progressDialog.show();
+				Log.i("HIP-POD-URL", value);
+	
+				new AddPodcastProvider().execute(new String[]{value},
+						progressDialog,
+						getApplicationContext());
+			} else {
+				dialog.setMessage(getString(R.string.invalid_url));
+			}
+	    }
+	}
 
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -89,41 +128,24 @@ public class HipstacastSearch extends ListActivity {
 		case R.id.menuAddUrl:
 			final EditText input = new EditText(this);
 			input.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
-
-			new AlertDialog.Builder(this)
+			input.setText("http://");
+			
+			AlertDialog d = new AlertDialog.Builder(this)
 					.setTitle(R.string.podcast_add_title)
 					.setMessage(R.string.podcast_url_alert_add_msg)
 					.setView(input)
-					.setPositiveButton("Ok",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									String value = input.getText().toString();
-
-									dialog.dismiss();
-									ProgressDialog progressDialog;
-									progressDialog = new ProgressDialog(input
-											.getContext());
-									progressDialog
-											.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-									progressDialog
-											.setMessage(getString(R.string.podcast_url_alert_add_fetching));
-									progressDialog.setCancelable(false);
-									progressDialog.show();
-									Log.i("HIP-POD-URL", value);
-
-									new AddPodcastProvider().execute(new String[]{value},
-											progressDialog,
-											getApplicationContext());
-								}
-							})
+					.setPositiveButton("Ok", null)
 					.setNegativeButton("Cancel",
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
 									// Do nothing.
 								}
-							}).show();
+							}).create();
+			d.show();
+			Button theButton = d.getButton(DialogInterface.BUTTON_POSITIVE);
+			theButton.setOnClickListener(new CustomURLClickListener(d, input));
+							
 
 			return true;
 		case R.id.menuSearch:
