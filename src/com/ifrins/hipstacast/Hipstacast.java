@@ -15,7 +15,7 @@ public class Hipstacast extends Application {
 		tracker.setCustomVar(1, "Screen", String.valueOf(HUtils
 				.getScreenCategory(getApplicationContext())));
 		try {
-			tracker.setCustomVar(1, "App Version", getPackageManager()
+			tracker.setProductVersion("Hipstacast", getPackageManager()
 					.getPackageInfo(getPackageName(), 0).versionName);
 		} catch (NameNotFoundException e) {
 			// TODO Auto-generated catch block
