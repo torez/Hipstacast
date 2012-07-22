@@ -54,6 +54,6 @@
     <string name="search_error">An error ocurred while searching. Try again later.</string>
     <string name="search_progress">Searching&#8230;</string>
     <!-- Resources -->
-    <string name="version_number">0.8b4</string>
+    <string name="version_number">0.8b6</string>
 
 </resources>

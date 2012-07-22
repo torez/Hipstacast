@@ -132,7 +132,7 @@ public class HipstacastMain extends Activity {
 		final Context c = this;
 		new AlertDialog.Builder(c)
 		.setTitle(R.string.import_menu)
-		.setMessage(String.format(getString(R.string.export), "http://goo.gl/kFyTo", n, s))
+		.setMessage(String.format(getString(R.string.import_msg), "http://goo.gl/yrv9e", n, s))
 		.setPositiveButton(R.string.import_menu,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog,

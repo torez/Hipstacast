@@ -25,7 +25,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.util.Log;
+import android.util.Log; 
 
 public class HipstacastSyncService extends Service {
 
@@ -132,11 +132,8 @@ public class HipstacastSyncService extends Service {
 			try {
 				doc = builder.parse(feed);
 			} catch (SAXException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
 			}
 			if (xpath == null) {
 				xpath = XPathFactory.newInstance().newXPath();

@@ -21,6 +21,7 @@ public class Hipstacast extends Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		tracker.setCustomVar(1, "Device", android.os.Build.MODEL);
 	}
 
 	@Override

@@ -79,7 +79,7 @@ public class ExportTask extends AsyncTask<Integer, Void, Void> {
 		if (sns != null) {
 			new AlertDialog.Builder(context)
 			.setTitle(R.string.import_menu) 
-			.setMessage(String.format(context.getString(R.string.export_done), "http://goo.gl/kFyTo", sns[0], sns[1]))
+			.setMessage(String.format(context.getString(R.string.export_done), "http://goo.gl/fKpD5", sns[0], sns[1]))
 			.setPositiveButton(R.string.done,
 					new DialogInterface.OnClickListener() {
 						public void onClick(DialogInterface dialog,
