@@ -55,6 +55,6 @@
     <string name="search_progress">Searching&#8230;</string>
     <string name="invalid_url">There\'s a problem with the URL. Check that\'s correct.</string>
     <!-- Resources -->
-    <string name="version_number">0.8b6</string>
+    <string name="version_number">0.8.1</string>
 
 </resources>

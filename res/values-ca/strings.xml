@@ -41,5 +41,19 @@
     <string name="import_progress">Important els podcasts. Espera\'t</string>
     <string name="unlistened_count">%d episodis sense escoltar</string>
     <string name="soundConfig">Configuració del so</string>
+    
+        <!-- 0.8b4 -->
+    <string name="export_done" formatted="false">Vés a %s amb el teu ordinador per baixar les teves subscripcions. Fes servir els codis següents: %d and %d.</string>
+    <string name="done">Fet</string>
+    <!-- 0.8b5 -->
+    <string name="search_title">Cerca &#8212; &#8220;%s&#8221;</string>
+    <!-- 0.8b6 -->
+    <string name="update_title">Actualització de software</string>
+    <string name="update_msg">Una nova versió de Hipstacast està disponible pel teu aparell. L\'actualització aporta millores, i noves funcions.</string>
+    <string name="update">Actualitza</string>
+    <string name="search_error">Hi ha hagut un error a l\'hora de cercar. Torna-ho a provar més tard.</string>
+    <string name="search_progress">Cercant&#8230;</string>
+    <string name="invalid_url">Hi ha un problema amb la URL. Comprova que sigui correcta.</string>
+    
 
 </resources>
