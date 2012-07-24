@@ -65,7 +65,7 @@ public class CheckForUpdates extends AsyncTask<Void, Void, Boolean> {
 	}
 
 	private int getServerVersionCode() {
-		String _url = "http://10.0.2.2:8080/api/updates";
+		String _url = "https://hipstacast.appspot.com/api/updates";
 
 		URL url = null;
 		try {

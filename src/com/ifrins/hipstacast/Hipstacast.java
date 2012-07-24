@@ -13,15 +13,15 @@ public class Hipstacast extends Application {
 		tracker = GoogleAnalyticsTracker.getInstance();
 		tracker.startNewSession("UA-33122624-1", 30, this);
 		tracker.setCustomVar(1, "Screen", String.valueOf(HUtils
-				.getScreenCategory(getApplicationContext())));
+				.getScreenCategory(getApplicationContext())), 1);
 		try {
-			tracker.setProductVersion("Hipstacast", getPackageManager()
-					.getPackageInfo(getPackageName(), 0).versionName);
+			tracker.setCustomVar(1, "App Version", getPackageManager()
+					.getPackageInfo(getPackageName(), 0).versionName, 1);
 		} catch (NameNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		tracker.setCustomVar(1, "Device", android.os.Build.MODEL);
+		tracker.setCustomVar(1, "Device", android.os.Build.MODEL, 1);
 	}
 
 	@Override
