@@ -26,12 +26,6 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
 
         holder.name.setText(cursor.getString(cursor.getColumnIndex("title")));
         int status = cursor.getInt(cursor.getColumnIndex("status"));
-        if (status == 0) {     
-        	holder.name.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Small);
-        }
-        else {
-        	holder.name.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Medium);
-        }
         if (status == 2) {
         	int d = cursor.getInt(cursor.getColumnIndex("duration"));
         	int p = cursor.getInt(cursor.getColumnIndex("position"));
@@ -39,10 +33,13 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
         	holder.duration.setText("-"+transformToDuration(String.valueOf(r)));
         } else if (status == 3) {
         	holder.duration.setVisibility(View.INVISIBLE);
+        } else if (status == 0) {
+        	holder.duration.setText("\u25BC");
+        	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Large);
         } else { 
         	holder.duration.setText(transformToDuration(cursor.getString(cursor.getColumnIndex("duration"))));
         }
-        if (cursor.getInt(cursor.getColumnIndex("duration")) == 0) {
+        if (cursor.getInt(cursor.getColumnIndex("duration")) == 0 && status > 0) {
         	holder.duration.setText("-:--:--");
         }
         //holder.status.setImageResource(R.drawable.ic_list_new);
