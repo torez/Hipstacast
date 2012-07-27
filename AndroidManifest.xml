@@ -39,10 +39,20 @@
             <intent-filter>
                 <action android:name="com.htc.lockscreen.idlescreen.IdleScreenService" />
             </intent-filter>
+
             <meta-data
                 android:name="com.htc.lockscreen.idlescreen"
                 android:resource="@xml/idlescreen" />
         </service>
+
+        <receiver
+            android:name="DownloadReceiver"
+            android:exported="true" >
+            <intent-filter android:priority="100" >
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
+                <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
+            </intent-filter>
+        </receiver>
 
         <activity
             android:name=".HipstacastMain"
