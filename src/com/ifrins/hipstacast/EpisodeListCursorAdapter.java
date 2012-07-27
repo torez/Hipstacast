@@ -30,13 +30,16 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
         	int d = cursor.getInt(cursor.getColumnIndex("duration"));
         	int p = cursor.getInt(cursor.getColumnIndex("position"));
         	int r = d-p;
+        	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Medium);
         	holder.duration.setText("-"+transformToDuration(String.valueOf(r)));
         } else if (status == 3) {
         	holder.duration.setVisibility(View.INVISIBLE);
+        	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Medium);
         } else if (status == 0) {
         	holder.duration.setText("\u25BC");
         	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Large);
         } else { 
+        	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Medium);
         	holder.duration.setText(transformToDuration(cursor.getString(cursor.getColumnIndex("duration"))));
         }
         if (cursor.getInt(cursor.getColumnIndex("duration")) == 0 && status > 0) {
