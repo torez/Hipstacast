@@ -15,6 +15,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import android.app.DownloadManager;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
@@ -228,7 +230,19 @@ public class HipstacastSyncService extends Service {
 		@Override
 		protected void onPostExecute(Void params) {
 			//System.exit(0);
+			NotificationManager notifManager = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
+			notifManager.cancel(-1001);
 			((Service) context).stopSelf();
+		}
+		@Override
+		protected void onPreExecute() {
+			Notification n = new Notification.Builder(context)
+				.setContentTitle(context.getString(R.string.feed_sync_notification_title))
+				.setSmallIcon(R.drawable.ic_stat_sync)
+				.setOngoing(true)
+				.getNotification();
+			NotificationManager notifManager = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
+			notifManager.notify(-1001, n);
 		}
 	}
 }
