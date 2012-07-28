@@ -1,10 +1,8 @@
 package com.ifrins.hipstacast;
 
-import com.ifrins.hipstacast.HipstacastSearch.CustomURLClickListener;
 import com.ifrins.hipstacast.fragments.SearchFragment;
 import com.ifrins.hipstacast.tasks.AddPodcastProvider;
 import com.ifrins.hipstacast.tasks.ITunesStoreSearchTask;
-
 import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.app.FragmentTransaction;
@@ -16,7 +14,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.app.NavUtils;
 import android.support.v4.view.ViewPager;
 import android.text.InputType;
 import android.util.Log;
@@ -33,19 +30,8 @@ import android.widget.TextView;
 
 public class HipstacastSearchNeue extends FragmentActivity implements ActionBar.TabListener {
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide fragments for each of the
-     * sections. We use a {@link android.support.v4.app.FragmentPagerAdapter} derivative, which will
-     * keep every loaded fragment in memory. If this becomes too memory intensive, it may be best
-     * to switch to a {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     SectionsPagerAdapter mSectionsPagerAdapter;
-
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     ViewPager mViewPager;
-    
     SearchFragment searchFragment = new SearchFragment();
 
     @Override
