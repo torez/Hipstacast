@@ -58,6 +58,7 @@ public class HipstacastSearchNeue extends FragmentActivity implements ActionBar.
                 actionBar.setSelectedNavigationItem(position);
             }
         });
+		((Hipstacast) getApplicationContext()).trackPageView("/featured");
 
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
@@ -149,6 +150,7 @@ public class HipstacastSearchNeue extends FragmentActivity implements ActionBar.
 											.toString();
 		
 									dialog.dismiss();
+									getActionBar().setSelectedNavigationItem(1);
 									new ITunesStoreSearchTask(c, searchFragment).execute(value);
 								}
 							})
