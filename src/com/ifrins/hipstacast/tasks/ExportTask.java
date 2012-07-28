@@ -20,6 +20,7 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 public class ExportTask extends AsyncTask<Integer, Void, Void> {
 	Context context;
@@ -62,14 +63,20 @@ public class ExportTask extends AsyncTask<Integer, Void, Void> {
 
 			// Execute HTTP Post Request
 			response = httpclient.execute(httppost);
+			
 
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 		}
-		if (response.getStatusLine().getStatusCode() == 200) {
+		int statusCode = response.getStatusLine().getStatusCode();
+		if (statusCode == 200) {
 			sns = params;
+		} else if (statusCode == 404) {
+			Toast.makeText(context, R.string.import_not_found_error, Toast.LENGTH_LONG).show();
+		} else if (statusCode == 500) {
+			Toast.makeText(context, R.string.import_server_error, Toast.LENGTH_LONG).show();
 		}
 		return null;
 	}

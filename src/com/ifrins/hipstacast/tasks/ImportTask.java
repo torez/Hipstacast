@@ -14,9 +14,12 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.ifrins.hipstacast.R;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 public class ImportTask extends AsyncTask<Integer, Void, Void> {
 	Context context;
@@ -46,10 +49,15 @@ public class ImportTask extends AsyncTask<Integer, Void, Void> {
 					.openConnection();
 			InputStream in = new BufferedInputStream(
 					urlConnection.getInputStream());
-			if (urlConnection.getResponseCode() == 200) {
+			int statusCode = urlConnection.getResponseCode();
+			if (statusCode == 200) {
 				response = IOUtils.toString(in);
-			} else {
+			} else if (statusCode == 404) {
 				response = "[]";
+				Toast.makeText(context, R.string.import_not_found_error, Toast.LENGTH_LONG).show();
+			} else if (statusCode == 500) {
+				response = "[]";
+				Toast.makeText(context, R.string.import_server_error, Toast.LENGTH_LONG).show();
 			}
 			urlConnection.disconnect();
 		} catch (IOException e) {

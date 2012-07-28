@@ -59,6 +59,8 @@
     <string name="feed_sync_notification_title">Looking for new episodes&#8230;</string>
     <string name="featured">Featured</string>
     <string name="search_results">Search Results</string>
+    <string name="import_not_found_error">We couldn\'t find your subscriptions. Please try again.</string>
+    <string name="import_server_error">There was a problem with your request. Please try again later.</string>
     <!-- Resources -->
     <string name="version_number">0.8.1</string>
 
