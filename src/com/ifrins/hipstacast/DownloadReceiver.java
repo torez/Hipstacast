@@ -28,23 +28,25 @@ public class DownloadReceiver extends BroadcastReceiver {
 					.getColumnIndex(DownloadManager.COLUMN_STATUS));
 			String downloadPath = c.getString(c
 					.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-			String[] subDirs = downloadPath.split("/");
-			int episodeId = Integer.parseInt(subDirs[subDirs.length - 1]
-					.split(".mp3")[0]);
-			int showId = Integer.parseInt(subDirs[subDirs.length - 2]);
-
-			if (downloadStatus == DownloadManager.STATUS_SUCCESSFUL) {
-				ContentValues updVal = new ContentValues();
-				updVal.put("status", 1);
-				context.getContentResolver()
-						.update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
-								+ showId + "/episodes/" + episodeId), updVal,
-								"_id = ?",
-								new String[] { String.valueOf(episodeId) });
-			}
-
-			Log.d("HIP-STAT", String.format("File %s with status %d",
-					downloadPath, downloadStatus));
+			if (downloadPath != null) {
+				String[] subDirs = downloadPath.split("/");
+				int episodeId = Integer.parseInt(subDirs[subDirs.length - 1]
+						.split(".mp3")[0]);
+				int showId = Integer.parseInt(subDirs[subDirs.length - 2]);
+	
+				if (downloadStatus == DownloadManager.STATUS_SUCCESSFUL) {
+					ContentValues updVal = new ContentValues();
+					updVal.put("status", 1);
+					context.getContentResolver()
+							.update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
+									+ showId + "/episodes/" + episodeId), updVal,
+									"_id = ?",
+									new String[] { String.valueOf(episodeId) });
+				}
+	
+				Log.d("HIP-STAT", String.format("File %s with status %d",
+						downloadPath, downloadStatus));
+				}
 		}
 	}
 
