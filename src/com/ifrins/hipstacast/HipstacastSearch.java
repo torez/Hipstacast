@@ -162,7 +162,7 @@ public class HipstacastSearch extends ListActivity {
 											.toString();
 		
 									dialog.dismiss();
-									new ITunesStoreSearchTask(c).execute(value);
+									new ITunesStoreSearchTask(c, null).execute(value);
 								}
 							})
 					.setNegativeButton("Cancel",
@@ -179,11 +179,6 @@ public class HipstacastSearch extends ListActivity {
 		}
 	}
 
-	public void startSearch(View view) {
-		EditText input = (EditText) findViewById(R.id.podcastSearchField);
-		Log.d("HIP-SEARCH", input.getText().toString());
-		new ITunesStoreSearchTask(this).execute(input.getText().toString());
-	}
 
 
 }
