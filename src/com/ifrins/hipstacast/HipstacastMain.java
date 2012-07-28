@@ -79,7 +79,7 @@ public class HipstacastMain extends Activity {
 		case R.id.menuAdd:
 			Log.d("HIP-CLICK", "menuAdd");
 			Intent openIntent = new Intent(getApplicationContext(),
-					HipstacastSearch.class);
+					HipstacastSearchNeue.class);
 			startActivity(openIntent);
 			return true;
 		case R.id.menuRefresh:

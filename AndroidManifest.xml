@@ -64,10 +64,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".HipstacastSearch"
-            android:label="@string/menu_search" >
-        </activity>
-        <activity
             android:name=".HipstacastEpisodeView"
             android:label="@string/app_name" >
         </activity>
@@ -78,6 +74,10 @@
         <activity
             android:name=".HipstacastSettings"
             android:label="@string/settings" >
+        </activity>
+        <activity
+            android:name=".HipstacastSearchNeue"
+            android:label="@string/menu_search" >
         </activity>
     </application>
 

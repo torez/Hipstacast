@@ -18,6 +18,7 @@ import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v4.app.Fragment;
 import android.widget.ListView;
 import android.widget.Toast;
 import com.ifrins.hipstacast.R;
@@ -30,9 +31,11 @@ public class ITunesStoreSearchTask extends
 	String query;
 	Context context;
 	ProgressDialog progressDialog;
+	Fragment searchFragment;
 
-	public ITunesStoreSearchTask(Context ctx) {
+	public ITunesStoreSearchTask(Context ctx, Fragment srch) {
 		context = ctx;
+		searchFragment = srch;
 	}
 
 	@Override
@@ -111,12 +114,9 @@ public class ITunesStoreSearchTask extends
 			ShowsSearchCursorAdapter adapter = new ShowsSearchCursorAdapter(
 					context, r);
 			adapter.notifyDataSetChanged();
-			ListActivity act = (ListActivity) context;
-			act.setListAdapter(adapter);
-			ListView listView = act.getListView();
-			listView.setTextFilterEnabled(true);
-			act.getActionBar().setTitle(
-					String.format(act.getString(R.string.search_title), query));
+			ListView list = (ListView)searchFragment.getView().findViewById(R.id.searchListView);
+			list.setAdapter(adapter);
+			list.setTextFilterEnabled(true);
 		} else {
 			Toast.makeText(context, R.string.search_error, Toast.LENGTH_SHORT)
 					.show();

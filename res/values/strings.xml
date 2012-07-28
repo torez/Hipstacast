@@ -57,6 +57,8 @@
 
     <!-- 1.0 -->
     <string name="feed_sync_notification_title">Looking for new episodes&#8230;</string>
+    <string name="featured">Featured</string>
+    <string name="search_results">Search Results</string>
     <!-- Resources -->
     <string name="version_number">0.8.1</string>
 
