@@ -61,6 +61,9 @@
     <string name="search_results">Search Results</string>
     <string name="import_not_found_error">We couldn\'t find your subscriptions. Please try again.</string>
     <string name="import_server_error">There was a problem with your request. Please try again later.</string>
+    <string name="support">Support</string>
+    <string name="twitter">Twitter</string>
+    <string name="google_plus">Google+</string>
     <!-- Resources -->
     <string name="version_number">0.8.1</string>
 

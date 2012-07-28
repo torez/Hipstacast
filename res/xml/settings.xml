@@ -28,11 +28,27 @@
 
         <PreferenceScreen
             android:summary=""
-            android:title="@string/sendfeedback" >
+            android:title="@string/support" >
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="mailto:francesc@lapomacatalana.com?subject=Feedback" />
+                android:data="mailto:hipstacast.app@gmail.com?subject=Hipstacast Support" />
         </PreferenceScreen>
+                <PreferenceScreen
+            android:summary=""
+            android:title="@string/twitter" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="http://twitter.com/hipstacast" />
+        </PreferenceScreen>
+                <PreferenceScreen
+            android:summary=""
+            android:title="@string/google_plus" >
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://plus.google.com/102398368854163423092" />
+        </PreferenceScreen>
+                
+        
     </PreferenceCategory>
 
 </PreferenceScreen>
