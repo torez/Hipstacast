@@ -134,7 +134,7 @@ public class EpisodePlayer extends Activity {
 
 		n = new Notification.Builder(getApplicationContext())
 				.setContentTitle("Hipstacast")
-				.setSmallIcon(R.drawable.ic_notification).setContentText(title)
+				.setSmallIcon(R.drawable.ic_stat_playing).setContentText(title)
 				.setOngoing(true).setContentIntent(contentIntent)
 				.setTicker(title).getNotification(); 
 
