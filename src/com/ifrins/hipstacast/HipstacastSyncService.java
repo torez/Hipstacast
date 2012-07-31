@@ -3,6 +3,8 @@ package com.ifrins.hipstacast;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -32,6 +34,7 @@ import android.util.Log;
 public class HipstacastSyncService extends Service {
 
 	private static String CONTENT_URL = "content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts";
+	private static String EPISODES_URL = "content://com.ifrins.hipstacast.provider.HipstacastContentProvider/episodes";
 	@Override
 	public IBinder onBind(Intent intent) {
 		// TODO Auto-generated method stub
@@ -70,6 +73,8 @@ public class HipstacastSyncService extends Service {
 		private DocumentBuilder builder = null;
 		private DocumentBuilderFactory factory = null;
 		private SimpleDateFormat format = null;
+		
+		private List<Integer> addedEpisodes = new ArrayList<Integer>();
 		
 		public SyncTask(Context ct) {
 			context = ct;
@@ -185,6 +190,8 @@ public class HipstacastSyncService extends Service {
 	
 							Uri episodeNewUri = context.getContentResolver().insert(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/" + show_id + "/episodes"),
 									episodeContentValues);
+							List<String> pS = episodeNewUri.getPathSegments();
+							addedEpisodes.add(Integer.parseInt(pS.get(pS.size()-1)));
 	
 							DownloadManager mgr = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
 							SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -229,9 +236,29 @@ public class HipstacastSyncService extends Service {
 		}
 		@Override
 		protected void onPostExecute(Void params) {
+			int length = addedEpisodes.size();
+			Notification uNotif = null;
+			if (length > 0) {
+				Cursor c = context.getContentResolver().query(Uri.parse(EPISODES_URL), new String[] {"_id", "title"}, "_id = ?", new String[] {String.valueOf(addedEpisodes.get(0))}, null);
+				String message = null;
+				c.moveToFirst();
+				if (length == 1) {
+					message = String.format(context.getString(R.string.notif_new_episodes_desc_1), c.getString(c.getColumnIndex("title")));
+				} else if (length > 1) {
+					message = String.format(context.getString(R.string.notif_new_episodes_desc_2), c.getString(c.getColumnIndex("title")), length-1);
+				}
+				uNotif = new Notification.Builder(context)
+						.setContentTitle(context.getString(R.string.notif_new_episodes_title))
+						.setContentText(message)
+						.setSmallIcon(R.drawable.ic_notification)
+						.getNotification();
+			}
 			//System.exit(0);
 			NotificationManager notifManager = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
 			notifManager.cancel(-1001);
+			if (uNotif != null) {
+				notifManager.notify(-1001, uNotif);
+			}
 			((Service) context).stopSelf();
 		}
 		@Override

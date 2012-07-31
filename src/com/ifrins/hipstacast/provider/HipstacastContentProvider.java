@@ -19,6 +19,7 @@ public class HipstacastContentProvider extends ContentProvider {
 	private static final int PODCASTS_ID = 101;
 	private static final int PODCASTS_ID_EPISODES = 102;
 	private static final int PODCASTS_ID_EPISODES_ID = 103;
+	private static final int EPISODES = 104;
 	
 	private HipstacastDatabase hDB;
 	
@@ -27,7 +28,7 @@ public class HipstacastContentProvider extends ContentProvider {
         sUriMatcher.addURI(AUTHORITY, "podcasts/*", PODCASTS_ID);
         sUriMatcher.addURI(AUTHORITY, "podcasts/*/episodes", PODCASTS_ID_EPISODES);
         sUriMatcher.addURI(AUTHORITY, "podcasts/*/episodes/*", PODCASTS_ID_EPISODES_ID);
-
+        sUriMatcher.addURI(AUTHORITY, "episodes", EPISODES);
 	}
 		
 	@Override
@@ -41,7 +42,7 @@ public class HipstacastContentProvider extends ContentProvider {
 	@Override
 	public String getType(Uri uri) {
 		final int match = sUriMatcher.match(uri);
-		if (match == PODCASTS || match == PODCASTS_ID_EPISODES) {
+		if (match == PODCASTS || match == PODCASTS_ID_EPISODES || match == EPISODES) {
 			return "vnd.android.cursor.dir/";
 		} else {
 			return "vnd.android.cursor.item";
@@ -77,7 +78,11 @@ public class HipstacastContentProvider extends ContentProvider {
 				id = db.insert("episodes", null, values);
 				getContext().getContentResolver().notifyChange(uri, null);
 				return ContentUris.withAppendedId(Uri.parse("content://" + AUTHORITY+ "/podcasts/" + values.getAsString("podcast_id") + "/"), id);
-			
+			case EPISODES:
+				id = db.insertOrThrow("episodes", null, values);
+				getContext().getContentResolver().notifyChange(uri, null);
+				return ContentUris.withAppendedId(Uri.parse("content://"+ AUTHORITY+ "/episodes"), id);
+				
 			default:
 				throw new UnsupportedOperationException("Unknown uri: " + uri);
 		}
@@ -115,6 +120,9 @@ public class HipstacastContentProvider extends ContentProvider {
 				break;
 				
 			case PODCASTS_ID_EPISODES_ID:
+				count = db.update("episodes", values, selection, selectionArgs);
+				break;
+			case EPISODES:
 				count = db.update("episodes", values, selection, selectionArgs);
 				break;
 			default:
