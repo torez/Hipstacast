@@ -64,6 +64,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".HipstacastWelcome"
+            android:label="@string/welcome_to_hipstacast"
+            android:theme="@android:style/Theme.Holo.NoActionBar" >
+        </activity>
+        <activity
             android:name=".HipstacastEpisodeView"
             android:label="@string/app_name" >
         </activity>

@@ -67,6 +67,11 @@
     <string name="notif_new_episodes_title">You have new podcasts to listen</string>
     <string name="notif_new_episodes_desc_1">%s</string>
     <string name="notif_new_episodes_desc_2" formatted="false">%s and %d more</string>
+    <string name="welcome_to_hipstacast">Welcome to Hipstacast</string>
+    <string name="start">Start</string>
+    <string name="features_list">Bringing the best podcast-listening experience to Android. You can listen or watch to podcasts wherever you are.\n\n&#8226; Holo Interface \n&#8226; Powerful Search \n&#8226; Downloads Management</string>
+    <string name="subscribe_features">You can subscribe to some of the following podcasts</string>
+    <string name="next">Next</string>
     <!-- Resources -->
     <string name="version_number">0.8.1</string>
 

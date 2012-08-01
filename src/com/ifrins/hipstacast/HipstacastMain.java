@@ -34,36 +34,44 @@ public class HipstacastMain extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		((Hipstacast)getApplicationContext()).trackPageView("/");
+		if (((Hipstacast)getApplicationContext()).shouldDisplayWelcomeActivity()) {
+			Intent welcomeActivity = new Intent(this, HipstacastWelcome.class);
+			welcomeActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(welcomeActivity);
+		}
+		else {
+			Cursor p = managedQuery(
+					Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"),
+					new String[] { "_id", "title", "imageUrl", "author" }, null,
+					null, "title ASC"); 
+			
+			ListView listView = (ListView)findViewById(R.id.mainRegularListView);
+			if (listView != null) {
+				listView.setAdapter(new PodcastMainListCursorAdapter(
+						getApplicationContext(), p));
 		
-		Cursor p = managedQuery(
-				Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"),
-				new String[] { "_id", "title", "imageUrl", "author" }, null,
-				null, "title ASC"); 
+				listView.setTextFilterEnabled(true);
 		
-		ListView listView = (ListView)findViewById(R.id.mainRegularListView);
-		listView.setAdapter(new PodcastMainListCursorAdapter(
-				getApplicationContext(), p));
-
-		listView.setTextFilterEnabled(true);
-
-		listView.setOnItemClickListener(new ListView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id) {
-				
-				Cursor c = (Cursor) parent.getAdapter().getItem(position);
-				Intent openIntent = new Intent(getApplicationContext(),
-						HipstacastEpisodeView.class);
-				openIntent.putExtra("show_id",
-						c.getString(c.getColumnIndex("_id")));
-				openIntent.putExtra("img_url",
-						c.getString(c.getColumnIndex("imageUrl")));
-				openIntent.putExtra("show_title", c.getString(c.getColumnIndex("title")));
-				startActivity(openIntent);
-				// c.close();
+				listView.setOnItemClickListener(new ListView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view,
+							int position, long id) {
+						
+						Cursor c = (Cursor) parent.getAdapter().getItem(position);
+						Intent openIntent = new Intent(getApplicationContext(),
+								HipstacastEpisodeView.class);
+						openIntent.putExtra("show_id",
+								c.getString(c.getColumnIndex("_id")));
+						openIntent.putExtra("img_url",
+								c.getString(c.getColumnIndex("imageUrl")));
+						openIntent.putExtra("show_title", c.getString(c.getColumnIndex("title")));
+						startActivity(openIntent);
+						// c.close();
+					}
+		
+				});
 			}
-
-		});
+		}
 		
 	}
 
