@@ -75,6 +75,7 @@
     <string name="already_selected_podcast">You\'ve already selected this podcast</string>
     <string name="wizard_finished">You can now use Hipstacast</string>
     <string name="hope_enjoy">Hope you enjoy it!</string>
+    <string name="subscription_count">%d subscriptions</string>
     <!-- Resources -->
     <string name="version_number">0.8.1</string>
 

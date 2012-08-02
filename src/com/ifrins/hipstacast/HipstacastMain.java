@@ -44,7 +44,7 @@ public class HipstacastMain extends Activity {
 					Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"),
 					new String[] { "_id", "title", "imageUrl", "author" }, null,
 					null, "title ASC"); 
-			
+			getActionBar().setSubtitle(String.format(getString(R.string.subscription_count), p.getCount()));
 			ListView listView = (ListView)findViewById(R.id.mainRegularListView);
 			if (listView != null) {
 				listView.setAdapter(new PodcastMainListCursorAdapter(
