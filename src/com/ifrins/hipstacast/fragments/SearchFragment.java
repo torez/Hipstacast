@@ -53,7 +53,7 @@ public class SearchFragment extends Fragment {
 										progressDialog.show();
 										Log.i("HIP-POD-URL", value);
 
-										new AddPodcastProvider().execute(new String[]{value},
+										new AddPodcastProvider(searchListView.getContext(), null).execute(new String[]{value},
 												progressDialog,
 												searchListView.getContext());
 									}

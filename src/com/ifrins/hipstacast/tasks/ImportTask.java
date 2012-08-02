@@ -77,7 +77,7 @@ public class ImportTask extends AsyncTask<Integer, Void, Void> {
 				e.printStackTrace();
 			}
 		}
-		new AddPodcastProvider().execute(Arrays.copyOf(urls.toArray(), urls.toArray().length, String[].class),
+		new AddPodcastProvider(context, null).execute(Arrays.copyOf(urls.toArray(), urls.toArray().length, String[].class),
 				progress,
 				context);
 

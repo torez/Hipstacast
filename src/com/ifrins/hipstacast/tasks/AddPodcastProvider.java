@@ -29,6 +29,7 @@ import com.ifrins.hipstacast.Hipstacast;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -56,6 +57,14 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 	private static final String START_HTML = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><style>body{background-color:#000;color:#fff;}body a{color:#33b5e5;}</style></head><body>";
 	private static final String END_HTML = "</body></html>";
 	
+	private OnTaskCompleted listener = null;
+	private Context context = null;
+		
+	public AddPodcastProvider(Context c, OnTaskCompleted l) {
+		listener = l;
+		context = c;
+	}
+
 	private String storeImage (String imageUrl) {
 		Log.d("HIP-URL", "The image url is " + imageUrl);
 		   try {
@@ -140,16 +149,14 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 		return (3600 * hours) + (60 * minutes) + seconds;
 	}
 	
-	private OnTaskCompleted listener = null;
-	private Context context = null;
-	public AddPodcastProvider() {
-		
+	private Boolean checkSubscriptionExistence(String feed) {
+		Cursor c = context.getContentResolver().query(Hipstacast.SUBSCRIPTIONS_PROVIDER_URI, new String[] {"_id", "feed_link"}, "feed_link = ?", new String[] {feed}, null);
+		int count = c.getCount();
+		c.close();
+		if (count == 0)
+			return false;
+		return true;
 	}
-	public AddPodcastProvider(Context c, OnTaskCompleted l) {
-		listener = l;
-		context = c;
-	}
-
 	
 	@Override
 	protected ContentValues doInBackground(Object... obj) {
@@ -158,88 +165,90 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 		if (url == null) return null;
 		int len = url.length;
 		for (int i = 0; i < len; i++) {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			factory.setNamespaceAware(false);
-			DocumentBuilder builder = null;
-			try {
-				builder = factory.newDocumentBuilder();
-			} catch (ParserConfigurationException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
-			Document doc = null;
-			try {
-				doc = builder.parse(url[i]);
-			} catch (SAXException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			XPath xpath = XPathFactory.newInstance().newXPath();
-	
-			try {
-				long d1 = System.currentTimeMillis();
-				String title = xpath.compile(TITLE_XPATH).evaluate(doc, XPathConstants.STRING).toString();
-				String link = xpath.compile(LINK_XPATH).evaluate(doc, XPathConstants.STRING).toString();
-				String feed_link = url[i];
-				String author = xpath.compile(AUTHOR_XPATH).evaluate(doc, XPathConstants.STRING).toString();
-				String description = xpath.compile(DESC_XPATH).evaluate(doc, XPathConstants.STRING).toString();
-				long itemPubDate = convertTimeStrToTimestamp(xpath.compile(PUBDATE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-				Log.d("HIP-IMG-RAW", xpath.compile(IMAGE_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-				String imageUrl = storeImage(xpath.compile(IMAGE_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-				long d2 = System.currentTimeMillis();
-				Log.d("HIP-PERF", String.valueOf(d2-d1));
-				Log.d("HIP-TITLE", title);
-				Log.d("HIP-IMG", xpath.compile(IMAGE_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-				Log.d("HIP-AUTH", author);
-				
-				ContentValues mNewValues = new ContentValues();
-				mNewValues.put("title", title);
-				mNewValues.put("link", link);
-				mNewValues.put("feed_link", feed_link);
-				mNewValues.put("author", author);
-				mNewValues.put("description", description);
-				mNewValues.put("imageUrl", imageUrl);
-				mNewValues.put("last_check", System.currentTimeMillis()/1000);
-				mNewValues.put("last_update", itemPubDate);
-				Uri mNewUri = c.getContext().getContentResolver().insert(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"), mNewValues);
-	
-				ContentValues episodeContentValues = new ContentValues();
-				String shownotes = xpath.compile(SHOWNOTES_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString();
-				episodeContentValues.put("podcast_id", Integer.parseInt(mNewUri.getLastPathSegment()));
-				episodeContentValues.put("publication_date", itemPubDate);
-				episodeContentValues.put("author", xpath.compile(AUTHOR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-				episodeContentValues.put("description", xpath.compile(DESCR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-				episodeContentValues.put("content_url", xpath.compile(MEDIALINK_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-				episodeContentValues.put("content_length", xpath.compile(MEDIALENGHT_ITEM_XPATH).evaluate(doc, XPathConstants.NUMBER).toString());
-				episodeContentValues.put("duration", convertDurationToSeconds(xpath.compile(DURATION_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString()));
-				episodeContentValues.put("title", xpath.compile(TITLE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-				episodeContentValues.put("guid", xpath.compile(LINK_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-				episodeContentValues.put("donation_url", xpath.compile(DONATE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-				episodeContentValues.put("status", 0);
-				if (shownotes == "") {
-					String ds = xpath.compile(DESCR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString();
-					episodeContentValues.put("shownotes", START_HTML + ds + END_HTML);
-				} else {
-					episodeContentValues.put("shownotes", START_HTML + shownotes + END_HTML);
+			if (!checkSubscriptionExistence(url[i])) {
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+				factory.setNamespaceAware(false);
+				DocumentBuilder builder = null;
+				try {
+					builder = factory.newDocumentBuilder();
+				} catch (ParserConfigurationException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
 				}
-				String mediaType = xpath.compile(MEDIATYPE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString().substring(0, 5);
-				if (mediaType.equals("video")) {
-					episodeContentValues.put("type", 1);
-				} else {
-					episodeContentValues.put("type", 0);
-				}				
+				Document doc = null;
+				try {
+					doc = builder.parse(url[i]);
+				} catch (SAXException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
-				c.getContext().getContentResolver().insert(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/" + mNewUri.getLastPathSegment() + "/episodes"),
-																				episodeContentValues);
+				XPath xpath = XPathFactory.newInstance().newXPath();
+		
+				try {
+					long d1 = System.currentTimeMillis();
+					String title = xpath.compile(TITLE_XPATH).evaluate(doc, XPathConstants.STRING).toString();
+					String link = xpath.compile(LINK_XPATH).evaluate(doc, XPathConstants.STRING).toString();
+					String feed_link = url[i];
+					String author = xpath.compile(AUTHOR_XPATH).evaluate(doc, XPathConstants.STRING).toString();
+					String description = xpath.compile(DESC_XPATH).evaluate(doc, XPathConstants.STRING).toString();
+					long itemPubDate = convertTimeStrToTimestamp(xpath.compile(PUBDATE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
+					Log.d("HIP-IMG-RAW", xpath.compile(IMAGE_XPATH).evaluate(doc, XPathConstants.STRING).toString());
+					String imageUrl = storeImage(xpath.compile(IMAGE_XPATH).evaluate(doc, XPathConstants.STRING).toString());
+					long d2 = System.currentTimeMillis();
+					Log.d("HIP-PERF", String.valueOf(d2-d1));
+					Log.d("HIP-TITLE", title);
+					Log.d("HIP-IMG", xpath.compile(IMAGE_XPATH).evaluate(doc, XPathConstants.STRING).toString());
+					Log.d("HIP-AUTH", author);
 					
-				
-			} catch (XPathExpressionException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+					ContentValues mNewValues = new ContentValues();
+					mNewValues.put("title", title);
+					mNewValues.put("link", link);
+					mNewValues.put("feed_link", feed_link);
+					mNewValues.put("author", author);
+					mNewValues.put("description", description);
+					mNewValues.put("imageUrl", imageUrl);
+					mNewValues.put("last_check", System.currentTimeMillis()/1000);
+					mNewValues.put("last_update", itemPubDate);
+					Uri mNewUri = c.getContext().getContentResolver().insert(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"), mNewValues);
+		
+					ContentValues episodeContentValues = new ContentValues();
+					String shownotes = xpath.compile(SHOWNOTES_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString();
+					episodeContentValues.put("podcast_id", Integer.parseInt(mNewUri.getLastPathSegment()));
+					episodeContentValues.put("publication_date", itemPubDate);
+					episodeContentValues.put("author", xpath.compile(AUTHOR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
+					episodeContentValues.put("description", xpath.compile(DESCR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
+					episodeContentValues.put("content_url", xpath.compile(MEDIALINK_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
+					episodeContentValues.put("content_length", xpath.compile(MEDIALENGHT_ITEM_XPATH).evaluate(doc, XPathConstants.NUMBER).toString());
+					episodeContentValues.put("duration", convertDurationToSeconds(xpath.compile(DURATION_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString()));
+					episodeContentValues.put("title", xpath.compile(TITLE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
+					episodeContentValues.put("guid", xpath.compile(LINK_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
+					episodeContentValues.put("donation_url", xpath.compile(DONATE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
+					episodeContentValues.put("status", 0);
+					if (shownotes == "") {
+						String ds = xpath.compile(DESCR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString();
+						episodeContentValues.put("shownotes", START_HTML + ds + END_HTML);
+					} else {
+						episodeContentValues.put("shownotes", START_HTML + shownotes + END_HTML);
+					}
+					String mediaType = xpath.compile(MEDIATYPE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString().substring(0, 5);
+					if (mediaType.equals("video")) {
+						episodeContentValues.put("type", 1);
+					} else {
+						episodeContentValues.put("type", 0);
+					}				
+					
+					c.getContext().getContentResolver().insert(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/" + mNewUri.getLastPathSegment() + "/episodes"),
+																					episodeContentValues);
+						
+					
+				} catch (XPathExpressionException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		if (c != null) {

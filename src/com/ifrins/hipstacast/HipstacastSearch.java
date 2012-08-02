@@ -29,9 +29,11 @@ public class HipstacastSearch extends ListActivity {
 	class CustomURLClickListener implements View.OnClickListener {
 	    private final AlertDialog dialog;
 	    private final EditText input;
-	    public CustomURLClickListener(AlertDialog dialog, EditText input) {
+	    private final Context context;
+	    public CustomURLClickListener(AlertDialog dialog, EditText input, Context context) {
 	        this.dialog = dialog;
 	        this.input = input;
+	        this.context = context;
 	    }
 	    @Override
 	    public void onClick(View v) {
@@ -50,7 +52,7 @@ public class HipstacastSearch extends ListActivity {
 				progressDialog.show();
 				Log.i("HIP-POD-URL", value);
 	
-				new AddPodcastProvider().execute(new String[]{value},
+				new AddPodcastProvider(context, null).execute(new String[]{value},
 						progressDialog,
 						getApplicationContext());
 			} else {
@@ -97,7 +99,7 @@ public class HipstacastSearch extends ListActivity {
 										progressDialog.show();
 										Log.i("HIP-POD-URL", value);
 
-										new AddPodcastProvider().execute(new String[]{value},
+										new AddPodcastProvider(listView.getContext(), null).execute(new String[]{value},
 												progressDialog,
 												getApplicationContext());
 									}
@@ -144,7 +146,7 @@ public class HipstacastSearch extends ListActivity {
 							}).create();
 			d.show();
 			Button theButton = d.getButton(DialogInterface.BUTTON_POSITIVE);
-			theButton.setOnClickListener(new CustomURLClickListener(d, input));
+			theButton.setOnClickListener(new CustomURLClickListener(d, input, this));
 							
 
 			return true;

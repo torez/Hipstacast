@@ -21,9 +21,9 @@ import android.widget.ListView;
 
 public class FeaturedFragment extends Fragment {
 
-	ListView featuredList;
-	Context context;
-	OnItemClickListener listener = new OnItemClickListener() {
+	private ListView featuredList;
+	private final Context context;
+	private OnItemClickListener listener = new OnItemClickListener() {
 
 		@Override
 		public void onItemClick(AdapterView<?> arg0,
@@ -54,7 +54,7 @@ public class FeaturedFragment extends Fragment {
 									progressDialog.show();
 									Log.i("HIP-POD-URL", value);
 
-									new AddPodcastProvider().execute(
+									new AddPodcastProvider(context, null).execute(
 											new String[] { value },
 											progressDialog,
 											context);

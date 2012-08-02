@@ -4,10 +4,12 @@ import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.net.Uri;
 
 public class Hipstacast extends Application {
 	public static final String WELCOME_PREFERENCES = "WELCOME";
 	public static final String TASK_ADD_PROVIDER = "AddPodcastProvider";
+	public static final Uri SUBSCRIPTIONS_PROVIDER_URI = Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts");
 	
 	public GoogleAnalyticsTracker tracker;
 	public Boolean shouldDisplayWelcomeActivity = null;
