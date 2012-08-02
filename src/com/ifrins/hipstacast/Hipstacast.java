@@ -3,9 +3,11 @@ package com.ifrins.hipstacast;
 import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 
 public class Hipstacast extends Application {
 	public static final String WELCOME_PREFERENCES = "WELCOME";
+	public static final String TASK_ADD_PROVIDER = "AddPodcastProvider";
 	
 	public GoogleAnalyticsTracker tracker;
 	public Boolean shouldDisplayWelcomeActivity = null;
@@ -37,5 +39,12 @@ public class Hipstacast extends Application {
 			shouldDisplayWelcomeActivity = pref.getBoolean("shown_"+getString(R.string.version_number), true);
 			return shouldDisplayWelcomeActivity;
 		}
+	}
+	public final void setWelcomeActivityShown() {
+		SharedPreferences pref = getSharedPreferences(WELCOME_PREFERENCES, 0);
+		Editor editor = pref.edit();
+		editor.putBoolean("shown_"+getString(R.string.version_number), false);
+		editor.commit();
+		shouldDisplayWelcomeActivity = false;
 	}
 }

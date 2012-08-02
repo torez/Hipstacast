@@ -1,0 +1,34 @@
+[
+	{
+		"name":"The Vergecast",
+		"feed":"http://feeds.feedburner.com/ThisIsMyNextPodcast",
+		"cover":"http://assets.sbnation.com/assets/770431/vergecast.png",
+		"author":"Joshua Topolsky, Nilay Patel, Paul Miller"
+	},
+	{
+		"name":"The Changelog",
+		"feed":"http://feeds.feedburner.com/changelogshow",
+		"cover":"http://www.buzzsprout.com/podcasts/105/artworks_large.png",
+		"author":"Adam Stacoviak and Wynn Netherland"
+	},
+	{
+		"name":"Engadget",
+		"feed":"http://podcasts.engadget.com/rss-aac.xml",
+		"cover":"http://www.blogsmithmedia.com/www.engadget.com/media/engadget-podcast.gif",
+		"author":"Tim Stevens and Darren Murph"
+	},
+	{
+		"name":"90 Seconds on The Verge",
+		"feed":"http://api.ooyala.com/syndication/podcast?id=d8e8567a-7766-4229-b719-735d72cb35ad",
+		"cover":"http://cdn2.c.ooyala.com.edgesuite.net/ppbnY65tdYh_HxFfIkVstq2Iq_oQ/album_art165383940.jpg",
+		"author":"The Verge",
+		"description":"Get the top stories from the world of technology in 90 seconds. Hosted by a rotating cast of writers from The Verge and filled with just the right amount of what you need."
+	},
+	{
+		"name":"Android Central Podcast",
+		"feed":"http://feeds.feedburner.com/AndroidCentralPodcast",
+		"cover":"http://www.mobilenations.com/broadcasting/podcast_android_central_1200.jpg",
+		"author":"Mobile Nations",
+		"description":"Android podcast - Get all the latest news on the Android Platform with Phil and Mickey: Android Apps, the Droid, Nexus One, and more."
+	}
+]

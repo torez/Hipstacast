@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -22,8 +23,12 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.http.util.ByteArrayBuffer;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
+
+import com.ifrins.hipstacast.Hipstacast;
+
 import android.app.ProgressDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -135,6 +140,17 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 		return (3600 * hours) + (60 * minutes) + seconds;
 	}
 	
+	private OnTaskCompleted listener = null;
+	private Context context = null;
+	public AddPodcastProvider() {
+		
+	}
+	public AddPodcastProvider(Context c, OnTaskCompleted l) {
+		listener = l;
+		context = c;
+	}
+
+	
 	@Override
 	protected ContentValues doInBackground(Object... obj) {
 		String[] url = (String[])obj[0];
@@ -232,6 +248,10 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 		return null;
 
 	}
-
+	@Override
+	protected void onPostExecute(ContentValues cv) {
+		if (listener != null)
+			listener.onTaskCompleted(Hipstacast.TASK_ADD_PROVIDER);
+	}
 	
 }
