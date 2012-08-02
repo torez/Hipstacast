@@ -1,5 +1,6 @@
 package com.ifrins.hipstacast;
 
+import com.ifrins.hipstacast.fragments.FeaturedFragment;
 import com.ifrins.hipstacast.fragments.SearchFragment;
 import com.ifrins.hipstacast.tasks.AddPodcastProvider;
 import com.ifrins.hipstacast.tasks.ITunesStoreSearchTask;
@@ -40,7 +41,7 @@ public class HipstacastSearchNeue extends FragmentActivity implements ActionBar.
         setContentView(R.layout.activity_hipstacast_search_neue);
         // Create the adapter that will return a fragment for each of the three primary sections
         // of the app.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this);
         // Set up the action bar.
         final ActionBar actionBar = getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
@@ -186,19 +187,21 @@ public class HipstacastSearchNeue extends FragmentActivity implements ActionBar.
      * sections of the app.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
+    	private Context context;
+    	
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
+        public SectionsPagerAdapter(FragmentManager fm, Context ctx) {
+            super(fm);
+        	context = ctx;
+        }
+ 
 
         @Override
         public Fragment getItem(int i) {
         	if (i == 0) {
-	            Fragment fragment = new DummySectionFragment();
-	            Bundle args = new Bundle();
-	            args.putInt(DummySectionFragment.ARG_SECTION_NUMBER, i + 1);
-	            fragment.setArguments(args);
-	            return fragment;
+	            return new FeaturedFragment(context);
         	} else if (i == 1) {
         		return searchFragment;
         	}
