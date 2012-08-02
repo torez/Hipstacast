@@ -1,7 +1,6 @@
 package com.ifrins.hipstacast;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -18,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.ifrins.hipstacast.tasks.ITunesStoreSearchTask;
 import com.ifrins.hipstacast.model.Podcast;

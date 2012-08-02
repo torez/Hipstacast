@@ -254,7 +254,7 @@ public class HipstacastSyncService extends Service {
 						.getNotification();
 			}
 			//System.exit(0);
-			NotificationManager notifManager = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
+			NotificationManager notifManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 			notifManager.cancel(-1001);
 			if (uNotif != null) {
 				notifManager.notify(-1001, uNotif);
@@ -268,7 +268,7 @@ public class HipstacastSyncService extends Service {
 				.setSmallIcon(R.drawable.ic_stat_sync)
 				.setOngoing(true)
 				.getNotification();
-			NotificationManager notifManager = (NotificationManager)context.getSystemService(context.NOTIFICATION_SERVICE);
+			NotificationManager notifManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 			notifManager.notify(-1001, n);
 		}
 	}

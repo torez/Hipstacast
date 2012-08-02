@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 public class DownloadReceiver extends BroadcastReceiver {
 
@@ -16,7 +15,7 @@ public class DownloadReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		// TODO Auto-generated method stub
 		DownloadManager downloadManager = (DownloadManager) context
-				.getSystemService(context.DOWNLOAD_SERVICE);
+				.getSystemService(Context.DOWNLOAD_SERVICE);
 		String intentAction = intent.getAction();
 		if ("android.intent.action.DOWNLOAD_COMPLETE".equals(intentAction)) {
 			Long dwnId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID,

@@ -20,6 +20,7 @@ public class Hipstacast extends Application {
 		tracker = GoogleAnalyticsTracker.getInstance();
 		tracker.startNewSession("UA-33122624-1", 30, this);
 		tracker.setCustomVar(1, "app_version", getString(R.string.version_number), 1);
+		tracker.setCustomVar(1, "device", android.os.Build.MODEL, 1);
 	}
 
 	@Override
