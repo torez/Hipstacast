@@ -69,12 +69,14 @@ public class ImportTask extends AsyncTask<Integer, Void, Void> {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		int len = a.length();
-		for (int i = 0; i < len; i++) {
-			try {
-				urls.add(a.getString(i));
-			} catch (JSONException e) {
-				e.printStackTrace();
+		if (a != null) {
+			int len = a.length();
+			for (int i = 0; i < len; i++) {
+				try {
+					urls.add(a.getString(i));
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		new AddPodcastProvider(context, null).execute(Arrays.copyOf(urls.toArray(), urls.toArray().length, String[].class),
