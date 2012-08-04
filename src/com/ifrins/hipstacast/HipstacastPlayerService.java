@@ -198,4 +198,10 @@ public class HipstacastPlayerService extends Service implements
 			mediaPlayer = null;
 		}
 	}
+	public int getCurrentPosition() {
+		if (mediaPlayer != null)
+			return mediaPlayer.getCurrentPosition();
+		else
+			return -1;
+	}
 }

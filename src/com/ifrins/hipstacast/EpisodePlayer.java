@@ -266,7 +266,7 @@ public class EpisodePlayer extends Activity {
 			bound = true;
 			if (fromNotification) {
 				Log.d("HIP_S", "The url is: " + player.podcastToPlayUrl);
-				start_position = player.mediaPlayer.getCurrentPosition();
+				start_position = player.getCurrentPosition();
 				SeekBar b = ((SeekBar) findViewById(R.id.playerSeekBar));
 				b.setProgress(start_position);
 				b.setOnSeekBarChangeListener(chl);
