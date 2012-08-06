@@ -113,6 +113,7 @@ public class HipstacastEpisodeView extends ListActivity {
 
 											d = null;
 											DownloadManager mgr = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
+											if (content_url != null) {
 											mgr.enqueue(new DownloadManager.Request(
 													Uri.parse(content_url))
 													.setTitle(title)
@@ -124,6 +125,7 @@ public class HipstacastEpisodeView extends ListActivity {
 																	+ "/"
 																	+ episode_id
 																	+ ".mp3"));
+											}
 
 										}
 									})
