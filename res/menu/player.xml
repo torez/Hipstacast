@@ -2,11 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menuPlayToggle"
-        android:icon="@drawable/ic_action_play"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/menu_play"/>
-    <item
         android:id="@+id/menuPlayShare"
         android:icon="@drawable/ic_action_share"
         android:showAsAction="ifRoom|withText"

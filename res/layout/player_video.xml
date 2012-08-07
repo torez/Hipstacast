@@ -17,7 +17,7 @@
         android:orientation="vertical" >
 
         <SeekBar
-            android:id="@id/playerSeekBar"
+            android:id="@+id/playerSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -27,9 +27,35 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:orientation="vertical" >
+        android:layout_marginBottom="10dp"
+        android:layout_marginTop="10dp" >
 
-        <Button
+        <ImageButton
+            android:id="@+id/playerRewind"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_action_rewind" />
+
+        <ImageButton
+            android:id="@+id/playToggleButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_action_play" />
+
+        <ImageButton
+            android:id="@+id/playerFastForward"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_action_ff" />
+
+        <!--
+             <ImageButton
             android:id="@+id/button1"
             style="@android:style/Holo.ButtonBar.AlertDialog"
             android:layout_width="wrap_content"
@@ -38,6 +64,7 @@
             android:onClick="startStopVideoToggle"
             android:text="@string/menu_play"
             android:textStyle="bold" />
+        -->
     </LinearLayout>
 
 </FrameLayout>

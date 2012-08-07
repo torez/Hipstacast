@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/playerDetails"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="top"
+        android:gravity="top"
         android:orientation="vertical" >
 
         <TextView
             android:id="@+id/playerEpisodeName"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:ellipsize="marquee"
             android:focusable="true"
             android:marqueeRepeatLimit="marquee_forever"
@@ -26,14 +28,85 @@
         <SeekBar
             android:id="@+id/playerSeekBar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="-20dp"
+            android:layout_marginTop="-10dp"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp" />
 
-        <WebView
-            android:id="@+id/playerEpisodeDesc"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp" >
+
+            <TextView
+                android:id="@+id/timeCounter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:gravity="right"
+                android:text="00:00"
+                android:textAppearance="@style/ClingText" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text=" / "
+                android:textAppearance="@style/ClingText" />
+
+            <TextView
+                android:id="@+id/playerTotalDuration"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="0.8"
+                android:gravity="left"
+                android:textAppearance="@style/ClingText" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/playerCoverImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:layerType="software" />
+            android:layout_weight="1" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:layout_marginTop="10dp"
+            android:background="#32B2E9" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:layout_weight="0"
+            android:gravity="bottom" >
+
+            <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/playerRewind"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_action_rewind" />
+
+            <ImageButton
+                android:id="@+id/playToggleButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_action_play" />
+
+            <ImageButton
+                android:id="@+id/playerFastForward"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_action_ff" />
+        </LinearLayout>
     </LinearLayout>
 
-</ScrollView>
+</LinearLayout>

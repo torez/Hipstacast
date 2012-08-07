@@ -76,6 +76,8 @@
     <string name="wizard_finished">You can now use Hipstacast</string>
     <string name="hope_enjoy">Hope you enjoy it!</string>
     <string name="subscription_count">%d subscriptions</string>
+    <string name="player">Player</string>
+    <string name="shownotes">Shownotes</string>
     <!-- Resources -->
     <string name="version_number">0.8.1</string>
 

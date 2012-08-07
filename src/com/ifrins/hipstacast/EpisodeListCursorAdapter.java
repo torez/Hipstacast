@@ -1,5 +1,7 @@
 package com.ifrins.hipstacast;
 
+import com.ifrins.hipstacast.utils.PlayerUIUtils;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -10,10 +12,6 @@ import android.widget.TextView;
 
 public class EpisodeListCursorAdapter extends CursorAdapter {
 
-	private static String transformToDuration(String input) {
-		int s = Integer.parseInt(input);
-		return String.format("%d:%02d:%02d", s/3600, (s%3600)/60, (s%60));
-	}
 	
 	public EpisodeListCursorAdapter(Context context, Cursor c) {
 		super(context, c);
@@ -31,7 +29,7 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
         	int p = cursor.getInt(cursor.getColumnIndex("position"));
         	int r = d-p;
         	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Small);
-        	holder.duration.setText("-"+transformToDuration(String.valueOf(r)));
+        	holder.duration.setText("-"+PlayerUIUtils.convertSecondsToDuration(r));
         } else if (status == 3) {
         	holder.duration.setVisibility(View.INVISIBLE);
         	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Medium);
@@ -40,7 +38,7 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
         	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Large);
         } else { 
         	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Small);
-        	holder.duration.setText(transformToDuration(cursor.getString(cursor.getColumnIndex("duration"))));
+        	holder.duration.setText(PlayerUIUtils.convertSecondsToDuration(cursor.getInt(cursor.getColumnIndex("duration"))));
         }
         if (cursor.getInt(cursor.getColumnIndex("duration")) == 0 && status > 0) {
         	holder.duration.setText("-:--:--");

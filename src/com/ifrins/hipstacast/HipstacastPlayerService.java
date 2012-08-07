@@ -4,6 +4,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import com.ifrins.hipstacast.tasks.OnTaskCompleted;
+
+import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -14,6 +17,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
@@ -23,7 +27,7 @@ import android.view.SurfaceHolder;
 
 public class HipstacastPlayerService extends Service implements
 		AudioManager.OnAudioFocusChangeListener {
-	MediaPlayer mediaPlayer;
+	public MediaPlayer mediaPlayer;
 	AudioManager audioManager;
 	public String podcastToPlayUrl;
 	private final IBinder mBinder = new LocalBinder();
@@ -33,6 +37,8 @@ public class HipstacastPlayerService extends Service implements
 	public int type;
 	public SurfaceHolder surface;
 	public Notification n;
+	public OnTaskCompleted completionListener = null;
+	
 	private final BroadcastReceiver brodcastReceiver = new BroadcastReceiver() {
 
 		@Override
@@ -47,6 +53,17 @@ public class HipstacastPlayerService extends Service implements
 		}
 	};
 
+	private final OnCompletionListener onCompletionListener = new OnCompletionListener() {
+
+		@Override
+		public void onCompletion(MediaPlayer mp) {
+			mp.pause();
+			stopForeground(true);
+			if (completionListener != null) {
+				completionListener.onTaskCompleted(Hipstacast.TASK_PLAYBACK_COMPLETED);
+			}
+		}
+	};
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		IntentFilter fAudio = new IntentFilter(
@@ -57,7 +74,7 @@ public class HipstacastPlayerService extends Service implements
 	}
 
 	public class LocalBinder extends Binder {
-		HipstacastPlayerService getService() {
+		public HipstacastPlayerService getService() {
 			// Return this instance of LocalService so clients can call public
 			// methods
 			return HipstacastPlayerService.this;
@@ -72,41 +89,32 @@ public class HipstacastPlayerService extends Service implements
 		if (type == 1) {
 			mediaPlayer.setDisplay(surface);
 		}
+		Log.d("HIP-URL", podcastToPlayUrl);
 		FileInputStream fileInputStream = null;
 		try {
 			fileInputStream = new FileInputStream(podcastToPlayUrl);
 		} catch (FileNotFoundException e2) {
-			// TODO Auto-generated catch block
-			e2.printStackTrace();
 		}
 
 		try {
 			if (fileInputStream != null) {
 				mediaPlayer.setDataSource(fileInputStream.getFD());
-			} else {
 			}
 		} catch (IllegalArgumentException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		} catch (SecurityException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		} catch (IllegalStateException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+		}
+		try {
+			fileInputStream.close();
+		} catch (IOException e1) {
 		}
 		try {
 			mediaPlayer.prepare();
 		} catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
+		mediaPlayer.setOnCompletionListener(onCompletionListener);
 	}
 
 	public void onAudioFocusChange(int focusChange) {
@@ -155,23 +163,24 @@ public class HipstacastPlayerService extends Service implements
 		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		int result = audioManager.requestAudioFocus(this,
 				AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-
 		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
 			if (mediaPlayer == null)
 				initMediaPlayer();
-
-			NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-			nm.notify(podcast_id, n);
+			if (n != null) { 
+				startForeground(podcast_id, n);
+			}
 			mediaPlayer.seekTo(start_position);
 			mediaPlayer.start();
 
 		}
 	}
-
+	public void seekTo(int pos) {
+		if (mediaPlayer != null)
+			mediaPlayer.seekTo(pos);
+	}
 	public void pause() {
 		stop();
-		((NotificationManager) getSystemService(NOTIFICATION_SERVICE))
-				.cancel(podcast_id);
+		stopForeground(true);
 	}
 
 	public void destroy() {
@@ -184,8 +193,9 @@ public class HipstacastPlayerService extends Service implements
 							+ show_id + "/episodes/" + podcast_id), c,
 							"_id = ?",
 							new String[] { String.valueOf(podcast_id) });
-
+			Log.d("HIP-PLAYER-DESTROY", "SHOULD BE DESTROYED");
 			start_position = mediaPlayer.getCurrentPosition();
+			mediaPlayer.reset();
 			mediaPlayer.release();
 			mediaPlayer = null;
 		}
@@ -203,5 +213,13 @@ public class HipstacastPlayerService extends Service implements
 			return mediaPlayer.getCurrentPosition();
 		else
 			return -1;
+	}
+	public int getDuration() {
+		if (mediaPlayer != null)
+			return mediaPlayer.getDuration();
+		else
+			Log.d("HIP-PLAY", "getDuration() invalid value");
+			return -1;
+
 	}
 }

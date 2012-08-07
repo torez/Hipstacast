@@ -84,6 +84,12 @@
             android:name=".HipstacastSearchNeue"
             android:label="@string/menu_search" >
         </activity>
+        <activity
+            android:name=".HipstacastVideoEpisodePlayer"
+            android:label="@string/menu_search"
+            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" 
+            android:launchMode="singleInstance">
+        </activity>
     </application>
 
 </manifest>

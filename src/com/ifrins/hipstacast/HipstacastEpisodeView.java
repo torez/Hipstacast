@@ -149,8 +149,12 @@ public class HipstacastEpisodeView extends ListActivity {
 											+ "/episodes/" + episode_id), up,
 									"_id = ?",
 									new String[] { String.valueOf(episode_id) });
-					Intent openIntent = new Intent(getApplicationContext(),
-							EpisodePlayer.class);
+					Intent openIntent = null;
+					if (content_type == 1) {
+						openIntent = new Intent(getApplicationContext(), HipstacastVideoEpisodePlayer.class);
+					} else {
+						openIntent = new Intent(getApplicationContext(), EpisodePlayer.class);
+					}
 					openIntent.putExtra(
 							"show_id",
 							Integer.parseInt(getIntent().getExtras().getString(
@@ -162,8 +166,12 @@ public class HipstacastEpisodeView extends ListActivity {
 				}
 
 				else {
-					Intent openIntent = new Intent(getApplicationContext(),
-							EpisodePlayer.class);
+					Intent openIntent = null;
+					if (content_type == 1) {
+						openIntent = new Intent(getApplicationContext(), HipstacastVideoEpisodePlayer.class);
+					} else {
+						openIntent = new Intent(getApplicationContext(), EpisodePlayer.class);
+					}
 					openIntent.putExtra(
 							"show_id",
 							Integer.parseInt(getIntent().getExtras().getString(
