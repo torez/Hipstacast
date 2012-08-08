@@ -11,6 +11,8 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,6 +25,7 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.widget.VideoView;
 
 public class HipstacastVideoEpisodePlayer extends Activity {
 	
@@ -31,52 +34,29 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 	int type;
 	int start_position;
 	int duration;
+	Boolean prepared = false;
 	Boolean visible = true;
 	SeekBar seekBar = null;
 	View videoTopView = null;
 	View videoBottomView = null;
-	HipstacastPlayerService player;
 	Boolean bound = false;
 	ImageButton playToggleButton;
 	ImageButton fastForwardButton;
 	ImageButton rewindButton;
 	String name;
 	Handler seekBarUpdateHandler = new Handler();
-	SurfaceView videoSurface = null;
-
+	VideoView videoView = null;
 	
-	private ServiceConnection mConnection = new ServiceConnection() {
-		@Override
-		public void onServiceConnected(ComponentName className, IBinder service) {
-			Log.d("HIP_S", "Service connected");
-			// We've bound to LocalService, cast the IBinder and get
-			// LocalService instance
-			LocalBinder binder = (LocalBinder) service;
-			player = binder.getService();
-			bound = true;
-			if (player != null && player.isPlaying()) {
-				playToggleButton.setImageResource(R.drawable.ic_action_pause);
-				seekBarUpdateHandler.post(updateRunnable);
-			}
-
-		}
-
-		@Override
-		public void onServiceDisconnected(ComponentName arg0) {
-			bound = false;
-			Log.d("HIP_S", "Service disconnected");
-		}
-	};
 	
 	private OnClickListener playToggleClickListener = new OnClickListener() {
 
 		@Override
 		public void onClick(View v) {
 			Log.d("HIP-PLAY", "Click!");
-			if (player != null && !player.isPlaying()) {
+			if (videoView != null && !videoView.isPlaying()) {
 				((ImageButton)v).setImageResource(R.drawable.ic_action_pause);
 				startPlaying();
-			} else if (player != null && player.isPlaying()) {
+			} else if (videoView != null && videoView.isPlaying()) {
 				((ImageButton)v).setImageResource(R.drawable.ic_action_play);
 				stopPlaying();
 			}
@@ -86,9 +66,9 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 	private OnClickListener fastForwardClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			if (player != null && player.isPlaying()) {
-				int newPosition = player.getCurrentPosition() + 30000;
-				player.seekTo(newPosition);
+			if (videoView != null && videoView.isPlaying()) {
+				int newPosition = videoView.getCurrentPosition() + 30000;
+				videoView.seekTo(newPosition);
 				seekBar.setProgress(newPosition);
 			}
 		}
@@ -97,9 +77,9 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 	private OnClickListener rewindClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			if (player != null && player.isPlaying()) {
-				int newPosition = player.getCurrentPosition() - 30000;
-				player.seekTo(newPosition);
+			if (videoView != null && videoView.isPlaying()) {
+				int newPosition = videoView.getCurrentPosition() - 30000;
+				videoView.seekTo(newPosition);
 				seekBar.setProgress(newPosition);
 			}
 		}
@@ -108,7 +88,7 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 	private OnClickListener surfaceClickListener = new OnClickListener() {
 		@Override
 		public void onClick(View v) {
-			if (player.isPlaying())
+			if (videoView.isPlaying())
 				if (visible) {
 					visible = false;
 					videoTopView.animate().alpha(0);
@@ -130,7 +110,7 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 				boolean fromUser) {
 			
 			if (fromUser) {
-				player.seekTo(progress);
+				videoView.seekTo(progress);
 			}
 		}
 
@@ -144,12 +124,28 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 		
 	};
 	
+	private OnPreparedListener onPreparedListener = new OnPreparedListener() {
+
+		@Override
+		public void onPrepared(MediaPlayer mp) {
+			prepared = true;
+			Log.d("HIP_POS", String.valueOf(start_position));
+			Log.d("HIP_DUR", String.valueOf(videoView.getDuration()));
+				
+			if (videoView.getDuration() > 0)
+				seekBar.setMax(videoView.getDuration());
+			videoView.seekTo(start_position);
+			videoView.start();
+				
+		}
+	};
+	
 	final Runnable updateRunnable = new Runnable()
 	{
 	    public void run() 
 	    {
-	        if (player.isPlaying()) {
-	        	seekBar.setProgress(player.getCurrentPosition());
+	        if (videoView.isPlaying()) {
+	        	seekBar.setProgress(videoView.getCurrentPosition());
 	        	seekBarUpdateHandler.postDelayed(updateRunnable, 1100);
 	        }
 	    }
@@ -163,9 +159,8 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 			if (task.equals(Hipstacast.TASK_PLAYBACK_COMPLETED)) {
 				playToggleButton.setImageResource(R.drawable.ic_action_play);
 				seekBarUpdateHandler.removeCallbacks(updateRunnable);
-				seekBar.setProgress(player.getDuration());
+				seekBar.setProgress(videoView.getDuration());
 				start_position = 0;
-				player.destroy();
 				PlayerUIUtils.setEpisodeAsListened(getApplicationContext(), podcast_id);
 			}
 		}
@@ -194,10 +189,9 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 		rewindButton = (ImageButton)findViewById(R.id.playerRewind);
 		fastForwardButton = (ImageButton)findViewById(R.id.playerFastForward);
 		
-		Intent intent = new Intent(this, HipstacastPlayerService.class);
-
-		startService(intent);
-		bindService(intent, mConnection, 0);
+		videoView = (VideoView)findViewById(R.id.videoPlayer);
+		videoView.setOnClickListener(surfaceClickListener);
+		
 
 	}
 	
@@ -227,38 +221,30 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 			seekBar.setProgress(pos * 1000);
 		}
 		
-		videoSurface = (SurfaceView)findViewById(R.id.videoPlayer);
-		videoSurface.setOnClickListener(surfaceClickListener);
 		episode.close();
 	}
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		if (player != null && !player.isPlaying())
-			player.destroy();
-			player = null;
-		if (bound)
-			unbindService(mConnection);
-		videoSurface = null;
+		videoView = null;
 		seekBarUpdateHandler.removeCallbacks(updateRunnable);		
 	}
 	
 	private void startPlaying() {
-		player.clean();
-		player.podcastToPlayUrl = android.os.Environment
+		String videoURI = android.os.Environment
 				.getExternalStorageDirectory().getAbsolutePath()
 				+ "/Android/data/com.ifrins.hipstacast/files/shows/"
 				+ show_id
 				+ "/" + podcast_id + ".mp3";
-		player.podcast_id = podcast_id;
-		player.show_id = show_id;
-		player.n = PlayerUIUtils.buildNotification(this, name, show_id, podcast_id, type);
-		Log.d("HIP-NW-SP", String.valueOf(start_position));
-		player.completionListener = completionListener;
-		player.surface = videoSurface.getHolder();
-		player.type = 1;
-		player.start_position = start_position;
-		player.play();
+		if (videoView != null && !prepared) {
+			videoView.setOnPreparedListener(onPreparedListener);
+			videoView.setVideoURI(Uri.parse(videoURI));
+		}
+		else if (videoView != null && prepared) {
+			videoView.seekTo(start_position);
+			videoView.start();
+		}
+			
 		if (duration == 0)
 			fixDuration();
 		seekBarUpdateHandler.postDelayed(updateRunnable, 1100);
@@ -266,17 +252,17 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 	}
 	
 	private void stopPlaying() {
-		player.pause();
-		start_position = player.mediaPlayer.getCurrentPosition();
+		videoView.pause();
+		start_position = videoView.getCurrentPosition();
 		PlayerUIUtils.savePosition(this, podcast_id, start_position);
 		Log.d("HIP-STATUS", "Should stop");
 	}
 
 	private void fixDuration() {
 		
-		seekBar.setMax(player.mediaPlayer.getDuration());
+		seekBar.setMax(videoView.getDuration());
 				
-		PlayerUIUtils.fixDuration(this, podcast_id, player.mediaPlayer.getDuration()/1000);
+		PlayerUIUtils.fixDuration(this, podcast_id, videoView.getDuration()/1000);
 	}
 	
 
