@@ -13,11 +13,14 @@ import org.json.JSONObject;
 import com.ifrins.hipstacast.model.Podcast;
 import com.ifrins.hipstacast.tasks.AddPodcastProvider;
 import com.ifrins.hipstacast.tasks.OnTaskCompleted;
+import com.ifrins.hipstacast.tasks.UpgradeTask;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources.NotFoundException;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -35,12 +38,15 @@ public class HipstacastWelcome extends Activity {
 	private View contentView = null;
     ViewGroup parent = null;
 	LayoutInflater i = null;
+	private Boolean openUpdater = null;
+	int latestVersion;
 	List<String> toSubscribe = new ArrayList<String>();
 
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		openUpdater = shouldOpenUpdater();
 		setContentView(R.layout.setup);
 		nextButton = (Button)findViewById(R.id.setupButton);
 		contentView = findViewById(R.id.setupContentView);
@@ -72,8 +78,14 @@ public class HipstacastWelcome extends Activity {
 		    contentView = getLayoutInflater().inflate(R.layout.setup_step_1, parent, false);
 		    nextButton.setText(R.string.start);
 		} else if (step == 2) {
-		    contentView = getLayoutInflater().inflate(R.layout.setup_step_2, parent, false);
-		    setUpFeaturedList(contentView);
+			if (openUpdater) {
+				contentView = getLayoutInflater().inflate(R.layout.setup_step_upgrade, parent, false);
+				nextButton.setEnabled(false);
+				new UpgradeTask(getApplicationContext(), listener, latestVersion).execute();
+			} else {
+			    contentView = getLayoutInflater().inflate(R.layout.setup_step_2, parent, false);
+			    setUpFeaturedList(contentView);
+			}
 		    nextButton.setText(R.string.next);
 		} else if (step == 3) {
 			contentView = getLayoutInflater().inflate(R.layout.setup_step_3, parent, false);
@@ -143,8 +155,21 @@ public class HipstacastWelcome extends Activity {
 		public void onTaskCompleted(String task) {
 			if (task == Hipstacast.TASK_ADD_PROVIDER) {
 				setViewForStep(3);
+			} else if (task == Hipstacast.TASK_UPGRADE) {
+				nextButton.setEnabled(true);
+				setViewForStep(3);
 			}
 		}
 		
 	};
+	
+	private Boolean shouldOpenUpdater() {
+		SharedPreferences pref = getSharedPreferences(Hipstacast.WELCOME_PREFERENCES, 0);
+		latestVersion = pref.getInt("latest-version", 0);
+		Cursor episodes = getContentResolver().query(Hipstacast.SUBSCRIPTIONS_PROVIDER_URI, new String[]{"_id"}, null, null, null);
+		if (episodes.getCount() > 0 && latestVersion < 7)
+			return true;
+		else
+			return false;
+	}
 }

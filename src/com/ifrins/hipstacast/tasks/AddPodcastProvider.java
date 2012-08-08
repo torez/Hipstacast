@@ -65,7 +65,7 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 		context = c;
 	}
 
-	private String storeImage (String imageUrl) {
+	private String storeImage (String imageUrl, String imageName) {
 		Log.d("HIP-URL", "The image url is " + imageUrl);
 		   try {
 	           
@@ -74,8 +74,8 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 	                dir.mkdirs();
 	           }
 	           	           
-	           URL url = new URL("http://src.sencha.io/jpg95/700/"+imageUrl); //you can write here any link
-	           File file = new File(dir, UUID.randomUUID().toString()+".jpg");
+	           URL url = new URL(imageUrl); //you can write here any link
+	           File file = new File(dir, imageName);
 
 	           long startTime = System.currentTimeMillis();
 	           Log.d("DownloadManager", "download begining");
@@ -197,7 +197,10 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 					String description = xpath.compile(DESC_XPATH).evaluate(doc, XPathConstants.STRING).toString();
 					long itemPubDate = convertTimeStrToTimestamp(xpath.compile(PUBDATE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString());
 					Log.d("HIP-IMG-RAW", xpath.compile(IMAGE_XPATH).evaluate(doc, XPathConstants.STRING).toString());
-					String imageUrl = storeImage(xpath.compile(IMAGE_XPATH).evaluate(doc, XPathConstants.STRING).toString());
+					String uuid = UUID.randomUUID().toString();
+					String remoteImageUrl = xpath.compile(IMAGE_XPATH).evaluate(doc, XPathConstants.STRING).toString();
+					String imageUrl = storeImage("http://src.sencha.io/jpg100/700/"+ remoteImageUrl, uuid+".jpg");
+					storeImage(remoteImageUrl, uuid+".w.jpg");
 					long d2 = System.currentTimeMillis();
 					Log.d("HIP-PERF", String.valueOf(d2-d1));
 					Log.d("HIP-TITLE", title);

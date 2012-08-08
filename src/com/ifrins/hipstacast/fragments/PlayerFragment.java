@@ -276,9 +276,12 @@ public class PlayerFragment extends Fragment {
 						"_id = ?", new String[] { String.valueOf(show_id) },
 						null);
 		p.moveToFirst();
-		String url = p.getString(p.getColumnIndex(HipstacastProvider.PODCAST_IMAGE));
+		String fullPath = p.getString(p.getColumnIndex(HipstacastProvider.PODCAST_IMAGE));
 		p.close();
-		return Uri.parse(url);
+		String[] imagePath = fullPath.split("/");
+		String imgName = imagePath[imagePath.length-1];
+		imgName = imgName.substring(0, imgName.length()-3) + "w.jpg";
+		return Uri.parse(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/hipstacast/img/"+ imgName);
 
 	}
 	
@@ -319,6 +322,6 @@ public class PlayerFragment extends Fragment {
 		
 		PlayerUIUtils.fixDuration(this.getActivity(), podcast_id, player.mediaPlayer.getDuration()/1000);
 	}
-	
+		
 
 }
