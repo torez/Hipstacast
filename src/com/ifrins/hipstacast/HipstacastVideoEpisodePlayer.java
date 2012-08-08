@@ -1,25 +1,20 @@
 package com.ifrins.hipstacast;
 
-import com.ifrins.hipstacast.HipstacastPlayerService.LocalBinder;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
-import com.ifrins.hipstacast.tasks.OnTaskCompleted;
 import com.ifrins.hipstacast.utils.PlayerUIUtils;
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.util.Log;
-import android.view.SurfaceView;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.ImageButton;
@@ -84,11 +79,12 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 			}
 		}
 	};
-	
-	private OnClickListener surfaceClickListener = new OnClickListener() {
+	private OnTouchListener surfaceClickListener = new OnTouchListener() {
+
 		@Override
-		public void onClick(View v) {
-			if (videoView.isPlaying())
+		public boolean onTouch(View v, MotionEvent event) {
+			// TODO Auto-generated method stub
+			if (event.getAction() == MotionEvent.ACTION_DOWN && videoView.isPlaying()) {
 				if (visible) {
 					visible = false;
 					videoTopView.animate().alpha(0);
@@ -100,6 +96,8 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 					videoTopView.animate().alpha(1);
 					videoBottomView.animate().alpha(1);
 				}
+			}
+			return true;
 		}
 	};
 	
@@ -151,21 +149,19 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 	    }
 	};
 	
-	public OnTaskCompleted completionListener = new OnTaskCompleted() {
+	private final OnCompletionListener onCompletionListener = new OnCompletionListener() {
 
 		@Override
-		public void onTaskCompleted(String task) {
-			Log.d("HIP-TASK", task);
-			if (task.equals(Hipstacast.TASK_PLAYBACK_COMPLETED)) {
-				playToggleButton.setImageResource(R.drawable.ic_action_play);
-				seekBarUpdateHandler.removeCallbacks(updateRunnable);
-				seekBar.setProgress(videoView.getDuration());
-				start_position = 0;
-				PlayerUIUtils.setEpisodeAsListened(getApplicationContext(), podcast_id);
-			}
+		public void onCompletion(MediaPlayer mp) {
+			mp.pause();
+			playToggleButton.setImageResource(R.drawable.ic_action_play);
+			seekBarUpdateHandler.removeCallbacks(updateRunnable);
+			seekBar.setProgress(videoView.getDuration());
+			start_position = 0;
+			PlayerUIUtils.setEpisodeAsListened(getApplicationContext(), podcast_id);
 		}
-		
 	};
+
 
 
 	@Override
@@ -190,7 +186,7 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 		fastForwardButton = (ImageButton)findViewById(R.id.playerFastForward);
 		
 		videoView = (VideoView)findViewById(R.id.videoPlayer);
-		videoView.setOnClickListener(surfaceClickListener);
+		videoView.setOnTouchListener(surfaceClickListener);
 		
 
 	}
@@ -239,6 +235,7 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 		if (videoView != null && !prepared) {
 			videoView.setOnPreparedListener(onPreparedListener);
 			videoView.setVideoURI(Uri.parse(videoURI));
+			videoView.setOnCompletionListener(onCompletionListener);
 		}
 		else if (videoView != null && prepared) {
 			videoView.seekTo(start_position);
