@@ -80,6 +80,7 @@
     <string name="shownotes">Shownotes</string>
     <string name="updating">Updating&#8230;</string>
     <string name="upgrading_database">Tuning the library for the new version&#8230;</string>
+    <string name="episodes">Episodes</string>
     <!-- Resources -->
     <string name="version_number">0.8.1</string>
 

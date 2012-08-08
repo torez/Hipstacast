@@ -1,41 +1,66 @@
 package com.ifrins.hipstacast;
 
 import java.io.File;
-import java.io.IOException;
-import android.app.AlertDialog;
-import android.app.DownloadManager;
-import android.app.ListActivity;
+import com.ifrins.hipstacast.fragments.EpisodesFragment;
+import android.app.ActionBar;
+import android.app.ActionBar.TabListener;
+import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.ListView;
 
-public class HipstacastEpisodeView extends ListActivity {
+public class HipstacastEpisodeView extends FragmentActivity implements TabListener {
 	int show_id;
 	int episodes_count;
+    SectionsPagerAdapter mSectionsPagerAdapter;
+    ViewPager mViewPager;
+
 
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+        setContentView(R.layout.activity_hipstacast_search_neue);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this);
+        final ActionBar actionBar = getActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+        
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                actionBar.setSelectedNavigationItem(position);
+            }
+        });
+		((Hipstacast) getApplicationContext()).trackPageView("/featured");
+
+        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText(mSectionsPagerAdapter.getPageTitle(i))
+                            .setTabListener(this));
+        }
+
 		((Hipstacast) getApplicationContext()).trackPageView("/episodes");
+		
 		getActionBar()
 				.setTitle(getIntent().getExtras().getString("show_title"));
+		
 		show_id = Integer
 				.parseInt(getIntent().getExtras().getString("show_id"));
-		Cursor p = managedQuery(
+		/*Cursor p = managedQuery(
 				Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
 						+ getIntent().getExtras().getString("show_id")
 						+ "/episodes"), new String[] { "_id", "title",
@@ -50,147 +75,9 @@ public class HipstacastEpisodeView extends ListActivity {
 		final ListView listView = getListView();
 		listView.setTextFilterEnabled(true);
 		registerForContextMenu(listView);
-		listView.setOnItemClickListener(new ListView.OnItemClickListener() {
-			@Override
-			public void onItemClick(AdapterView<?> parent, View view,
-					final int position, long id) {
-
-				final Cursor c = (Cursor) getListAdapter().getItem(position);
-				int status = c.getInt(c.getColumnIndex("status"));
-				final int episode_id = c.getInt(c.getColumnIndex("_id"));
-				final int podcast_id = c.getInt(c.getColumnIndex("podcast_id"));
-				final String content_url = c.getString(c
-						.getColumnIndex("content_url"));
-				final String title = c.getString(c.getColumnIndex("title"));
-				final long content_length = c.getLong(c
-						.getColumnIndex("content_length"));
-				final int content_type = c.getInt(c.getColumnIndex("type"));
-
-				File f = new File(android.os.Environment
-						.getExternalStorageDirectory().getAbsolutePath()
-						+ "/Android/data/com.ifrins.hipstacast/files/shows/"
-						+ podcast_id + "/" + episode_id + ".mp3");
-				File _f = new File(
-						android.os.Environment.getExternalStorageDirectory()
-								.getAbsolutePath()
-								+ "/Android/data/com.ifrins.hipstacast/files/shows/.nomedia");
-				if (!_f.exists()) {
-					try {
-						_f.createNewFile();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				if (status == 0 && !f.exists()) {
-					String msg = null;
-					if (content_length >= 1024 * 1024) {
-						msg = String.format(
-								getString(R.string.episode_not_downloaded),
-								(content_length / 1024) / 1024);
-					} else {
-						msg = String.format(
-								getString(R.string.episode_not_downloaded),
-								"\u221E");
-					}
-					new AlertDialog.Builder(listView.getContext())
-							.setTitle(c.getString(c.getColumnIndex("title")))
-							.setMessage(msg)
-							.setPositiveButton(R.string.download,
-									new DialogInterface.OnClickListener() {
-										public void onClick(
-												DialogInterface dialog,
-												int whichButton) {
-											File d = new File(
-													android.os.Environment
-															.getExternalStorageDirectory()
-															.getAbsolutePath()
-															+ "/Android/data/com.ifrins.hipstacast/files/shows/"
-															+ podcast_id);
-											if (d.exists() == false) {
-												d.mkdirs();
-											}
-
-											d = null;
-											DownloadManager mgr = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-											if (content_url != null) {
-											mgr.enqueue(new DownloadManager.Request(
-													Uri.parse(content_url))
-													.setTitle(title)
-													.setDestinationInExternalFilesDir(
-															getApplicationContext(),
-															null,
-															"shows/"
-																	+ podcast_id
-																	+ "/"
-																	+ episode_id
-																	+ ".mp3"));
-											}
-
-										}
-									})
-							.setNegativeButton(R.string.cancel,
-									new DialogInterface.OnClickListener() {
-										public void onClick(
-												DialogInterface dialog,
-												int whichButton) {
-											// Do nothing.
-										}
-									}).show();
-
-				} else if (status == 0 && f.exists()) {
-					ContentValues up = new ContentValues();
-					up.put("status", 1);
-					getContentResolver()
-							.update(Uri
-									.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
-											+ getIntent().getExtras()
-													.getString("show_id")
-											+ "/episodes/" + episode_id), up,
-									"_id = ?",
-									new String[] { String.valueOf(episode_id) });
-					Intent openIntent = null;
-					if (content_type == 1) {
-						openIntent = new Intent(getApplicationContext(), HipstacastVideoEpisodePlayer.class);
-					} else {
-						openIntent = new Intent(getApplicationContext(), EpisodePlayer.class);
-					}
-					openIntent.putExtra(
-							"show_id",
-							Integer.parseInt(getIntent().getExtras().getString(
-									"show_id")));
-					openIntent.putExtra("episode_id", episode_id);
-					openIntent.putExtra("type", content_type);
-					startActivity(openIntent);
-
-				}
-
-				else {
-					Intent openIntent = null;
-					if (content_type == 1) {
-						openIntent = new Intent(getApplicationContext(), HipstacastVideoEpisodePlayer.class);
-					} else {
-						openIntent = new Intent(getApplicationContext(), EpisodePlayer.class);
-					}
-					openIntent.putExtra(
-							"show_id",
-							Integer.parseInt(getIntent().getExtras().getString(
-									"show_id")));
-					openIntent.putExtra("episode_id", episode_id);
-					openIntent.putExtra("type", content_type);
-					startActivity(openIntent);
-				}
-
-			}
-
-		});
+		listView.setOnItemClickListener(;*/
 	}
 
-	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.menu.episodes, menu);
-		return true;
-	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
@@ -202,51 +89,62 @@ public class HipstacastEpisodeView extends ListActivity {
 			return super.onOptionsItemSelected(item);
 		}
 	}
+	
+    @Override
+    public void onTabUnselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
 
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v,
-			ContextMenuInfo menuInfo) {
-		AdapterView.AdapterContextMenuInfo info = null;
-		try {
-			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-		} catch (ClassCastException e) {
-			e.printStackTrace();
-		}
-		Cursor c = (Cursor) getListAdapter().getItem(info.position);
-		menu.setHeaderTitle(c.getString(c.getColumnIndex("title")));
-		menu.add(0, 1, 1, R.string.delete);
-	}
+    @Override
+    public void onTabSelected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+        mViewPager.setCurrentItem(tab.getPosition());
+    }
 
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-				.getMenuInfo();
-		Cursor c = (Cursor) getListAdapter().getItem(info.position);
+    @Override
+    public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
 
-		switch (item.getItemId()) {
-		case 1:
-			int pid = c.getInt(c.getColumnIndex("_id"));
-			this.getContentResolver()
-					.delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
-							+ show_id + "/episodes"), "_id = ?",
-							new String[] { String.valueOf(pid) });
-			File f = new File(android.os.Environment
-					.getExternalStorageDirectory().getAbsolutePath()
-					+ "/Android/data/com.ifrins.hipstacast/files/shows/"
-					+ show_id + "/" + pid + ".mp3");
-			if (f.exists()) {
-				f.delete();
-				Intent i = new Intent(getApplicationContext(),
-						HipstacastMain.class);
-				i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-				startActivity(i);
+    /**
+     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to one of the primary
+     * sections of the app.
+     */
+    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    	private Context context;
+    	
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+        public SectionsPagerAdapter(FragmentManager fm, Context ctx) {
+            super(fm);
+        	context = ctx;
+        }
+ 
 
-			}
-			return true;
-		default:
-			return super.onContextItemSelected(item);
-		}
-	}
+        @Override
+        public Fragment getItem(int i) {
+        	if (i == 0) {
+	            EpisodesFragment eF = new EpisodesFragment();
+	            Bundle attrs = new Bundle();
+	            attrs.putInt("show_id", show_id);
+	            eF.setArguments(attrs);
+	            return eF;
+        	}
+        	return null;
+        }
+
+        @Override
+        public int getCount() {
+            return 1;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            switch (position) {
+                case 0: return getString(R.string.episodes).toUpperCase();
+            }
+            return null;
+        }
+    }
+
 
 	private class UnsubscribeTask extends AsyncTask<Integer, Void, Void> {
 		ProgressDialog progressDialog;

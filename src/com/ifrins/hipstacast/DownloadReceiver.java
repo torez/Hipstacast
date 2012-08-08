@@ -46,6 +46,7 @@ public class DownloadReceiver extends BroadcastReceiver {
 				Log.d("HIP-STAT", String.format("File %s with status %d",
 						downloadPath, downloadStatus));
 				}
+			c.close();
 		}
 	}
 
