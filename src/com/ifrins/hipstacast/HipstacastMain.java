@@ -135,8 +135,10 @@ public class HipstacastMain extends Activity {
 
 	}
 	private void startImport() {
-		final int n = new Random().nextInt(9999);
-		final int s = new Random().nextInt(9999);
+		Random r = new Random();
+		final int n = r.nextInt(9999);
+		final int s = r.nextInt(9999);
+		r = null;
 		final Context c = this;
 		new AlertDialog.Builder(c)
 		.setTitle(R.string.import_menu)
