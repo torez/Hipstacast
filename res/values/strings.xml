@@ -81,6 +81,8 @@
     <string name="updating">Updating&#8230;</string>
     <string name="upgrading_database">Tuning the library for the new version&#8230;</string>
     <string name="episodes">Episodes</string>
+    <string name="episodes_number">%d episodes</string>
+    <string name="details">Details</string>
     <!-- Resources -->
     <string name="version_number">0.8.1</string>
 

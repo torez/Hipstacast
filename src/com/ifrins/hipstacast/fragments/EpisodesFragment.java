@@ -167,7 +167,8 @@ public class EpisodesFragment extends Fragment {
 		episodesListView = new ListView(getActivity());
     	
     	Cursor episodes = createCursor();
-    	
+		getActivity().getActionBar().setSubtitle(String.format(getActivity().getString(R.string.episodes_number), episodes.getCount())); 
+
     	episodesListView.setAdapter(new EpisodeListCursorAdapter(getActivity(), episodes));
     	episodesListView.setOnItemClickListener(episodeClickListener);
     	registerForContextMenu(episodesListView);

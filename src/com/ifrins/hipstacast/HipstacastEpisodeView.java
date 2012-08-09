@@ -1,6 +1,8 @@
 package com.ifrins.hipstacast;
 
 import java.io.File;
+
+import com.ifrins.hipstacast.fragments.EpisodeDetailsFragment;
 import com.ifrins.hipstacast.fragments.EpisodesFragment;
 import android.app.ActionBar;
 import android.app.ActionBar.TabListener;
@@ -60,22 +62,6 @@ public class HipstacastEpisodeView extends FragmentActivity implements TabListen
 		
 		show_id = Integer
 				.parseInt(getIntent().getExtras().getString("show_id"));
-		/*Cursor p = managedQuery(
-				Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
-						+ getIntent().getExtras().getString("show_id")
-						+ "/episodes"), new String[] { "_id", "title",
-						"duration", "podcast_id", "status", "position",
-						"content_url", "content_length", "publication_date",
-						"type" }, "podcast_id = ?", new String[] { getIntent()
-						.getExtras().getString("show_id") },
-				"publication_date DESC");
-		episodes_count = p.getCount();
-		setListAdapter(new EpisodeListCursorAdapter(getApplicationContext(), p));
-
-		final ListView listView = getListView();
-		listView.setTextFilterEnabled(true);
-		registerForContextMenu(listView);
-		listView.setOnItemClickListener(;*/
 	}
 
 
@@ -127,19 +113,27 @@ public class HipstacastEpisodeView extends FragmentActivity implements TabListen
 	            attrs.putInt("show_id", show_id);
 	            eF.setArguments(attrs);
 	            return eF;
+        	} else if (i == 1) {
+	            EpisodeDetailsFragment eDF = new EpisodeDetailsFragment();
+	            Bundle attrs = new Bundle();
+	            attrs.putInt("show_id", show_id);
+	            eDF.setArguments(attrs);
+	            return eDF;
+
         	}
         	return null;
         }
 
         @Override
         public int getCount() {
-            return 1;
+            return 2;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0: return getString(R.string.episodes).toUpperCase();
+                case 1: return getString(R.string.details).toUpperCase();
             }
             return null;
         }
