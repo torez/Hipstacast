@@ -4,6 +4,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import com.ifrins.hipstacast.Hipstacast;
+
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
 import android.text.format.DateFormat;
 
 public class SyncUtils {
@@ -24,6 +29,7 @@ public class SyncUtils {
 		}
 		return (3600 * hours) + (60 * minutes) + seconds;
 	}
+	
 	public final static long convertTimeStrToTimestamp(String timestamp) {
 		SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH);
 		try {
@@ -34,5 +40,16 @@ public class SyncUtils {
 		}
 		return 0;
 	}
+	public final static Boolean episodeExists(Context context, String guid) {
+		Cursor c = context.getContentResolver().query(Hipstacast.EPISODES_PROVIDER_URI, new String[] {"_id", "podcast_id", "guid"}, "guid = ?", new String[] {guid}, null);
+		int co = c.getCount();
+		c.close();
+		if (co > 0) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 
 }

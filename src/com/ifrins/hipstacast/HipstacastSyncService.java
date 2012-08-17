@@ -16,6 +16,9 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.ifrins.hipstacast.tasks.SyncUtils;
+
 import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -110,16 +113,6 @@ public class HipstacastSyncService extends Service {
 			return (3600 * hours) + (60 * minutes) + seconds;
 		}
 
-		private Boolean episodeExists(String guid, int show_id) {
-			Cursor c = getApplicationContext().getContentResolver().query(Uri.parse(CONTENT_URL+"/"+show_id+"/episodes"), new String[] {"_id", "podcast_id", "guid"}, "guid = ?", new String[] {guid}, null);
-			int co = c.getCount();
-			c.close();
-			if (co > 0) {
-				return true;
-			} else {
-				return false;
-			}
-		}
 		
 		private void checkFeed(String feed, int show_id, long itemPubDate) {
 			if (factory == null) {
@@ -153,7 +146,7 @@ public class HipstacastSyncService extends Service {
 					String link = xpath.compile(String.format(LINK_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
 					long ciPubDate = convertTimeStrToTimestamp(xpath.compile(String.format(PUBDATE_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString());
 					
-					if (ciPubDate > itemPubDate && !episodeExists(link, show_id)) {
+					if (ciPubDate > itemPubDate && !SyncUtils.episodeExists(getApplicationContext(), link)) {
 						String mediaType = "";
 						ContentValues episodeContentValues = new ContentValues();
 						String shownotes = xpath.compile(String.format(SHOWNOTES_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();

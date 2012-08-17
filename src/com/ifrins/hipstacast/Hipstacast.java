@@ -11,6 +11,7 @@ import android.os.StrictMode;
 
 public class Hipstacast extends Application {
 	public static final String WELCOME_PREFERENCES = "WELCOME";
+	public static final String FULL_SHOW_PREFERENCES = "FULLSHOWPREFERENCES";
 	public static final String TASK_ADD_PROVIDER = "AddPodcastProvider";
 	public static final String TASK_PLAYBACK_COMPLETED = "PlaybackCompleted";
 	public static final String TASK_OPEN_WEBPAGE = "OpenWebpageFromEpisode";

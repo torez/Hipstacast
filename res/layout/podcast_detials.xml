@@ -13,44 +13,16 @@
         android:text="{Episode Title}"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <ScrollView
+    <TextView
+        android:id="@+id/showDetailsDescription"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="0.6" >
-
-        <TextView
-            android:id="@+id/showDetailsDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="{Description}"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-    </ScrollView>
-
-    <View
-        android:layout_width="fill_parent"
-        android:layout_height="2dp"
-        android:layout_marginTop="0dp"
-        android:background="#32B2E9" />
-
-    <ProgressBar
-        android:id="@+id/remoteEpisodeProgressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:indeterminate="false" />
-
-    <ListView
-        android:id="@+id/remoteEpisodesListView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="5dp"
-        android:layout_weight="2" >
-
-    </ListView>
+        android:layout_height="match_parent"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="{Description}"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 </LinearLayout>

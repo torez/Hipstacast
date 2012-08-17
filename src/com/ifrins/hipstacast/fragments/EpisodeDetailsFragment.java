@@ -32,9 +32,7 @@ public class EpisodeDetailsFragment extends Fragment {
 		((TextView)v.findViewById(R.id.showDetailsTitle)).setText(Html.fromHtml(show.getString(show.getColumnIndex(HipstacastProvider.PODCAST_TITLE))));
 		((TextView)v.findViewById(R.id.showDetailsDescription)).setText(Html.fromHtml(show.getString(show.getColumnIndex(HipstacastProvider.PODCAST_DESCRIPTION))));
 
-		ListView remoteEpisodesList = (ListView)v.findViewById(R.id.remoteEpisodesListView);
-		ProgressBar progressBar = (ProgressBar)v.findViewById(R.id.remoteEpisodeProgressBar);
-		new LoadRemoteEpisodesTask(getActivity(), remoteEpisodesList, show.getString(show.getColumnIndex(HipstacastProvider.PODCAST_FEED)), show_id, progressBar).execute();
+		new LoadRemoteEpisodesTask(getActivity(), show.getString(show.getColumnIndex(HipstacastProvider.PODCAST_FEED)), show_id).execute();
 		return v;
 	}
 	

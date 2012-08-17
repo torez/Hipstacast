@@ -14,15 +14,21 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.ifrins.hipstacast.Hipstacast;
 import com.ifrins.hipstacast.RemoteEpisodesArrayAdapter;
 import com.ifrins.hipstacast.model.PodcastEpisode;
+
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 
-public class LoadRemoteEpisodesTask extends AsyncTask<Void, Integer, PodcastEpisode[]> {
+public class LoadRemoteEpisodesTask extends AsyncTask<Void, Void, Void> {
 	
 	private static final String ITEMS_XPATH = "rss/channel/item";
 
@@ -46,24 +52,30 @@ public class LoadRemoteEpisodesTask extends AsyncTask<Void, Integer, PodcastEpis
 	private DocumentBuilderFactory factory = null;
 	
 	Context context;
-	ListView listView;
 	String feed;
 	int show_id;
 	int totalItems;
-	ProgressBar progress;
+	SharedPreferences sPreferences = null;
 	
-	public LoadRemoteEpisodesTask(Context context, ListView listView, String feed, int show_id, ProgressBar progress) {
+	Boolean shouldCheck;
+
+	
+	public LoadRemoteEpisodesTask(Context context, String feed, int show_id) {
 		this.context = context;
-		this.listView = listView;
 		this.feed = feed;
 		this.show_id = show_id;
-		this.progress = progress;
 	}
 	
 	@Override
-	protected PodcastEpisode[] doInBackground(Void... arg0) {
-		List<PodcastEpisode> episodes = new ArrayList<PodcastEpisode>();
-
+	protected void onPreExecute() {
+		sPreferences = context.getSharedPreferences(Hipstacast.FULL_SHOW_PREFERENCES, 0);
+		shouldCheck = sPreferences.getBoolean("check_"+show_id, true);
+	}
+	
+	@Override
+	protected Void doInBackground(Void... arg0) {
+	if (shouldCheck) {	
+		
 		if (factory == null) {
 			factory = DocumentBuilderFactory.newInstance();
 			factory.setNamespaceAware(false);
@@ -91,10 +103,10 @@ public class LoadRemoteEpisodesTask extends AsyncTask<Void, Integer, PodcastEpis
 			NodeList items = (NodeList) xpath.compile(ITEMS_XPATH).evaluate(doc, XPathConstants.NODESET);
 			totalItems = items.getLength();
 			for (int i = 0; i < totalItems; i++) {
-				this.publishProgress(i+1);
 				String content_url = xpath.compile(String.format(MEDIALINK_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
-				if (content_url.length() > 0) {
-					String guid = xpath.compile(String.format(LINK_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
+				String guid = xpath.compile(String.format(LINK_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
+
+				if (content_url.length() > 0 && !SyncUtils.episodeExists(context, guid)) {
 					long pubDate = SyncUtils.convertTimeStrToTimestamp(xpath.compile(String.format(PUBDATE_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString());
 					String author = xpath.compile(String.format(AUTHOR_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
 					String title = xpath.compile(String.format(TITLE_ITEM_XPATH, i+1)).evaluate(doc,XPathConstants.STRING).toString();
@@ -120,9 +132,21 @@ public class LoadRemoteEpisodesTask extends AsyncTask<Void, Integer, PodcastEpis
 						type = 0;
 					}				
 					
-					PodcastEpisode currentEpisode = new PodcastEpisode(i, show_id, guid, pubDate, author, title, description, content_url, content_length, duration,
-																		donation_url, type, shownotes);
-					episodes.add(currentEpisode);
+					ContentValues episodeContentValues = new ContentValues();
+					episodeContentValues.put("podcast_id", show_id);
+					episodeContentValues.put("publication_date", pubDate);
+					episodeContentValues.put("author", author);
+					episodeContentValues.put("description", description);
+					episodeContentValues.put("content_url", content_url);
+					episodeContentValues.put("content_length", content_length);
+					episodeContentValues.put("duration", duration);
+					episodeContentValues.put("title", title);
+					episodeContentValues.put("guid", guid);
+					episodeContentValues.put("donation_url", donation_url);
+					episodeContentValues.put("status", 3);
+					episodeContentValues.put("shownotes", shownotes);
+					episodeContentValues.put("type", type);
+					context.getContentResolver().insert(Hipstacast.EPISODES_PROVIDER_URI, episodeContentValues);
 				}
 			}
 
@@ -131,23 +155,17 @@ public class LoadRemoteEpisodesTask extends AsyncTask<Void, Integer, PodcastEpis
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
-		// TODO Auto-generated method stub
-		return Arrays.copyOf(episodes.toArray(), episodes.toArray().length, PodcastEpisode[].class);
 	}
-	@Override 
-	protected void onPostExecute(PodcastEpisode[] ep) {
-		RemoteEpisodesArrayAdapter adapter = new RemoteEpisodesArrayAdapter(context, ep);
-		adapter.notifyDataSetChanged();
-		listView.setAdapter(adapter);
-		progress.setVisibility(View.GONE);
-		
-	}
-	@Override
-	public void onProgressUpdate(Integer... p) {
-		progress.setMax(totalItems);
-		progress.setProgress(p[0]);
-	}
+	return null;
+	}	
 	
-
+	@Override
+	protected void onPostExecute(Void p) {
+		if (shouldCheck) {
+			SharedPreferences.Editor editorP = sPreferences.edit();
+			editorP.putBoolean("check_"+show_id, false);
+			editorP.commit();
+		}
+			
+	}
 }

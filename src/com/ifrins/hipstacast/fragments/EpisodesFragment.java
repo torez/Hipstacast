@@ -69,7 +69,7 @@ public class EpisodesFragment extends Fragment {
 					e.printStackTrace();
 				}
 			}
-			if (status == 0 && !f.exists()) {
+			if ((status == 0 || status == 3) && !f.exists()) {
 				String msg = null;
 				if (content_length >= 1024 * 1024) {
 					msg = String.format(
