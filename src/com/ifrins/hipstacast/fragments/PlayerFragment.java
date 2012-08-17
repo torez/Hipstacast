@@ -42,7 +42,7 @@ public class PlayerFragment extends Fragment {
 	SeekBar seekBar = null;
 	TextView timeCounter = null;
 	ImageButton playToggleButton = null;
-	
+	Boolean showingControls = true;
 	String name;
 	String websiteLink;
 	String donationLink;
@@ -105,6 +105,25 @@ public class PlayerFragment extends Fragment {
 				player.seekTo(newPosition);
 				seekBar.setProgress(newPosition);
 				timeCounter.setText(PlayerUIUtils.convertSecondsToDuration(newPosition/1000));
+			}
+		}
+	};
+	
+	private OnClickListener pictureClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			if (player != null && player.isPlaying()) {
+				if (showingControls) {
+					getView().findViewById(R.id.playerEpisodeName).setSelected(false);
+					getView().findViewById(R.id.playerDetails).animate().alpha(0);
+					seekBarUpdateHandler.removeCallbacks(updateRunnable);
+					showingControls = false;
+				} else {
+					getView().findViewById(R.id.playerDetails).animate().alpha(1);
+					getView().findViewById(R.id.playerEpisodeName).setSelected(true);
+					seekBarUpdateHandler.post(updateRunnable);
+					showingControls = true;
+				}
 			}
 		}
 	};
@@ -214,6 +233,7 @@ public class PlayerFragment extends Fragment {
 		
 		ImageView coverImage = (ImageView)finalView.findViewById(R.id.playerCoverImage);
 		coverImage.setImageURI(getImageUri(episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_PODCAST_ID))));
+		coverImage.setOnClickListener(pictureClickListener);
 		
 		TextView totalDuration = (TextView)finalView.findViewById(R.id.playerTotalDuration);
 		duration = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_DURATION));
