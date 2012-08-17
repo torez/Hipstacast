@@ -20,9 +20,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 
 public class EpisodePlayer extends FragmentActivity implements ActionBar.TabListener {
-	HipstacastPlayerService player;
-	Boolean bound = false;
-	Boolean isPlaying = false;
 	ViewPager pager = null;
     SectionsPagerAdapter mSectionsPagerAdapter;
 	int show_id;
@@ -104,8 +101,6 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 	@Override
 	protected void onDestroy() {
 		Log.d("HIP-DS", "On Destroy");
-		if (player != null && !player.isPlaying())
-			player.destroy();
 		super.onDestroy();
 	}
 	

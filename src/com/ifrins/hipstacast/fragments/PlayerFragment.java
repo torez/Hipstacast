@@ -242,13 +242,14 @@ public class PlayerFragment extends Fragment {
 	}
 	
 	@Override
-	public void onStop() {
+	public void onDetach() {
+		super.onDetach();
+		Log.d("HIP-DETACH", "Detach");
 		if (player != null && !player.isPlaying())
 			player.destroy();
 		if (bound)
 			this.getActivity().unbindService(mConnection);
 		seekBarUpdateHandler.removeCallbacks(updateRunnable);
-		super.onStop();
 	}
 
 	private Cursor getEpisodeDetails() {
