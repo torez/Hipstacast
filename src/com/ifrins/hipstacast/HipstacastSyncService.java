@@ -1,5 +1,6 @@
 package com.ifrins.hipstacast;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,11 +18,13 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.ifrins.hipstacast.provider.HipstacastProvider;
 import com.ifrins.hipstacast.tasks.SyncUtils;
 
 import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentValues;
 import android.content.Context;
@@ -31,6 +34,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.util.Log; 
 
@@ -67,6 +71,7 @@ public class HipstacastSyncService extends Service {
 		private static final String SHOWNOTES_ITEM_XPATH = "rss/channel/item[position() = %d]/encoded/text()";
 		private static final String DURATION_ITEM_XPATH = "rss/channel/item[position() = %d]/duration/text()";
 		private static final String DONATE_ITEM_XPATH = "rss/channel/item[position() = %d]/link[@rel='payment']/@href";
+		private SharedPreferences prefs = null;
 
 		
 		private static final String START_HTML = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><style>body{background-color:#000;color:#fff;}body a{color:#33b5e5;} img{max-width:100%}</style></head><body>";
@@ -187,7 +192,6 @@ public class HipstacastSyncService extends Service {
 							addedEpisodes.add(Integer.parseInt(pS.get(pS.size()-1)));
 	
 							DownloadManager mgr = (DownloadManager)getSystemService(DOWNLOAD_SERVICE);
-							SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 							DownloadManager.Request r = new DownloadManager.Request(Uri.parse(content_url))
 														.setTitle(title)
 														.setDestinationInExternalFilesDir(getApplicationContext(), null, "shows/"+show_id+"/"+episodeNewUri.getLastPathSegment() + ".mp3");
@@ -213,6 +217,26 @@ public class HipstacastSyncService extends Service {
 			}
 		}
 		
+		private void deleteOldEpisodes(int show_id) {
+			Cursor c = getApplicationContext().getContentResolver().query(Hipstacast.EPISODES_PROVIDER_URI, new String[]{"_id", HipstacastProvider.EPISODE_PODCAST_ID, HipstacastProvider.EPISODE_STATUS, HipstacastProvider.EPISODE_PUB_DATE }, "podcast_id = ? AND status = ?", new String[] {String.valueOf(show_id), "3"}, "publication_date DESC");
+			int _i = 0;
+			int shouldKeep = prefs.getInt("should_keep", 1)-1;
+			while (c.moveToNext() != false) {
+				if (_i > shouldKeep) {
+					File f = new File(android.os.Environment
+							.getExternalStorageDirectory().getAbsolutePath()
+							+ "/Android/data/com.ifrins.hipstacast/files/shows/"
+							+ show_id + "/" + c.getInt(c.getColumnIndex("_id")) + ".mp3");
+					if (f.exists()) {
+						f.delete();
+						Log.d("HIP-DEL", "Deleting!");
+					}
+				}
+				_i++;
+			}
+			c.close();
+		}
+	
 		@Override
 		protected Void doInBackground(Void... params) {
 			Cursor c = getApplicationContext().getContentResolver().query(Uri.parse(CONTENT_URL), new String[] {"_id", "feed_link", "last_update"}, null, null, null);
@@ -220,7 +244,9 @@ public class HipstacastSyncService extends Service {
 			long d1 = System.currentTimeMillis();
 
 			while (c.moveToNext() != false) {
-				checkFeed(c.getString(c.getColumnIndex("feed_link")), c.getInt(c.getColumnIndex("_id")), c.getLong(c.getColumnIndex("last_update")));
+				int show_id = c.getInt(c.getColumnIndex("_id"));
+				checkFeed(c.getString(c.getColumnIndex("feed_link")), show_id, c.getLong(c.getColumnIndex("last_update")));
+				deleteOldEpisodes(show_id);
 			}
 			long d2 = System.currentTimeMillis();
 			Log.d("HIP-SYNC-PREF", String.valueOf(d2-d1));
@@ -252,6 +278,7 @@ public class HipstacastSyncService extends Service {
 			if (uNotif != null) {
 				notifManager.notify(-1001, uNotif);
 			}
+
 			((Service) context).stopSelf();
 		}
 		@Override
@@ -263,6 +290,7 @@ public class HipstacastSyncService extends Service {
 				.getNotification();
 			NotificationManager notifManager = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
 			notifManager.notify(-1001, n);
+			prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		}
 	}
 }
