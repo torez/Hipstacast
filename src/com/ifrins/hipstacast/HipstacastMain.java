@@ -120,7 +120,6 @@ public class HipstacastMain extends Activity {
 
 		AlarmManager m = ((AlarmManager) getApplicationContext()
 				.getSystemService(ALARM_SERVICE));
-		m.cancel(contentIntent);
 		m.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, d,
 				Long.parseLong(prefs.getString("fetchFrequency", "86400000")),
 				contentIntent);
