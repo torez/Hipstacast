@@ -25,6 +25,7 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
         holder.name.setText(cursor.getString(cursor.getColumnIndex("title")));
         int status = cursor.getInt(cursor.getColumnIndex("status"));
         if (status == 2) {
+        	holder.duration.setVisibility(View.VISIBLE);
         	int d = cursor.getInt(cursor.getColumnIndex("duration"));
         	int p = cursor.getInt(cursor.getColumnIndex("position"));
         	int r = d-p;
@@ -34,13 +35,16 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
         	holder.duration.setVisibility(View.INVISIBLE);
         	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Medium);
         } else if (status == 0) {
+        	holder.duration.setVisibility(View.VISIBLE);
         	holder.duration.setText("\u25BC");
         	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Large);
         } else { 
+        	holder.duration.setVisibility(View.VISIBLE);
         	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Small);
         	holder.duration.setText(PlayerUIUtils.convertSecondsToDuration(cursor.getInt(cursor.getColumnIndex("duration"))));
         }
-        if (cursor.getInt(cursor.getColumnIndex("duration")) == 0 && status > 0) {
+        if (cursor.getInt(cursor.getColumnIndex("duration")) == 0 && status > 0 && status != 3) {
+        	holder.duration.setVisibility(View.VISIBLE);
         	holder.duration.setText("-:--:--");
         }
         //holder.status.setImageResource(R.drawable.ic_list_new);
