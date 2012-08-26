@@ -3,12 +3,8 @@ package com.ifrins.hipstacast;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import com.ifrins.hipstacast.tasks.OnTaskCompleted;
-
-import android.app.IntentService;
 import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.ContentValues;
@@ -161,6 +157,7 @@ public class HipstacastPlayerService extends Service implements
 
 	public void play() {
 		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
 		int result = audioManager.requestAudioFocus(this,
 				AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
 		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {

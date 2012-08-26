@@ -1,16 +1,12 @@
 package com.ifrins.hipstacast;
 
-import com.ifrins.hipstacast.model.Podcast;
 import com.ifrins.hipstacast.model.PodcastEpisode;
 import com.ifrins.hipstacast.utils.PlayerUIUtils;
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class RemoteEpisodesArrayAdapter extends ArrayAdapter<PodcastEpisode> {

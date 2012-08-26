@@ -1,5 +1,6 @@
 package com.ifrins.hipstacast;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.FeaturedFragment;
 import com.ifrins.hipstacast.fragments.SearchFragment;
 import com.ifrins.hipstacast.tasks.AddPodcastProvider;
@@ -59,7 +60,6 @@ public class HipstacastSearchNeue extends FragmentActivity implements ActionBar.
                 actionBar.setSelectedNavigationItem(position);
             }
         });
-		((Hipstacast) getApplicationContext()).trackPageView("/featured");
 
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
@@ -77,6 +77,18 @@ public class HipstacastSearchNeue extends FragmentActivity implements ActionBar.
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search, menu);
         return true;
+    }
+    
+    @Override
+    public void onStart() {
+    	super.onStart();
+		EasyTracker.getInstance().activityStart(this);
+    }
+    
+    @Override
+    public void onStop() {
+    	super.onStop();
+		EasyTracker.getInstance().activityStop(this);
     }
     
     class CustomURLClickListener implements View.OnClickListener {

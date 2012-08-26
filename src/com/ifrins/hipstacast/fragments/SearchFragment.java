@@ -3,20 +3,17 @@ package com.ifrins.hipstacast.fragments;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.model.Podcast;
 import com.ifrins.hipstacast.tasks.AddPodcastProvider;
-
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 public class SearchFragment extends Fragment {
     @Override

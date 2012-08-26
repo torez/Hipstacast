@@ -84,6 +84,6 @@
     <string name="episodes_number">%d episodes</string>
     <string name="details">Details</string>
     <!-- Resources -->
-    <string name="version_number">0.8.1</string>
+    <string name="version_number">1.0</string>
 
 </resources>

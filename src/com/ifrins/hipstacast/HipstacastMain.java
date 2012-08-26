@@ -23,6 +23,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.tasks.CheckForUpdates;
 import com.ifrins.hipstacast.tasks.ExportTask;
 import com.ifrins.hipstacast.tasks.ImportTask;
@@ -33,7 +34,6 @@ public class HipstacastMain extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		((Hipstacast)getApplicationContext()).trackPageView("/");
 		if (((Hipstacast)getApplicationContext()).shouldDisplayWelcomeActivity()) {
 			Intent welcomeActivity = new Intent(this, HipstacastWelcome.class);
 			welcomeActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -110,6 +110,7 @@ public class HipstacastMain extends Activity {
 	@Override
 	public void onStart() {
 		super.onStart();
+		EasyTracker.getInstance().activityStart(this);
 		Intent newIntent = new Intent(this, HipstacastSyncService.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 				newIntent, 0);
@@ -126,7 +127,14 @@ public class HipstacastMain extends Activity {
 		new CheckForUpdates(this).execute();
 		
 	}
-	private void startExport() {
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance().activityStop(this);
+	}
+	private 
+	void startExport() {
 		final int n = new Random().nextInt(9999);
 		final int s = new Random().nextInt(9999);
 

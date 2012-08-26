@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
 import java.text.ParseException;
@@ -23,9 +22,7 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.http.util.ByteArrayBuffer;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
 import com.ifrins.hipstacast.Hipstacast;
-
 import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;

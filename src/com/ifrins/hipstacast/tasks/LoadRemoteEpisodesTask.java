@@ -1,9 +1,6 @@
 package com.ifrins.hipstacast.tasks;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,19 +11,11 @@ import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
 import com.ifrins.hipstacast.Hipstacast;
-import com.ifrins.hipstacast.RemoteEpisodesArrayAdapter;
-import com.ifrins.hipstacast.model.PodcastEpisode;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.view.View;
-import android.widget.ListView;
-import android.widget.ProgressBar;
 
 public class LoadRemoteEpisodesTask extends AsyncTask<Void, Void, Void> {
 	

@@ -1,5 +1,6 @@
 package com.ifrins.hipstacast;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
 import com.ifrins.hipstacast.utils.PlayerUIUtils;
 import android.app.Activity;
@@ -175,9 +176,7 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 		show_id = getIntent().getExtras().getInt("show_id");
 		podcast_id = getIntent().getExtras().getInt("episode_id");
 		type = getIntent().getExtras().getInt("type");
-		
-		((Hipstacast) getApplicationContext()).trackPageView("/player");
-		
+				
 		seekBar = (SeekBar)findViewById(R.id.playerSeekBar);
 		videoTopView = findViewById(R.id.viewVideoTop);
 		videoBottomView = findViewById(R.id.viewVideoBottom);
@@ -194,6 +193,7 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		EasyTracker.getInstance().activityStart(this);
 		seekBar.setOnSeekBarChangeListener(seekBarChangeListener);
 		playToggleButton.setOnClickListener(playToggleClickListener);
 		fastForwardButton.setOnClickListener(fastForwardClickListener);
@@ -219,11 +219,17 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 		
 		episode.close();
 	}
+	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
 		videoView = null;
 		seekBarUpdateHandler.removeCallbacks(updateRunnable);		
+	}
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance().activityStop(this);
 	}
 	
 	private void startPlaying() {

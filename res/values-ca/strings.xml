@@ -55,5 +55,34 @@
     <string name="search_progress">Cercant&#8230;</string>
     <string name="invalid_url">Hi ha un problema amb la URL. Comprova que sigui correcta.</string>
     
+    <!-- 1.0 -->
+        <string name="feed_sync_notification_title">Cercant nous episodes&#8230;</string>
+    <string name="featured">Destacats</string>
+    <string name="search_results">Resultats</string>
+    <string name="import_not_found_error">No hem pogut trobar les teves subscripccions. Torna-ho a intentar.</string>
+    <string name="import_server_error">Hi ha hagut un problema amb la teva sol·licitud.</string>
+    <string name="support">Suport</string>
+    <string name="twitter">Twitter</string>
+    <string name="google_plus">Google+</string>
+    <string name="notif_new_episodes_title">Tens nous episodis per escoltar</string>
+    <string name="notif_new_episodes_desc_1">%s</string>
+    <string name="notif_new_episodes_desc_2" formatted="false">%s i %d més</string>
+    <string name="welcome_to_hipstacast">Benvingut a Hipstacast</string>
+    <string name="start">Comença</string>
+    <string name="features_list"> Portant la millor experiència de podcasts a Android. Pots escoltar-los o mirar-los des d\'on siguis\n\n&#8226; Interfície Holo \n&#8226; Cerca potent \n&#8226; Gestor de baixades</string>
+    <string name="subscribe_features">Pots subscriure\'t a algun dels següents podcasts</string>
+    <string name="next">Següent</string>
+    <string name="already_selected_podcast">Ja has seleccionat aquest podcast</string>
+    <string name="wizard_finished">Ja pots utilitzar Hipstacast</string>
+    <string name="hope_enjoy">Gaudeix de l\'experiència!</string>
+    <string name="subscription_count">%d subscripccions</string>
+    <string name="player">Reproductor</string>
+    <string name="shownotes">Notes</string>
+    <string name="updating">Actualitzant&#8230;</string>
+    <string name="upgrading_database">Optimitzant la llibreria per la nova versió&#8230;</string>
+    <string name="episodes">Episodis</string>
+    <string name="episodes_number">%d episodis</string>
+    <string name="details">Detalls</string>
+    
 
 </resources>

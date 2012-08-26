@@ -1,6 +1,5 @@
 package com.ifrins.hipstacast;
 
-import com.google.android.apps.analytics.GoogleAnalyticsTracker;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -22,7 +21,6 @@ public class Hipstacast extends Application {
 	public static final Uri SUBSCRIPTIONS_PROVIDER_URI = Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts");
 	public static final Uri EPISODES_PROVIDER_URI = Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/episodes");
 
-	public GoogleAnalyticsTracker tracker;
 	public Boolean shouldDisplayWelcomeActivity = null;
 
 	@Override
@@ -33,23 +31,13 @@ public class Hipstacast extends Application {
         .build());
 
 		super.onCreate();
-		tracker = GoogleAnalyticsTracker.getInstance();
-		tracker.startNewSession("UA-33122624-1", 30, this);
-		tracker.setCustomVar(1, "app_version", getString(R.string.version_number), 1);
-		tracker.setCustomVar(1, "device", android.os.Build.MODEL, 1);
+		
 	}
 
 	@Override
 	public void onTerminate() {
-		tracker.stopSession();
 	}
 
-	public void trackPageView(String page) {
-		tracker.trackPageView(page);
-	}
-	public void trackEvent(String event_name, String event_cat, String event_action, int event_value) {
-		tracker.trackEvent(event_cat, event_action, event_name, event_value);
-	}
 	public final Boolean shouldDisplayWelcomeActivity() {
 		if (shouldDisplayWelcomeActivity != null) {
 			return shouldDisplayWelcomeActivity;

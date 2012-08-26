@@ -1,5 +1,6 @@
 package com.ifrins.hipstacast;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.PlayerFragment;
 import com.ifrins.hipstacast.fragments.ShownotesFragment;
 import com.ifrins.hipstacast.tasks.OnTaskCompleted;
@@ -7,6 +8,7 @@ import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.Notification;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
@@ -37,7 +39,6 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		((Hipstacast) getApplicationContext()).trackPageView("/player");
 		show_id = getIntent().getExtras().getInt("show_id");
 		podcast_id = getIntent().getExtras().getInt("episode_id");
 		type = getIntent().getExtras().getInt("type");
@@ -66,7 +67,14 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 	@Override
 	protected void onStart() {
 		super.onStart();
+		EasyTracker.getInstance().activityStart(this);
 		fromNotification = getIntent().getExtras().getBoolean("from_notif");
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		EasyTracker.getInstance().activityStop(this);
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -89,6 +97,9 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 			action = Hipstacast.TASK_OPEN_DONATIONS;
 		} else if (itemId == R.id.menuPlayWebsite) {
 			action = Hipstacast.TASK_OPEN_WEBPAGE;
+		} else if (itemId == R.id.menuPlaySoundConfig) {
+			Intent enhanceSoundIntent = new Intent("com.htc.HtcSoundEnhancerSetting.ShowSettingPage");
+			startActivity(enhanceSoundIntent);
 		}
 		if (action != null && playerFragment != null && playerFragment.completionListener != null) {
 			playerFragment.completionListener.onTaskCompleted(action);

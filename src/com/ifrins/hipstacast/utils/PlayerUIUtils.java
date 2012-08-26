@@ -8,8 +8,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.SurfaceView;
-import android.widget.SeekBar;
-
 import com.ifrins.hipstacast.EpisodePlayer;
 import com.ifrins.hipstacast.HipstacastPlayerService;
 import com.ifrins.hipstacast.R;

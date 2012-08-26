@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.UUID;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -16,14 +14,11 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import org.apache.http.util.ByteArrayBuffer;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
 import com.ifrins.hipstacast.Hipstacast;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;

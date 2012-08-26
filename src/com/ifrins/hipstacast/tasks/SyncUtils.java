@@ -3,13 +3,9 @@ package com.ifrins.hipstacast.tasks;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-
 import com.ifrins.hipstacast.Hipstacast;
-
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
-import android.text.format.DateFormat;
 
 public class SyncUtils {
 	public static final int convertDurationToSeconds(String duration) {

@@ -1,7 +1,7 @@
 package com.ifrins.hipstacast;
 
 import java.io.File;
-
+import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.EpisodeDetailsFragment;
 import com.ifrins.hipstacast.fragments.EpisodesFragment;
 import android.app.ActionBar;
@@ -18,8 +18,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
 public class HipstacastEpisodeView extends FragmentActivity implements TabListener {
@@ -46,7 +44,6 @@ public class HipstacastEpisodeView extends FragmentActivity implements TabListen
                 actionBar.setSelectedNavigationItem(position);
             }
         });
-		((Hipstacast) getApplicationContext()).trackPageView("/featured");
 
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
             actionBar.addTab(
@@ -55,7 +52,6 @@ public class HipstacastEpisodeView extends FragmentActivity implements TabListen
                             .setTabListener(this));
         }
 
-		((Hipstacast) getApplicationContext()).trackPageView("/episodes");
 		
 		getActionBar()
 				.setTitle(getIntent().getExtras().getString("show_title"));
@@ -63,8 +59,19 @@ public class HipstacastEpisodeView extends FragmentActivity implements TabListen
 		show_id = Integer
 				.parseInt(getIntent().getExtras().getString("show_id"));
 	}
-
-
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		EasyTracker.getInstance().activityStart(this);
+	}
+	
+	@Override
+	public void onStop(){
+		super.onStop();
+		EasyTracker.getInstance().activityStop(this);
+	}
+	
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
