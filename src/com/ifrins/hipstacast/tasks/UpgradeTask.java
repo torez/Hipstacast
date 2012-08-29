@@ -58,6 +58,9 @@ public class UpgradeTask extends AsyncTask<Void, Void, Void> {
 			while (c.moveToNext() == true) {
 				String[] imagePath = c.getString(c.getColumnIndex(HipstacastProvider.PODCAST_IMAGE)).split("/");
 				String imgName = imagePath[imagePath.length-1];
+				if (imgName.length() == 0) {
+					return null;
+				}
 				imgName = imgName.substring(0, imgName.length()-3) + "w.jpg";
 				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 				factory.setNamespaceAware(false);
