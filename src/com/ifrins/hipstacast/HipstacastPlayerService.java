@@ -42,7 +42,7 @@ public class HipstacastPlayerService extends Service implements
 			if (intent.getAction().equals(
 					android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
 				Log.d("HIP-MUSIC", "Audio becoming noisy");
-				if (mediaPlayer.isPlaying())
+				if (mediaPlayer != null && mediaPlayer.isPlaying())
 					mediaPlayer.stop();
 				destroy();
 			}

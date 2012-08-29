@@ -100,7 +100,13 @@ public class LoadRemoteEpisodesTask extends AsyncTask<Void, Void, Void> {
 					String author = xpath.compile(String.format(AUTHOR_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
 					String title = xpath.compile(String.format(TITLE_ITEM_XPATH, i+1)).evaluate(doc,XPathConstants.STRING).toString();
 					String description = xpath.compile(String.format(DESCR_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
-					double content_length = (Double) xpath.compile(String.format(MEDIALENGHT_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.NUMBER);
+					double content_length;
+					try {
+						content_length = Double.parseDouble(xpath.compile(String.format(MEDIALENGHT_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString());
+					}
+					catch (NumberFormatException e) {
+						content_length = 0;
+					}
 					int duration = SyncUtils.convertDurationToSeconds(xpath.compile(String.format(DURATION_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString());
 					String donation_url = xpath.compile(String.format(DONATE_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
 					String shownotes = xpath.compile(String.format(SHOWNOTES_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();

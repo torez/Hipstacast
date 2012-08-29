@@ -25,13 +25,7 @@ public class Hipstacast extends Application {
 
 	@Override
 	public void onCreate() {
-	    StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-        .detectAll()
-        .penaltyLog()
-        .build());
-
 		super.onCreate();
-		
 	}
 
 	@Override
@@ -45,7 +39,7 @@ public class Hipstacast extends Application {
 			SharedPreferences pref = getSharedPreferences(WELCOME_PREFERENCES, 0);
 			shouldDisplayWelcomeActivity = pref.getBoolean("shown_"+getString(R.string.version_number), true);
 			return shouldDisplayWelcomeActivity;
-		}
+		} 
 	}
 	public final void setWelcomeActivityShown() {
 		SharedPreferences pref = getSharedPreferences(WELCOME_PREFERENCES, 0);
