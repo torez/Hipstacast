@@ -2,14 +2,14 @@ package com.ifrins.hipstacast.fragments;
 
 import java.io.File;
 import java.io.IOException;
-
 import com.ifrins.hipstacast.EpisodeListCursorAdapter;
 import com.ifrins.hipstacast.EpisodePlayer;
 import com.ifrins.hipstacast.Hipstacast;
 import com.ifrins.hipstacast.HipstacastMain;
 import com.ifrins.hipstacast.HipstacastVideoEpisodePlayer;
 import com.ifrins.hipstacast.R;
-
+import com.ifrins.hipstacast.provider.HipstacastProvider;
+import com.ifrins.hipstacast.utils.PlayerUIUtils;
 import android.app.AlertDialog;
 import android.app.DownloadManager;
 import android.content.ContentValues;
@@ -20,6 +20,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -183,6 +184,11 @@ public class EpisodesFragment extends Fragment {
 		Cursor c = (Cursor) episodesListView.getAdapter().getItem(info.position);
 		menu.setHeaderTitle(c.getString(c.getColumnIndex("title")));
 		menu.add(0, 1, 1, R.string.delete);
+		int status = c.getInt(c.getColumnIndex(HipstacastProvider.EPISODE_STATUS));
+		Log.d("HIP-STATUS", String.valueOf(status));
+		if (status != HipstacastProvider.EPISODE_STATUS_FINISHED) {
+			menu.add(0, 2, 2, R.string.mark_as_listened);
+		}
 
 	}
 	
@@ -191,10 +197,10 @@ public class EpisodesFragment extends Fragment {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 		Cursor c = (Cursor) episodesListView.getAdapter().getItem(info.position);
+		int pid = c.getInt(c.getColumnIndex("_id"));
 
 		switch (item.getItemId()) {
 		case 1:
-			int pid = c.getInt(c.getColumnIndex("_id"));
 			getActivity().getContentResolver()
 					.delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
 							+ show_id + "/episodes"), "_id = ?",
@@ -211,6 +217,10 @@ public class EpisodesFragment extends Fragment {
 				startActivity(i);
 
 			}
+			return true;
+		case 2:
+			PlayerUIUtils.markAsListenedAndUpdate(getActivity(), pid, episodesListView);
+			c.requery();
 			return true;
 		default:
 			return super.onContextItemSelected(item);

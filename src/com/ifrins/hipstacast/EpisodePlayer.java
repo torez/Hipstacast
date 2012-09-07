@@ -143,6 +143,7 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 
         @Override
         public Fragment getItem(int i) {
+        	Log.d("HIP-FRAG", "Requesting fragment id " + i);
         	if (i == 0) {
         		playerFragment = new PlayerFragment();
         		Bundle args = new Bundle();

@@ -74,8 +74,6 @@ public class HipstacastSyncService extends Service {
 		private SharedPreferences prefs = null;
 
 		
-		private static final String START_HTML = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><style>body{background-color:#000;color:#fff;}body a{color:#33b5e5;} img{max-width:100%}</style></head><body>";
-		private static final String END_HTML = "</body></html>";
 		private final Context context;
 		private XPath xpath = null;
 		private DocumentBuilder builder = null;
@@ -176,9 +174,9 @@ public class HipstacastSyncService extends Service {
 							episodeContentValues.put("status", 0);
 							if (shownotes == "") {
 								String ds = xpath.compile(String.format(DESCR_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
-								episodeContentValues.put("shownotes", START_HTML + ds + END_HTML);
+								episodeContentValues.put("shownotes", SyncUtils.START_HTML + ds + SyncUtils.END_HTML);
 							} else {
-								episodeContentValues.put("shownotes", START_HTML + shownotes + END_HTML);
+								episodeContentValues.put("shownotes", SyncUtils.START_HTML + shownotes + SyncUtils.END_HTML);
 							}
 							if (mediaType.equals("video")) {
 								episodeContentValues.put("type", 1);

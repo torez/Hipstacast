@@ -8,7 +8,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.widget.ListView;
+
 import com.ifrins.hipstacast.EpisodePlayer;
+import com.ifrins.hipstacast.EpisodeListCursorAdapter;
 import com.ifrins.hipstacast.HipstacastPlayerService;
 import com.ifrins.hipstacast.R;
 
@@ -101,6 +104,10 @@ public class PlayerUIUtils {
 				.update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/episodes"), c, "_id = ?",
 						new String[] { String.valueOf(episode_id) });
 
+	}
+	public static void markAsListenedAndUpdate(Context context, int episode_id, ListView listView) {
+		setEpisodeAsListened(context, episode_id);
+		((EpisodeListCursorAdapter)listView.getAdapter()).notifyDataSetChanged();
 	}
 
 

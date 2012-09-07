@@ -8,6 +8,9 @@ import android.content.Context;
 import android.database.Cursor;
 
 public class SyncUtils {
+	public static final String START_HTML = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><style>body{background-color:#000;color:#fff;}body a{color:#33b5e5;} img{max-width:100%}iframe{width:99%; height:auto;border:0; margin-top:5px}</style></head><body>";
+	public static final String END_HTML = "<iframe src=\"https://hipstacast.appspot.com/api/ads\"></iframe></body></html>";
+	
 	public static final int convertDurationToSeconds(String duration) {
 		String[] tokens = duration.split(":");
 		int hours = 0;

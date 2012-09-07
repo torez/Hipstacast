@@ -51,8 +51,6 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 	private static final String DURATION_ITEM_XPATH = "rss/channel/item[position() = 1]/duration/text()";
 	private static final String DONATE_ITEM_XPATH = "/rss/channel/item[position() = 1]/link[@rel='payment']/@href";
 	
-	private static final String START_HTML = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><style>body{background-color:#000;color:#fff;}body a{color:#33b5e5;} img{max-width:100%}</style></head><body>";
-	private static final String END_HTML = "</body></html>";
 	
 	private OnTaskCompleted listener = null;
 	private Context context = null;
@@ -232,9 +230,9 @@ public class AddPodcastProvider extends AsyncTask<Object, Void, ContentValues> {
 						episodeContentValues.put("status", 0);
 						if (shownotes == "") {
 							String ds = xpath.compile(DESCR_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString();
-							episodeContentValues.put("shownotes", START_HTML + ds + END_HTML);
+							episodeContentValues.put("shownotes", SyncUtils.START_HTML + ds + SyncUtils.END_HTML);
 						} else {
-							episodeContentValues.put("shownotes", START_HTML + shownotes + END_HTML);
+							episodeContentValues.put("shownotes", SyncUtils.START_HTML + shownotes + SyncUtils.END_HTML);
 						}
 						String mediaType = xpath.compile(MEDIATYPE_ITEM_XPATH).evaluate(doc, XPathConstants.STRING).toString();
 						if (mediaType.length() > 3) {

@@ -33,7 +33,6 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
         	holder.duration.setText("-"+PlayerUIUtils.convertSecondsToDuration(r));
         } else if (status == 3) {
         	holder.duration.setVisibility(View.INVISIBLE);
-        	holder.duration.setTextAppearance(context, android.R.style.TextAppearance_DeviceDefault_Medium);
         } else if (status == 0) {
         	holder.duration.setVisibility(View.VISIBLE);
         	holder.duration.setText("\u25BC");

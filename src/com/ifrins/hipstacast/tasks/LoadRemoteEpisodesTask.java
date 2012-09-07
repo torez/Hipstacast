@@ -34,8 +34,6 @@ public class LoadRemoteEpisodesTask extends AsyncTask<Void, Void, Void> {
 	private static final String DONATE_ITEM_XPATH = "rss/channel/item[position() = %d]/link[@rel='payment']/@href";
 
 	
-	private static final String START_HTML = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><style>body{background-color:#000;color:#fff;}body a{color:#33b5e5;} img{max-width:100%}</style></head><body>";
-	private static final String END_HTML = "</body></html>";
 	private XPath xpath = null;
 	private DocumentBuilder builder = null;
 	private DocumentBuilderFactory factory = null;
@@ -112,9 +110,9 @@ public class LoadRemoteEpisodesTask extends AsyncTask<Void, Void, Void> {
 					String shownotes = xpath.compile(String.format(SHOWNOTES_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
 					int type;
 					if (shownotes == "") {
-						shownotes = START_HTML + xpath.compile(String.format(DESCR_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString() + END_HTML;
+						shownotes = SyncUtils.START_HTML + xpath.compile(String.format(DESCR_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString() + SyncUtils.END_HTML;
 					} else {
-						shownotes = START_HTML + shownotes + END_HTML;
+						shownotes = SyncUtils.START_HTML + shownotes + SyncUtils.END_HTML;
 					}
 					String mediaType = xpath.compile(String.format(MEDIATYPE_ITEM_XPATH, i+1)).evaluate(doc, XPathConstants.STRING).toString();
 					if (mediaType.length() > 4) {
