@@ -232,8 +232,12 @@ public class PlayerFragment extends Fragment {
 		episodeTitle.setSelected(true);
 		
 		ImageView coverImage = (ImageView)finalView.findViewById(R.id.playerCoverImage);
-		coverImage.setImageURI(getImageUri(episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_PODCAST_ID))));
+		Uri coverImageUri = getImageUri(episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_PODCAST_ID)));
+		if (coverImageUri != null) {
+			coverImage.setImageURI(coverImageUri);
+		}
 		coverImage.setOnClickListener(pictureClickListener);
+
 		
 		TextView totalDuration = (TextView)finalView.findViewById(R.id.playerTotalDuration);
 		duration = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_DURATION));
@@ -301,8 +305,12 @@ public class PlayerFragment extends Fragment {
 		p.close();
 		String[] imagePath = fullPath.split("/");
 		String imgName = imagePath[imagePath.length-1];
-		imgName = imgName.substring(0, imgName.length()-3) + "w.jpg";
-		return Uri.parse(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/hipstacast/img/"+ imgName);
+		if (imgName.length() > 3) {
+			imgName = imgName.substring(0, imgName.length()-3) + "w.jpg";
+			return Uri.parse(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/hipstacast/img/"+ imgName);
+		} else {
+			return null;
+		}
 
 	}
 	
