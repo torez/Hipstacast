@@ -131,13 +131,22 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 	
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
     	private Context context;
+    	private ShownotesFragment sF;
     	
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
         public SectionsPagerAdapter(FragmentManager fm, Context ctx) {
             super(fm);
         	context = ctx;
+    		playerFragment = new PlayerFragment();
+    		Bundle args = new Bundle();
+    		if (fromNotification)
+    			args.putBoolean("from_notification", fromNotification);
+    		args.putInt("podcast_id", podcast_id);
+    		playerFragment.setArguments(args);
+    		sF = new ShownotesFragment();
+    		Bundle argsSF = new Bundle();
+    		argsSF.putInt("episode_id", podcast_id);
+    		sF.setArguments(argsSF);
+
         }
  
 
@@ -145,19 +154,9 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
         public Fragment getItem(int i) {
         	Log.d("HIP-FRAG", "Requesting fragment id " + i);
         	if (i == 0) {
-        		playerFragment = new PlayerFragment();
-        		Bundle args = new Bundle();
-        		if (fromNotification)
-        			args.putBoolean("from_notification", fromNotification);
-        		args.putInt("podcast_id", podcast_id);
-        		playerFragment.setArguments(args);
         		return playerFragment;
 
         	} else if (i == 1) {
-        		ShownotesFragment sF = new ShownotesFragment();
-        		Bundle args = new Bundle();
-        		args.putInt("episode_id", podcast_id);
-        		sF.setArguments(args);
         		return sF;
         	}
         	return null;
