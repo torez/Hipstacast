@@ -9,7 +9,7 @@ import android.net.Uri;
 import org.acra.*;
 import org.acra.annotation.*;
 
-@ReportsCrashes(formKey = "dGVTZWQtbGxnYW1WbExwVnJCQndSdFE6MQ") 
+@ReportsCrashes(formKey = "", formUri = "http://dev.enlacebit.me/submit.php")
 public class Hipstacast extends Application {
 	public static final String WELCOME_PREFERENCES = "WELCOME";
 	public static final String FULL_SHOW_PREFERENCES = "FULLSHOWPREFERENCES";

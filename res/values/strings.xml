@@ -87,6 +87,6 @@
     <!-- 1.0.2 -->
     <string name="mark_as_listened">Mark as listened</string>
     <!-- Resources -->
-    <string name="version_number">1.0.2</string>
+    <string name="version_number">1.0.4</string>
 
 </resources>

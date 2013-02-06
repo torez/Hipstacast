@@ -2,6 +2,7 @@ package com.ifrins.hipstacast.fragments;
 
 import com.ifrins.hipstacast.R;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
@@ -18,15 +19,29 @@ public class ShownotesFragment extends Fragment {
 	
 	private WebViewClient wVClient = new WebViewClient() {
         @Override
-        public void onLoadResource (WebView view, String url) {
-        	if (!url.contains("data:text/html") || !url.contains("https://hipstacast.appspot.com/api/ads")) {
-                if(view.getHitTestResult().getType() > 0){
-                    view.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
-                    view.stopLoading();
+        public boolean shouldOverrideUrlLoading (WebView view, String url) {
+        	Log.d("HOP", url);
+        	if (!url.contains("data:text/html") || !url.contains("https://hipstacast.appspot.com/api/ads") || !url.contains("htts://hipstacast.appspot.com/api/ads")) {
+                if (view != null) {
+                	Context context = view.getContext();
+                	if (context != null)
+                		context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    	view.stopLoading();
+                    return true;
                 }
         	}
-        	Log.d("HIP-RES-URL", url);
+        	return false;
         }
+        
+        @Override
+        public void onLoadResource (WebView view, String url) {
+            if (url.contains("http://a-ads.com/catalog")) {
+                    view.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
+                    view.stopLoading();
+                    Log.i("RESLOAD", Uri.parse(url).toString());
+            }
+        }
+
 
 	};
 	
@@ -40,7 +55,10 @@ public class ShownotesFragment extends Fragment {
 		View shownotesView = inflater.inflate(R.layout.shownotes_viewer, null);
 		WebView webView = (WebView)shownotesView.findViewById(R.id.playerEpisodeDesc);
 		webView.setWebViewClient(wVClient);
-		webView.loadData(p.getString(p.getColumnIndex("shownotes")), "text/html; charset=UTF-8", null);
+		webView.getSettings().setJavaScriptEnabled(true);
+		String data = p.getString(p.getColumnIndex("shownotes"));
+		webView.loadDataWithBaseURL("http://hipstacast.appspot.com", data, "text/html", null, null);
+
 		p.close();
 		return shownotesView;
 	}

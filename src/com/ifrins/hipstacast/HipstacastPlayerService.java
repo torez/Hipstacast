@@ -102,7 +102,8 @@ public class HipstacastPlayerService extends Service implements
 		} catch (IOException e1) {
 		}
 		try {
-			fileInputStream.close();
+			if (fileInputStream != null)
+				fileInputStream.close();
 		} catch (IOException e1) {
 		}
 		try {
@@ -123,16 +124,16 @@ public class HipstacastPlayerService extends Service implements
 			mediaPlayer.setVolume(1.0f, 1.0f);
 			break;
 		case AudioManager.AUDIOFOCUS_LOSS:
-			if (mediaPlayer.isPlaying())
+			if (mediaPlayer != null && mediaPlayer.isPlaying())
 				mediaPlayer.stop();
 			destroy();
 			break;
 		case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-			if (mediaPlayer.isPlaying())
+			if (mediaPlayer != null && mediaPlayer.isPlaying())
 				mediaPlayer.pause();
 			break;
 		case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-			if (mediaPlayer.isPlaying())
+			if (mediaPlayer != null && mediaPlayer.isPlaying())
 				mediaPlayer.setVolume(0.1f, 0.1f);
 			break;
 		}

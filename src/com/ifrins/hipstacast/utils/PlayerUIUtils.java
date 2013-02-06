@@ -100,8 +100,9 @@ public class PlayerUIUtils {
 		ContentValues c = new ContentValues();
 		c.put("position", 0);
 		c.put("status", 3);
-		context.getContentResolver()
-				.update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/episodes"), c, "_id = ?",
+		if (context != null)
+			context.getContentResolver()
+					.update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/episodes"), c, "_id = ?",
 						new String[] { String.valueOf(episode_id) });
 
 	}
