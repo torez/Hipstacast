@@ -65,7 +65,9 @@ public class ImportTask extends AsyncTask<Integer, Void, Void> {
 		}
 		JSONArray a = null;
 		try {
-			a = new JSONArray(response);
+			if (response != null) {
+				a = new JSONArray(response);
+			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -79,9 +81,12 @@ public class ImportTask extends AsyncTask<Integer, Void, Void> {
 				}
 			}
 		}
-		new AddPodcastProvider(context, null).execute(Arrays.copyOf(urls.toArray(), urls.toArray().length, String[].class),
+		if (urls.size() > 0) {
+			new AddPodcastProvider(context, null).execute(Arrays.copyOf(urls.toArray(), urls.toArray().length, String[].class),
 				progress,
 				context);
+		}
+	
 
 		return null;
 	}
