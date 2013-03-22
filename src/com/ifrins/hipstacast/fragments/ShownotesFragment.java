@@ -35,7 +35,8 @@ public class ShownotesFragment extends Fragment {
         
         @Override
         public void onLoadResource (WebView view, String url) {
-            if (url.contains("http://a-ads.com/catalog")) {
+        	Log.d("CLICK", url);
+            if (url.contains("http://click.a-ads.com") || url.contains("http://a-ads.com/catalog")) {
                     view.getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)));
                     view.stopLoading();
                     Log.i("RESLOAD", Uri.parse(url).toString());
