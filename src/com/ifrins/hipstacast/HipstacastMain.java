@@ -1,5 +1,6 @@
 package com.ifrins.hipstacast;
 
+import com.crashlytics.android.Crashlytics;
 import java.util.Random;
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -33,6 +34,7 @@ public class HipstacastMain extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Crashlytics.start(this);
 		setContentView(R.layout.main);
 		if (((Hipstacast)getApplicationContext()).shouldDisplayWelcomeActivity()) {
 			Intent welcomeActivity = new Intent(this, HipstacastWelcome.class);

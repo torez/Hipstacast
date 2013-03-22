@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ifrins.hipstacast"
-    android:versionCode="17"
-    android:versionName="1.0.9" >
+    android:versionCode="18"
+    android:versionName="1.0.10" >
 
     <uses-sdk android:minSdkVersion="15" />
 
@@ -90,6 +90,7 @@
             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" 
             android:launchMode="singleInstance">
         </activity>
+        <meta-data android:name="com.crashlytics.ApiKey" android:value="450aa570a5e6b349ef7a66d64772c93f12031b58"/>
     </application>
 
 </manifest>

@@ -6,10 +6,7 @@ import android.content.SharedPreferences.Editor;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
-import org.acra.*;
-import org.acra.annotation.*;
 
-@ReportsCrashes(formKey = "", formUri = "http://dev.enlacebit.me/submit.php")
 public class Hipstacast extends Application {
 	public static final String WELCOME_PREFERENCES = "WELCOME";
 	public static final String FULL_SHOW_PREFERENCES = "FULLSHOWPREFERENCES";
@@ -27,7 +24,6 @@ public class Hipstacast extends Application {
 
 	@Override
 	public void onCreate() {
-		ACRA.init(this);
 		super.onCreate();
 	}
 
