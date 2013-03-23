@@ -26,14 +26,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textStyle="bold" >
+            android:textStyle="bold"
+            android:textColor="@color/abs__bright_foreground_holo_light" >
         </TextView>
 
         <TextView
             android:id="@+id/podcastAuthor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall" >
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/abs__bright_foreground_holo_light" >
         </TextView>
     </LinearLayout>
 
