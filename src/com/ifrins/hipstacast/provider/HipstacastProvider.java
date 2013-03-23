@@ -1,5 +1,7 @@
 package com.ifrins.hipstacast.provider;
 
+import android.net.Uri;
+
 public class HipstacastProvider {
 	public final static String PODCAST_TITLE = "title";
 	public final static String PODCAST_LINK = "link";
@@ -31,6 +33,8 @@ public class HipstacastProvider {
 	
 	public final static int EPISODE_TYPE_AUDIO = 0;
 	public final static int EPISODE_TYPE_VIDEO = 1;
+	
+	public final static Uri SUBSCRIPTIONS_URI = Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts");
 	
 	
 }

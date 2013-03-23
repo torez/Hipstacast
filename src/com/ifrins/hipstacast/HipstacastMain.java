@@ -1,8 +1,11 @@
 package com.ifrins.hipstacast;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.crashlytics.android.Crashlytics;
 import java.util.Random;
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -11,74 +14,37 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
+import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.ifrins.hipstacast.fragments.SubscriptionsFragment;
 import com.ifrins.hipstacast.tasks.CheckForUpdates;
 import com.ifrins.hipstacast.tasks.ExportTask;
 import com.ifrins.hipstacast.tasks.ImportTask;
 
-public class HipstacastMain extends Activity {
+public class HipstacastMain extends SherlockFragmentActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Crashlytics.start(this);
-		setContentView(R.layout.main);
-		if (((Hipstacast)getApplicationContext()).shouldDisplayWelcomeActivity()) {
-			Intent welcomeActivity = new Intent(this, HipstacastWelcome.class);
-			welcomeActivity.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(welcomeActivity);
-		}
-		else {
-			Cursor p = managedQuery(
-					Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"),
-					new String[] { "_id", "title", "imageUrl", "author" }, null,
-					null, "title ASC"); 
-			getActionBar().setSubtitle(String.format(getString(R.string.subscription_count), p.getCount()));
-			ListView listView = (ListView)findViewById(R.id.mainRegularListView);
-			if (listView != null) {
-				listView.setAdapter(new PodcastMainListCursorAdapter(
-						getApplicationContext(), p));
+		setContentView(R.layout.basic_layout);
 		
-				listView.setTextFilterEnabled(true);
+		Fragment mainFragment = new SubscriptionsFragment();
 		
-				listView.setOnItemClickListener(new ListView.OnItemClickListener() {
-					@Override
-					public void onItemClick(AdapterView<?> parent, View view,
-							int position, long id) {
-						
-						Cursor c = (Cursor) parent.getAdapter().getItem(position);
-						Intent openIntent = new Intent(getApplicationContext(),
-								HipstacastEpisodeView.class);
-						openIntent.putExtra("show_id",
-								c.getString(c.getColumnIndex("_id")));
-						openIntent.putExtra("img_url",
-								c.getString(c.getColumnIndex("imageUrl")));
-						openIntent.putExtra("show_title", c.getString(c.getColumnIndex("title")));
-						startActivity(openIntent);
-						// c.close();
-					}
-		
-				});
-			}
-		}
+		this.getSupportFragmentManager()
+			.beginTransaction()
+			.replace(R.id.container, mainFragment)
+			.commit();
 		
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
-		MenuInflater inflater = getMenuInflater();
+		MenuInflater inflater = getSupportMenuInflater();
 		inflater.inflate(R.menu.main_menu, menu);
 		return true;
 	}
