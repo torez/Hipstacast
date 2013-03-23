@@ -86,6 +86,7 @@
     
     <!-- 1.0.2 -->
     <string name="mark_as_listened">Mark as listened</string>
+    <string name="search_podcasts">Search podcasts</string>
     <!-- Resources -->
     <string name="version_number">1.0.8</string>
 

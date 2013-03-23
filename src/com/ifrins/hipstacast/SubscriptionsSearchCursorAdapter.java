@@ -10,12 +10,12 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class ShowsSearchCursorAdapter extends ArrayAdapter<Object> {
+public class SubscriptionsSearchCursorAdapter extends ArrayAdapter<Object> {
 
 	private Context ctx;
 	private Object[] podcsts;
 
-	public ShowsSearchCursorAdapter(Context context, Object[] podcasts) {
+	public SubscriptionsSearchCursorAdapter(Context context, Object[] podcasts) {
 		super(context, R.layout.podcasts_list, podcasts);
 		ctx = context;
 		podcsts = podcasts;

@@ -14,43 +14,25 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.support.v4.app.Fragment;
-import android.widget.ListView;
-import android.widget.Toast;
-import com.ifrins.hipstacast.R;
-import com.ifrins.hipstacast.ShowsSearchCursorAdapter;
 import com.ifrins.hipstacast.model.Podcast;
 
-public class ITunesStoreSearchTask extends
-		AsyncTask<String, Void, List<Podcast>> {
+public class ITunesStoreSearchTask extends AsyncTask<String, Void, List<Podcast>> {
 
 	String query;
 	Context context;
-	ProgressDialog progressDialog;
-	Fragment searchFragment;
+	OnSearchFinished completitionCallback;
 
-	public ITunesStoreSearchTask(Context ctx, Fragment srch) {
-		context = ctx;
-		searchFragment = srch;
-	}
-
-	@Override
-	protected void onPreExecute() {
-		progressDialog = new ProgressDialog(context);
-		progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-		progressDialog.setMessage(context.getString(R.string.search_progress));
-		progressDialog.setCancelable(false);
-		progressDialog.show();
-
+	public ITunesStoreSearchTask(Context context, String query, OnSearchFinished completitionCallback) {
+		this.context = context;
+		this.query = query;
+		this.completitionCallback = completitionCallback;
 	}
 
 	@Override
 	protected List<Podcast> doInBackground(String... params) {
 
-		query = params[0];
 		String _url;
 		String response = null;
 
@@ -107,18 +89,12 @@ public class ITunesStoreSearchTask extends
 
 	@Override
 	protected void onPostExecute(List<Podcast> result) {
-		progressDialog.dismiss();
+		Object[] r = null;
+		
 		if (result != null) {
-			Object[] r = result.toArray();
-			ShowsSearchCursorAdapter adapter = new ShowsSearchCursorAdapter(
-					context, r);
-			adapter.notifyDataSetChanged();
-			ListView list = (ListView)searchFragment.getView().findViewById(R.id.searchListView);
-			list.setAdapter(adapter);
-			list.setTextFilterEnabled(true);
-		} else {
-			Toast.makeText(context, R.string.search_error, Toast.LENGTH_SHORT)
-					.show();
+			r = result.toArray();
 		}
+		
+		completitionCallback.onSearchFinished(r);
 	}
 }

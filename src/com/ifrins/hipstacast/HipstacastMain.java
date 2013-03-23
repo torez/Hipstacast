@@ -18,7 +18,6 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.SubscriptionsFragment;
@@ -53,10 +52,7 @@ public class HipstacastMain extends SherlockFragmentActivity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.menuAdd:
-			Log.d("HIP-CLICK", "menuAdd");
-			Intent openIntent = new Intent(getApplicationContext(),
-					HipstacastSearchNeue.class);
-			startActivity(openIntent);
+			this.onSearchRequested();
 			return true;
 		case R.id.menuRefresh:
 			startService(new Intent(this, HipstacastSyncService.class));
