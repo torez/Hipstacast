@@ -95,6 +95,6 @@ public class ITunesStoreSearchTask extends AsyncTask<String, Void, List<Podcast>
 			r = result.toArray();
 		}
 		
-		completitionCallback.onSearchFinished(r);
+		completitionCallback.onSearchFinished(context, r);
 	}
 }
