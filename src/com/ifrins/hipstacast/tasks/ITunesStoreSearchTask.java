@@ -20,6 +20,8 @@ import com.ifrins.hipstacast.model.Podcast;
 
 public class ITunesStoreSearchTask extends AsyncTask<String, Void, List<Podcast>> {
 
+	private static final String SEARCH_BASE_URL = "http://itunes.apple.com/search?country=US&media=podcast&limit=10&term=";
+	
 	String query;
 	Context context;
 	OnSearchFinished completitionCallback;
@@ -37,11 +39,9 @@ public class ITunesStoreSearchTask extends AsyncTask<String, Void, List<Podcast>
 		String response = null;
 
 		try {
-			_url = "http://itunes.apple.com/search?country=US&media=podcast&limit=10&term="
-					+ URLEncoder.encode(query, "UTF-8");
+			_url = SEARCH_BASE_URL + URLEncoder.encode(query, "UTF-8");
 		} catch (UnsupportedEncodingException e) {
-			_url = "http://itunes.apple.com/search?country=US&media=podcast&limit=10&term="
-					+ query;
+			_url = SEARCH_BASE_URL + query;
 			e.printStackTrace();
 		}
 

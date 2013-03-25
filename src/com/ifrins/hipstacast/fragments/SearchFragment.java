@@ -71,9 +71,11 @@ public class SearchFragment extends SherlockListFragment {
 	OnSearchFinished mSearchFinished = new OnSearchFinished() {
 
 		@Override
-		public void onSearchFinished(Object[] results) {
-			mAdapter = new SubscriptionsSearchCursorAdapter(SearchFragment.this.getActivity(), results);
-			SearchFragment.this.setListAdapter(mAdapter);
+		public void onSearchFinished(Context context, Object[] results) {
+			if (results != null && results.length > 0 && context != null) {
+				mAdapter = new SubscriptionsSearchCursorAdapter(context, results);
+				SearchFragment.this.setListAdapter(mAdapter);
+			}
 			
 			SearchFragment.this.setListShown(true);
 		}
@@ -84,10 +86,15 @@ public class SearchFragment extends SherlockListFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		this.getListView().setOnItemClickListener(mListClickListener);
-				
-		String query = this.getArguments().getString(SearchManager.QUERY);
 		
+		this.getListView().setOnItemClickListener(mListClickListener);
+	}
+	
+	@Override
+	public void onStart () {
+		super.onStart();
+		
+		String query = this.getArguments().getString(SearchManager.QUERY);
 		new ITunesStoreSearchTask(this.getActivity(), query, mSearchFinished).execute();
 	}
 	
