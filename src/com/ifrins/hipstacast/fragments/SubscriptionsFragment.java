@@ -12,12 +12,12 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.ifrins.hipstacast.HipstacastEpisodeView;
-import com.ifrins.hipstacast.PodcastMainListCursorAdapter;
+import com.ifrins.hipstacast.adapters.SubscriptionsCursorAdapter;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
 
 public class SubscriptionsFragment extends SherlockListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
-	PodcastMainListCursorAdapter mAdapter;
+	SubscriptionsCursorAdapter mAdapter;
 	
 	ListView.OnItemClickListener mListClickListener = new ListView.OnItemClickListener() {
 		@Override
@@ -41,7 +41,7 @@ public class SubscriptionsFragment extends SherlockListFragment implements Loade
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
-		mAdapter = new PodcastMainListCursorAdapter(this.getActivity(), null);
+		mAdapter = new SubscriptionsCursorAdapter(this.getActivity(), null);
 	}
 	
 	@Override
@@ -50,6 +50,7 @@ public class SubscriptionsFragment extends SherlockListFragment implements Loade
 		
 		this.setListAdapter(mAdapter);
 		this.setListShown(false);
+		this.getListView().setOnItemClickListener(mListClickListener);
 		
 		this.getLoaderManager().initLoader(0, null, this);
 	}

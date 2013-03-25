@@ -1,5 +1,6 @@
-package com.ifrins.hipstacast;
+package com.ifrins.hipstacast.adapters;
 
+import com.ifrins.hipstacast.R;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -10,12 +11,12 @@ import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class PodcastMainListCursorAdapter extends CursorAdapter {
+public class SubscriptionsCursorAdapter extends CursorAdapter {
 
 	Context ctx;
 
-	public PodcastMainListCursorAdapter(Context context, Cursor c) {
-		super(context, c);
+	public SubscriptionsCursorAdapter(Context context, Cursor c) {
+		super(context, c, false);
 		ctx = context;
 	}
 
