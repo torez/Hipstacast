@@ -2,6 +2,11 @@ package com.ifrins.hipstacast.fragments;
 
 import java.io.File;
 import java.io.IOException;
+
+import com.actionbarsherlock.app.SherlockListFragment;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
 import com.ifrins.hipstacast.EpisodeListCursorAdapter;
 import com.ifrins.hipstacast.EpisodePlayer;
 import com.ifrins.hipstacast.Hipstacast;
@@ -19,21 +24,18 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 
 
-public class EpisodesFragment extends Fragment {
+public class EpisodesFragment extends SherlockListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
 	int show_id;
 	ListView episodesListView = null;
@@ -159,22 +161,39 @@ public class EpisodesFragment extends Fragment {
 
 	};
 	
+	EpisodeListCursorAdapter mAdapter;
+	
 	@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-    	
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		
+		mAdapter = new EpisodeListCursorAdapter(this.getActivity(), null);
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		
+		this.setListAdapter(mAdapter);
+		this.setListShown(false);
+		this.getListView().setOnItemClickListener(episodeClickListener);
+		
+		this.getLoaderManager().initLoader(0, null, this);
+		
 		show_id = this.getArguments().getInt("show_id");
 		this.setHasOptionsMenu(true);
-		episodesListView = new ListView(getActivity());
-    	
-    	Cursor episodes = createCursor();
-		getActivity().getActionBar().setSubtitle(String.format(getActivity().getString(R.string.episodes_number), episodes.getCount())); 
+    	registerForContextMenu(this.getListView());
 
-    	episodesListView.setAdapter(new EpisodeListCursorAdapter(getActivity(), episodes));
-    	episodesListView.setOnItemClickListener(episodeClickListener);
-    	registerForContextMenu(episodesListView);
-    	return episodesListView;
-    }
+
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		this.getLoaderManager().restartLoader(0, null, this);
+	}
+	
     
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo)
@@ -193,7 +212,7 @@ public class EpisodesFragment extends Fragment {
 	}
 	
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item) {
 		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
 				.getMenuInfo();
 		Cursor c = (Cursor) episodesListView.getAdapter().getItem(info.position);
@@ -220,10 +239,9 @@ public class EpisodesFragment extends Fragment {
 			return true;
 		case 2:
 			PlayerUIUtils.markAsListenedAndUpdate(getActivity(), pid, episodesListView);
-			c.requery();
 			return true;
 		default:
-			return super.onContextItemSelected(item);
+			return super.onOptionsItemSelected(item);
 		}
 	}
 	
@@ -233,13 +251,36 @@ public class EpisodesFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+	@Override
+	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
+		return new CursorLoader(this.getActivity(),
+								Hipstacast.EPISODES_PROVIDER_URI,
+								new String[] { "_id", "title",
+										"duration", "podcast_id", "status", "position",
+										"content_url", "content_length", "publication_date",
+										"type" },
+								"podcast_id = ?",
+								 new String[] { String.valueOf(show_id) }, 
+								 "publication_date DESC");
+	}
 
-    private Cursor createCursor() {
-    	return getActivity().managedQuery(Hipstacast.EPISODES_PROVIDER_URI, new String[] { "_id", "title",
-				"duration", "podcast_id", "status", "position",
-				"content_url", "content_length", "publication_date",
-				"type" }, "podcast_id = ?", new String[] { String.valueOf(show_id) }, "publication_date DESC");
+	@Override
+	public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
+		mAdapter.swapCursor(newCursor);
+		getSherlockActivity()
+			.getSupportActionBar()
+			.setSubtitle(String.format(getActivity().getString(R.string.episodes_number), newCursor.getCount()));
+		
+		if (this.isResumed()) {
+			this.setListShown(true);
+		} else {
+			this.setListShownNoAnimation(true);
+		}
+	}
 
-    }
+	@Override
+	public void onLoaderReset(Loader<Cursor> loader) {
+		mAdapter.swapCursor(null);
+	}
 	
 }

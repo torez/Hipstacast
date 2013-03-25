@@ -1,12 +1,14 @@
 package com.ifrins.hipstacast;
 
 import java.io.File;
+
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.TabListener;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.EpisodeDetailsFragment;
 import com.ifrins.hipstacast.fragments.EpisodesFragment;
-import android.app.ActionBar;
-import android.app.ActionBar.TabListener;
-import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -14,13 +16,12 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
-import android.view.MenuItem;
 
-public class HipstacastEpisodeView extends FragmentActivity implements TabListener {
+public class HipstacastEpisodeView extends SherlockFragmentActivity implements TabListener {
 	int show_id;
 	int episodes_count;
     SectionsPagerAdapter mSectionsPagerAdapter;
@@ -32,7 +33,7 @@ public class HipstacastEpisodeView extends FragmentActivity implements TabListen
 		
         setContentView(R.layout.activity_hipstacast_search_neue);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this);
-        final ActionBar actionBar = getActionBar();
+        final ActionBar actionBar = this.getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -101,14 +102,12 @@ public class HipstacastEpisodeView extends FragmentActivity implements TabListen
      * sections of the app.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-    	private Context context;
     	
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
         public SectionsPagerAdapter(FragmentManager fm, Context ctx) {
             super(fm);
-        	context = ctx;
         }
  
 
