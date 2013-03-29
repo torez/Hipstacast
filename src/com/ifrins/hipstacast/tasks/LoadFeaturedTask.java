@@ -10,7 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ifrins.hipstacast.R;
-import com.ifrins.hipstacast.ShowsSearchCursorAdapter;
+import com.ifrins.hipstacast.SubscriptionsSearchCursorAdapter;
 import com.ifrins.hipstacast.model.Podcast;
 
 import android.content.Context;
@@ -61,7 +61,7 @@ public class LoadFeaturedTask extends AsyncTask<Void, Void, List<Podcast>> {
 	@Override
 	protected void onPostExecute(List<Podcast> podcastList) {
 		featuredList.setOnItemClickListener(itemClickListener);
-		featuredList.setAdapter(new ShowsSearchCursorAdapter(context, podcastList.toArray()));
+		featuredList.setAdapter(new SubscriptionsSearchCursorAdapter(context, podcastList.toArray()));
 	}
 
 }
