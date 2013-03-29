@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+        <item
+        android:id="@+id/menu_delete_subscription"
+        android:title="Remove subscription"/>
+
+                <item
+        android:id="@+id/menu_report_subscription"
+        android:title="Report issues with the subscription"/>
+        
+</menu>

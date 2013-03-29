@@ -6,12 +6,18 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.ifrins.hipstacast.HipstacastEpisodeView;
+import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.adapters.SubscriptionsCursorAdapter;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
 
@@ -36,12 +42,14 @@ public class SubscriptionsFragment extends SherlockListFragment implements Loade
 		}
 
 	};
+	
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		
 		mAdapter = new SubscriptionsCursorAdapter(this.getActivity(), null);
+		this.registerForContextMenu(this.getListView());
 	}
 	
 	@Override
@@ -87,4 +95,30 @@ public class SubscriptionsFragment extends SherlockListFragment implements Loade
 	public void onLoaderReset(Loader<Cursor> arg0) {
 		mAdapter.swapCursor(null);
 	}
+	
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		
+		MenuInflater inflater = this.getSherlockActivity().getMenuInflater();
+		inflater.inflate(R.menu.subscriptions_contextmenu, menu);
+		
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	    
+	    switch(item.getItemId()) {
+	    	case R.id.menu_delete_subscription:
+	    		//TODO: Delete subscription
+	    		return true;
+	    	case R.id.menu_report_subscription:
+	    		//TODO: Report subscription
+	    		return true;
+	    	default:
+	    		return super.onContextItemSelected(item);
+	    }
+	}
+
 }
