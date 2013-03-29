@@ -14,7 +14,7 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
 
 	
 	public EpisodeListCursorAdapter(Context context, Cursor c) {
-		super(context, c);
+		super(context, c, false);
 		
 	}
 
