@@ -21,7 +21,7 @@ public class EpisodeDetailsFragment extends Fragment {
             Bundle savedInstanceState) {
 		show_id = this.getArguments().getInt("show_id");
 		
-		View v = inflater.inflate(R.layout.podcast_detials, null);
+		View v = inflater.inflate(R.layout.podcast_details, null);
 		
 		Cursor show = getCursor();
 		show.moveToFirst();
@@ -34,7 +34,7 @@ public class EpisodeDetailsFragment extends Fragment {
 	}
 	
 	private Cursor getCursor() {
-    	return getActivity().managedQuery(Hipstacast.SUBSCRIPTIONS_PROVIDER_URI, new String[] { "_id", "title",
+    	return getActivity().getContentResolver().query(Hipstacast.SUBSCRIPTIONS_PROVIDER_URI, new String[] { "_id", "title",
     			"description", HipstacastProvider.PODCAST_FEED}, "_id = ?", new String[] { String.valueOf(show_id) }, null);
 
 	}
