@@ -1,36 +1,39 @@
 package com.ifrins.hipstacast;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import com.ifrins.hipstacast.model.PodcastEpisode;
 import com.ifrins.hipstacast.tasks.OnTaskCompleted;
+import com.ifrins.hipstacast.utils.PlayerCallbacks;
+import com.ifrins.hipstacast.utils.PlayerUIUtils;
+
 import android.app.Notification;
 import android.app.Service;
 import android.content.BroadcastReceiver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
 public class HipstacastPlayerService extends Service implements
 		AudioManager.OnAudioFocusChangeListener {
-	public MediaPlayer mediaPlayer;
+	
 	AudioManager audioManager;
+	WakeLock mWakeLock;
+	PodcastEpisode mPodcast;
+	
+	public MediaPlayer mediaPlayer;
 	public String podcastToPlayUrl;
 	private final IBinder mBinder = new LocalBinder();
 	public int start_position;
-	public int show_id;
-	public int podcast_id;
-	public int type;
 	public SurfaceHolder surface;
 	public Notification n;
 	public OnTaskCompleted completionListener = null;
@@ -76,49 +79,51 @@ public class HipstacastPlayerService extends Service implements
 			return HipstacastPlayerService.this;
 		}
 	}
-
-	public void initMediaPlayer() {
+	
+	@Override
+	public void onCreate() {
+		super.onCreate();
 		mediaPlayer = new MediaPlayer();
-		mediaPlayer.setWakeMode(getApplicationContext(),
-				PowerManager.PARTIAL_WAKE_LOCK);
 		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		if (type == 1) {
-			mediaPlayer.setDisplay(surface);
-		}
-		Log.d("HIP-URL", podcastToPlayUrl);
-		FileInputStream fileInputStream = null;
-		try {
-			fileInputStream = new FileInputStream(podcastToPlayUrl);
-		} catch (FileNotFoundException e2) {
-		}
-
-		try {
-			if (fileInputStream != null) {
-				mediaPlayer.setDataSource(fileInputStream.getFD());
-			}
-		} catch (IllegalArgumentException e1) {
-		} catch (SecurityException e1) {
-		} catch (IllegalStateException e1) {
-		} catch (IOException e1) {
-		}
-		try {
-			if (fileInputStream != null)
-				fileInputStream.close();
-		} catch (IOException e1) {
-		}
-		try {
-			mediaPlayer.prepare();
-		} catch (IllegalStateException e) {
-		} catch (IOException e) {
-		}
 		mediaPlayer.setOnCompletionListener(onCompletionListener);
+
+		audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
+		
+		//TODO: audioManager.registerMediaButtonEventReceiver(eventReceiver);
+		
+		PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
+		mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, this.getClass().getName());
+	}
+
+	public void initMediaPlayer(PodcastEpisode podcast, PlayerCallbacks callback) {
+		mPodcast = podcast;
+		
+		try {
+			mediaPlayer.setDataSource(podcast.content_url);
+			mediaPlayer.setOnPreparedListener(PlayerUIUtils.getOnPlayerPreparedListener(callback));
+			mediaPlayer.prepareAsync();
+		} catch (IllegalArgumentException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void onAudioFocusChange(int focusChange) {
+		/*
 		switch (focusChange) {
 		case AudioManager.AUDIOFOCUS_GAIN:
 			if (mediaPlayer == null)
-				initMediaPlayer();
+				//initMediaPlayer();
 			else if (!mediaPlayer.isPlaying())
 				mediaPlayer.start();
 			mediaPlayer.setVolume(1.0f, 1.0f);
@@ -137,6 +142,7 @@ public class HipstacastPlayerService extends Service implements
 				mediaPlayer.setVolume(0.1f, 0.1f);
 			break;
 		}
+		*/
 	}
 
 	@Override
@@ -145,10 +151,11 @@ public class HipstacastPlayerService extends Service implements
 	}
 
 	public boolean isPlaying() {
-		if (mediaPlayer == null)
+		if (mediaPlayer == null) {
 			return false;
-		else
+		} else {
 			return mediaPlayer.isPlaying();
+		}
 	}
 
 	public void stop() {
@@ -157,61 +164,33 @@ public class HipstacastPlayerService extends Service implements
 	}
 
 	public void play() {
-		audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-
-		int result = audioManager.requestAudioFocus(this,
-				AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-		if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-			if (mediaPlayer == null)
-				initMediaPlayer();
-			if (n != null) { 
-				startForeground(podcast_id, n);
-			}
-			mediaPlayer.seekTo(start_position);
-			mediaPlayer.start();
-
-		}
+		mediaPlayer.start();
 	}
+	
 	public void seekTo(int pos) {
-		if (mediaPlayer != null)
-			mediaPlayer.seekTo(pos);
+
 	}
+	
 	public void pause() {
-		stop();
-		stopForeground(true);
+	
 	}
 
 	public void destroy() {
-		if (mediaPlayer != null) {
-			ContentValues c = new ContentValues();
-			c.put("position", (int) mediaPlayer.getCurrentPosition() / 1000);
-			c.put("status", 2);
-			getContentResolver()
-					.update(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
-							+ show_id + "/episodes/" + podcast_id), c,
-							"_id = ?",
-							new String[] { String.valueOf(podcast_id) });
-			Log.d("HIP-PLAYER-DESTROY", "SHOULD BE DESTROYED");
-			start_position = mediaPlayer.getCurrentPosition();
-			mediaPlayer.reset();
-			mediaPlayer.release();
-			mediaPlayer = null;
-		}
-
+	
 	}
 
 	public void clean() {
+	
+	}
+	
+	public int getCurrentPosition() {
 		if (mediaPlayer != null) {
-			mediaPlayer.reset();
-			mediaPlayer = null;
+			return mediaPlayer.getCurrentPosition();
+		} else {
+			return -1;
 		}
 	}
-	public int getCurrentPosition() {
-		if (mediaPlayer != null)
-			return mediaPlayer.getCurrentPosition();
-		else
-			return -1;
-	}
+	
 	public int getDuration() {
 		if (mediaPlayer != null)
 			return mediaPlayer.getDuration();

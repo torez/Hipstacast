@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.util.Log;
 import android.view.SurfaceView;
@@ -21,7 +23,8 @@ public class PlayerUIUtils {
 			int show_id, int episode_id, int type, Notification n,
 			int start_position, SurfaceView surface) {
 		
-		player.clean();
+		/*
+		
 		player.podcastToPlayUrl = android.os.Environment
 				.getExternalStorageDirectory().getAbsolutePath()
 				+ "/Android/data/com.ifrins.hipstacast/files/shows/"
@@ -38,7 +41,7 @@ public class PlayerUIUtils {
 		player.start_position = start_position;
 		player.play();
 		Log.d("HIP-STATUS", "Should start");
-
+		*/
 	}
 
 	public static String convertSecondsToDuration(int seconds) {
@@ -111,5 +114,13 @@ public class PlayerUIUtils {
 		((EpisodeListCursorAdapter)listView.getAdapter()).notifyDataSetChanged();
 	}
 
+	public static OnPreparedListener getOnPlayerPreparedListener(final PlayerCallbacks callbacks) {
+		return new OnPreparedListener() {
+			@Override
+			public void onPrepared(MediaPlayer arg0) {
+				callbacks.onPrepared();
+			}
+		};
+	}
 
 }

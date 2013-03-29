@@ -4,8 +4,10 @@ import com.ifrins.hipstacast.Hipstacast;
 import com.ifrins.hipstacast.HipstacastPlayerService;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.HipstacastPlayerService.LocalBinder;
+import com.ifrins.hipstacast.model.PodcastEpisode;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
 import com.ifrins.hipstacast.tasks.OnTaskCompleted;
+import com.ifrins.hipstacast.utils.PlayerCallbacks;
 import com.ifrins.hipstacast.utils.PlayerUIUtils;
 import android.content.ComponentName;
 import android.content.Context;
@@ -48,6 +50,19 @@ public class PlayerFragment extends Fragment {
 	String donationLink;
 	int type;
 	
+	PodcastEpisode mPodcast = new PodcastEpisode();
+	
+	PlayerCallbacks mPlayerCallbacks = new PlayerCallbacks() {
+
+		@Override
+		public void onPrepared() {
+			PlayerFragment.this.getView()
+				.findViewById(R.id.playerControls)
+				.setVisibility(View.VISIBLE);
+		}
+		
+	};
+	
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
@@ -57,6 +72,11 @@ public class PlayerFragment extends Fragment {
 			LocalBinder binder = (LocalBinder) service;
 			player = binder.getService();
 			bound = true;
+			
+			if (player != null) {
+				player.initMediaPlayer(mPodcast, mPlayerCallbacks);
+			}
+			
 			if (player != null && player.isPlaying()) {
 				playToggleButton.setImageResource(R.drawable.ic_action_pause);
 				seekBarUpdateHandler.post(updateRunnable);
@@ -212,12 +232,24 @@ public class PlayerFragment extends Fragment {
 
 		this.getActivity().startService(intent);
 		this.getActivity().bindService(intent, mConnection, Context.BIND_DEBUG_UNBIND);
-
+		
+		podcast_id = this.getArguments().getInt("podcast_id");
+		Cursor episode = getEpisodeDetails();
+		episode.moveToFirst();
+		show_id = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_PODCAST_ID));
+		//name = episode.getString(episode.getColumnIndex(HipstacastProvider.EPISODE_TITLE));
+		//type = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_TYPE));
+		websiteLink = episode.getString(episode.getColumnIndex("guid"));
+		donationLink = episode.getString(episode.getColumnIndex(HipstacastProvider.EPISODE_DONATION));
+		
+		mPodcast.podcast_id = podcast_id;
+		mPodcast.title = episode.getString(episode.getColumnIndex(HipstacastProvider.EPISODE_TITLE));
+		mPodcast.type = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_TYPE));
+		mPodcast.content_url = episode.getString(episode.getColumnIndex(HipstacastProvider.EPISODE_CONTENT_URL));
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		podcast_id = this.getArguments().getInt("podcast_id");
 		View finalView = inflater.inflate(R.layout.player, null);
 		Cursor episode = getEpisodeDetails();
 		episode.moveToFirst();
@@ -321,8 +353,6 @@ public class PlayerFragment extends Fragment {
 				+ "/Android/data/com.ifrins.hipstacast/files/shows/"
 				+ show_id
 				+ "/" + podcast_id + ".mp3";
-		player.podcast_id = podcast_id;
-		player.show_id = show_id;
 		player.n = PlayerUIUtils.buildNotification(this.getActivity(), name, show_id, podcast_id, type);
 		Log.d("HIP-NW-SP", String.valueOf(start_position));
 		player.completionListener = completionListener;

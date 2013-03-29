@@ -36,4 +36,8 @@ public class PodcastEpisode {
 		this.shownotes = shownotes;
 
 	}
+
+	public PodcastEpisode() {
+		// TODO Auto-generated constructor stub
+	}
 }

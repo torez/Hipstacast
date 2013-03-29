@@ -83,11 +83,13 @@
             android:background="#32B2E9" />
 
         <LinearLayout
+            android:id="@+id/playerControls"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_gravity="bottom"
             android:layout_weight="0"
-            android:gravity="bottom" >
+            android:gravity="bottom"
+            android:visibility="invisible" >
 
             <ImageButton
                 android:layout_width="match_parent"
