@@ -40,47 +40,17 @@
                 android:id="@+id/playerSeekBar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="-20dp"
+                android:layout_marginBottom="-10dp"
                 android:layout_marginTop="-10dp"
                 android:paddingBottom="10dp"
                 android:paddingTop="10dp" />
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp" >
-
-                <TextView
-                    android:id="@+id/timeCounter"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.8"
-                    android:gravity="right"
-                    android:textAppearance="@style/ClingText"
-                    android:textIsSelectable="false" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="left"
-                    android:textAppearance="@style/ClingText"
-                    android:textIsSelectable="false" />
-
-                <TextView
-                    android:id="@+id/playerTotalDuration"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.8"
-                    android:gravity="left"
-                    android:textAppearance="@style/ClingText"
-                    android:textIsSelectable="false" />
-            </LinearLayout>
         </LinearLayout>
 
         <ImageView
             android:id="@+id/playerCoverImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_marginTop="20dp"
             android:layout_weight="1" />
 
         <LinearLayout

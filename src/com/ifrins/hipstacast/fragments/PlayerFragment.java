@@ -271,19 +271,15 @@ public class PlayerFragment extends Fragment {
 		coverImage.setOnClickListener(pictureClickListener);
 
 		
-		TextView totalDuration = (TextView)finalView.findViewById(R.id.playerTotalDuration);
 		duration = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_DURATION));
-		totalDuration.setText(PlayerUIUtils.convertSecondsToDuration(duration));
 		
 		seekBar = (SeekBar)finalView.findViewById(R.id.playerSeekBar);
 		seekBar.setMax(episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_DURATION))*1000);
 		seekBar.setOnSeekBarChangeListener(seekBarChangeListener);
 		
 		int currentPosition = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_CURRENT_POSITION));
-		timeCounter = (TextView)finalView.findViewById(R.id.timeCounter);
 
 		if (currentPosition > 0) {
-			timeCounter.setText(PlayerUIUtils.convertSecondsToDuration(currentPosition));
 			seekBar.setProgress(currentPosition * 1000);
 			start_position = currentPosition * 1000;
 		}
@@ -348,18 +344,7 @@ public class PlayerFragment extends Fragment {
 	
 	private void startPlaying() {
 		player.clean();
-		player.podcastToPlayUrl = android.os.Environment
-				.getExternalStorageDirectory().getAbsolutePath()
-				+ "/Android/data/com.ifrins.hipstacast/files/shows/"
-				+ show_id
-				+ "/" + podcast_id + ".mp3";
-		player.n = PlayerUIUtils.buildNotification(this.getActivity(), name, show_id, podcast_id, type);
-		Log.d("HIP-NW-SP", String.valueOf(start_position));
-		player.completionListener = completionListener;
-		player.start_position = start_position;
-		player.play();
-		if (duration == 0)
-			fixDuration();
+		player.play(start_position);
 		seekBarUpdateHandler.postDelayed(updateRunnable, 1100);
 		Log.d("HIP-STATUS", "Should start");
 	}
@@ -370,17 +355,5 @@ public class PlayerFragment extends Fragment {
 		PlayerUIUtils.savePosition(this.getActivity(), podcast_id, start_position);
 		Log.d("HIP-STATUS", "Should stop");
 	}
-	private void fixDuration() {
-		View finalView = this.getView();
-		
-		SeekBar seekBar = (SeekBar)finalView.findViewById(R.id.playerSeekBar);
-		seekBar.setMax(player.mediaPlayer.getDuration());
-		
-		TextView timeCounter = (TextView)finalView.findViewById(R.id.playerTotalDuration);
-		timeCounter.setText(PlayerUIUtils.convertSecondsToDuration(player.mediaPlayer.getDuration()/1000));
-		
-		PlayerUIUtils.fixDuration(this.getActivity(), podcast_id, player.mediaPlayer.getDuration()/1000);
-	}
-		
 
 }
