@@ -2,85 +2,86 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/card_background_color"
     android:orientation="vertical" >
 
     <LinearLayout
+        style="@style/CardParent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top"
+        android:background="@color/card_foreground_color"
         android:gravity="top"
         android:orientation="vertical" >
 
-		<LinearLayout
-		            android:id="@+id/playerDetails"
-		    
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:orientation="vertical" >
-
-        <TextView
-            android:id="@+id/playerEpisodeName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="marquee"
-            android:focusable="true"
-            android:marqueeRepeatLimit="marquee_forever"
-            android:paddingLeft="5dp"
-            android:paddingRight="5dp"
-            android:paddingTop="10dp"
-            android:singleLine="true"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
-
-        <SeekBar
-            android:id="@+id/playerSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="-20dp"
-            android:layout_marginTop="-10dp"
-            android:paddingBottom="10dp"
-            android:paddingTop="10dp" />
-
         <LinearLayout
+            android:id="@+id/playerDetails"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp" >
+            android:orientation="vertical" >
 
             <TextView
-                android:id="@+id/timeCounter"
-                android:layout_width="0dp"
+                android:id="@+id/playerEpisodeName"
+                style="@style/CardTitle"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                android:gravity="right"
-                android:text="00:00"
-                android:textAppearance="@style/ClingText" />
+                android:ellipsize="marquee"
+                android:focusable="true"
+                android:fontFamily="sans-serif-light"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="10dp"
+                android:singleLine="true"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:textIsSelectable="false" />
 
-            <TextView
-                android:layout_width="wrap_content"
+            <SeekBar
+                android:id="@+id/playerSeekBar"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:text=" / "
-                android:textAppearance="@style/ClingText" />
+                android:layout_marginBottom="-20dp"
+                android:layout_marginTop="-10dp"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp" />
 
-            <TextView
-                android:id="@+id/playerTotalDuration"
-                android:layout_width="0dp"
+            <LinearLayout
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.8"
-                android:gravity="left"
-                android:textAppearance="@style/ClingText" />
+                android:layout_marginBottom="10dp" >
+
+                <TextView
+                    android:id="@+id/timeCounter"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:gravity="right"
+                    android:textAppearance="@style/ClingText"
+                    android:textIsSelectable="false" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left"
+                    android:textAppearance="@style/ClingText"
+                    android:textIsSelectable="false" />
+
+                <TextView
+                    android:id="@+id/playerTotalDuration"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.8"
+                    android:gravity="left"
+                    android:textAppearance="@style/ClingText"
+                    android:textIsSelectable="false" />
+            </LinearLayout>
         </LinearLayout>
-		</LinearLayout>
+
         <ImageView
             android:id="@+id/playerCoverImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />
-
-        <View
-            android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="10dp"
-            android:background="#32B2E9" />
 
         <LinearLayout
             android:id="@+id/playerControls"
@@ -92,10 +93,10 @@
             android:visibility="invisible" >
 
             <ImageButton
+                android:id="@+id/playerRewind"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:id="@+id/playerRewind"
                 android:background="@android:color/transparent"
                 android:src="@drawable/ic_action_rewind" />
 
