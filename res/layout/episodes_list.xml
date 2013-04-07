@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="0.40"
         android:gravity="left"
-        android:minLines="2"
+        android:maxLines="2"
         android:text="Title"
         android:textAppearance="?android:attr/textAppearanceMedium" >
     </TextView>
