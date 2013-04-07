@@ -89,5 +89,7 @@
     <string name="search_podcasts">Search podcasts</string>
     <!-- Resources -->
     <string name="version_number">1.0.8</string>
+    <string name="about">About</string>
+    <string name="loveCat">Created with &#9829; in Catalonia</string>
 
 </resources>

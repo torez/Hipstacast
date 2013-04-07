@@ -106,6 +106,9 @@
             android:launchMode="singleInstance"
             android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
         </activity>
+        <activity
+            android:name=".HipstacastAbout"
+            android:label="@string/about" />
 
         <meta-data
             android:name="com.crashlytics.ApiKey"

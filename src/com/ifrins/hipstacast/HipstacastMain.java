@@ -66,6 +66,9 @@ public class HipstacastMain extends SherlockFragmentActivity {
 		case R.id.menuExport:
 			startExport();
 			return true;
+		case R.id.menuAbout:
+			startActivity(new Intent(this, HipstacastAbout.class));
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
