@@ -1,6 +1,5 @@
 package com.ifrins.hipstacast;
 
-
 import java.io.IOException;
 
 import com.ifrins.hipstacast.HipstacastPlayerService.Preparation.PlayerStatus;
@@ -14,6 +13,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnBufferingUpdateListener;
+import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.IBinder;
@@ -36,6 +37,16 @@ public class HipstacastPlayerService extends Service {
 	}
 	
 	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+		return START_STICKY;
+	}
+	
+	@Override
+	public void onDestroy() {
+		HipstacastLogging.log("Destroying service");
+	}
+	
+	@Override
 	public IBinder onBind(Intent intent) {
 		return new LocalBinder();
 	}
@@ -49,6 +60,8 @@ public class HipstacastPlayerService extends Service {
 		mPlayer.reset();
 		mPlayer.setAudioSessionId(episodeId);
 		mPlayer.setOnPreparedListener(mPreparedListener);
+		mPlayer.setOnBufferingUpdateListener(mBufferingUpdateListener);
+		mPlayer.setOnErrorListener(mOnErrorListener);
 		try {
 			mPlayer.setDataSource(mPreparation.getPath());
 		} catch (IllegalArgumentException e) {
@@ -90,6 +103,14 @@ public class HipstacastPlayerService extends Service {
 		return false;
 	}
 	
+	public Boolean isPlaying(){
+		if (mPlayer != null && mPreparation.status == PlayerStatus.PREPARED) {
+			return mPlayer.isPlaying();
+		} else {
+			return false;
+		}
+	}
+	
 	// PLAYER CONTROLS 
 	
 	public void play() {
@@ -104,10 +125,43 @@ public class HipstacastPlayerService extends Service {
 		}
 	}
 	
+	public void destroy() {
+		if (mPlayer != null) {
+			mPlayer.release();
+			mPreparation = null;
+		}
+	}
+	
+	public void ff() {
+		if (mPlayer != null) {
+			mPlayer.seekTo(mPlayer.getCurrentPosition() + (20 * 1000));
+		}
+	}
+	
+	public void rewind() {
+		if (mPlayer != null) {
+			mPlayer.seekTo(mPlayer.getCurrentPosition() - (20 * 1000));
+		}
+	}
+	
+	public void seekTo(int position) {
+		if (mPlayer != null) {
+			mPlayer.seekTo(position);
+		}
+	}
+	
 	// GET DATA
 	
 	public String getEpisodeTitle() {
 		return mPreparation.getEpisodeTitle();
+	}
+	
+	public String getCoverPath(Context context) {
+		return mPreparation.getCoverPath(context);
+	}
+	
+	public int getEpisodeDuration() {
+		return mPreparation.getEpisodeDuration();
 	}
 	
 	private OnPreparedListener mPreparedListener = new OnPreparedListener() {
@@ -121,6 +175,29 @@ public class HipstacastPlayerService extends Service {
 			
 		}
 		
+	};
+	
+	private OnBufferingUpdateListener mBufferingUpdateListener = new OnBufferingUpdateListener() {
+		
+		@Override
+		public void onBufferingUpdate(MediaPlayer mp, int ratio) {
+			mPlayerCallbacks.onBufferingUpdate(ratio);
+			
+			if (ratio == 100) {
+				mp.setOnBufferingUpdateListener(null);
+			}
+		}
+		
+	};
+	
+	private OnErrorListener mOnErrorListener = new OnErrorListener() {
+
+		@Override
+		public boolean onError(MediaPlayer arg0, int what, int extra) {
+			HipstacastLogging.log("what", what);
+			HipstacastLogging.log("extra", extra);
+			return false;
+		}
 	};
 
 	// OTHER CLASSES
@@ -163,6 +240,44 @@ public class HipstacastPlayerService extends Service {
 				episodeCursor.moveToFirst();
 			}
 			return episodeCursor.getString(episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_TITLE));
+		}
+		
+		public int getSubscriptionId() {
+			if (episodeCursor.getPosition() != 0) {
+				episodeCursor.moveToFirst();
+			}
+			return episodeCursor.getInt(episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_PODCAST_ID));
+		}
+		
+		public int getEpisodeDuration() {
+			if (episodeCursor.getPosition() != 0) {
+				episodeCursor.moveToFirst();
+			}
+			return episodeCursor.getInt(episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_DURATION));
+		}
+		
+		public String getCoverPath(Context context) {
+			Cursor subscription = context.getContentResolver().query(
+									HipstacastProvider.SUBSCRIPTIONS_URI, 
+									new String[] { "_id", HipstacastProvider.PODCAST_IMAGE}, 
+									"_id = ?", 
+									new String[] {String.valueOf(this.getSubscriptionId())}, 
+									null);
+			
+			subscription.moveToFirst();
+
+			String fullPath = subscription.getString(subscription.getColumnIndex(HipstacastProvider.PODCAST_IMAGE));
+			subscription.close();
+			String[] imagePath = fullPath.split("/");
+			String imgName = imagePath[imagePath.length-1];
+			
+			if (imgName.length() > 3) {
+				imgName = imgName.substring(0, imgName.length()-3) + "w.jpg";
+				
+				return android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/hipstacast/img/"+ imgName;
+			}
+			
+			return null;
 		}
 	}
 

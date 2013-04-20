@@ -19,6 +19,13 @@ import com.ifrins.hipstacast.HipstacastPlayerService;
 import com.ifrins.hipstacast.R;
 
 public class PlayerUIUtils {
+	
+	public static String fixCoverPath(String url) {
+		if (!url.startsWith("http")) {
+			return "file://" + url;
+		}
+		return url;
+	}
 
 	public static void startPlaying(HipstacastPlayerService player,
 			int show_id, int episode_id, int type, Notification n,

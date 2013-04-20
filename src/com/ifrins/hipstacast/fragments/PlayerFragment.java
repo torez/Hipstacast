@@ -4,24 +4,25 @@ import com.ifrins.hipstacast.HipstacastPlayerService;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.HipstacastPlayerService.LocalBinder;
 import com.ifrins.hipstacast.model.PodcastEpisode;
-import com.ifrins.hipstacast.provider.HipstacastProvider;
 import com.ifrins.hipstacast.utils.HipstacastLogging;
 import com.ifrins.hipstacast.utils.PlayerCallbacks;
+import com.ifrins.hipstacast.utils.PlayerUIUtils;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -47,6 +48,36 @@ public class PlayerFragment extends Fragment {
 	
 	PodcastEpisode mPodcast = new PodcastEpisode();
 	
+	OnClickListener playbackToggleClickListener = new OnClickListener() {
+
+		@Override
+		public void onClick(View v) {
+			ImageButton button = (ImageButton)v;
+			
+			if (player.isPlaying()) {
+				button.setImageResource(R.drawable.ic_action_play);
+				player.pause();
+			} else {
+				button.setImageResource(R.drawable.ic_action_pause);
+				player.play();
+			}
+		}
+	};
+	
+	OnClickListener ffClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			player.ff();
+		}
+	};
+	
+	OnClickListener rewindClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			player.rewind();
+		}
+	};
+	
 	PlayerCallbacks mPlayerCallbacks = new PlayerCallbacks() {
 
 		@Override
@@ -54,11 +85,14 @@ public class PlayerFragment extends Fragment {
 			PlayerFragment.this.getView()
 			.findViewById(R.id.playerControls)
 			.setVisibility(View.VISIBLE);
+			
+			seekBar.setMax(player.getEpisodeDuration());
 
 		}
 
 		@Override
 		public void onBufferingUpdate(int progress) {
+			HipstacastLogging.log("progress", progress);
 			double percentage = progress * 0.01;
 			int seekPos = (int) (seekBar.getMax() * percentage);
 			seekBar.setSecondaryProgress(seekPos);
@@ -74,9 +108,23 @@ public class PlayerFragment extends Fragment {
 			HipstacastLogging.log(("We are ready!"));
 			
 			TextView titleView = (TextView)fragmentView.findViewById(R.id.playerEpisodeName);
-			
 			titleView.setText(player.getEpisodeTitle());
 			titleView.setSelected(true);
+			
+			ImageView coverView = (ImageView)fragmentView.findViewById(R.id.playerCoverImage);
+			UrlImageViewHelper.setUrlDrawable(coverView, PlayerUIUtils.fixCoverPath(
+																player.getCoverPath(PlayerFragment.this.getActivity())));
+			
+			seekBar = (SeekBar) fragmentView.findViewById(R.id.playerSeekBar);
+			
+			ImageButton playbackToggle = (ImageButton) fragmentView.findViewById(R.id.playToggleButton);
+			playbackToggle.setOnClickListener(playbackToggleClickListener);
+			
+			ImageButton ffButton = (ImageButton) fragmentView.findViewById(R.id.playerFastForward);
+			ffButton.setOnClickListener(ffClickListener);
+			
+			ImageButton rewindButton = (ImageButton) fragmentView.findViewById(R.id.playerRewind);
+			rewindButton.setOnClickListener(rewindClickListener);
 		}
 		
 	};
@@ -85,9 +133,6 @@ public class PlayerFragment extends Fragment {
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			Log.d("HIP_S", "Service connected");
-			// We've bound to LocalService, cast the IBinder and get
-			// LocalService instance
 			LocalBinder binder = (LocalBinder) service;
 			player = binder.getService();
 			bound = true;
@@ -104,7 +149,6 @@ public class PlayerFragment extends Fragment {
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
 			bound = false;
-			Log.d("HIP_S", "Service disconnected");
 		}
 	};
 
@@ -131,52 +175,24 @@ public class PlayerFragment extends Fragment {
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		/*Log.d("HIP-DETACH", "Detach");
-		if (player != null && !player.isPlaying())
+		
+		if (player != null && !player.isPlaying()) {
 			player.destroy();
-		if (bound)
-			this.getActivity().unbindService(mConnection);
-		seekBarUpdateHandler.removeCallbacks(updateRunnable);
-		*/
-	}
-
-	private Cursor getEpisodeDetails() {
-		Log.d("HIP_ID", String.valueOf(episodeId));
-		Cursor p = this
-				.getActivity()
-				.getContentResolver()
-				.query(Uri
-						.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/episodes"),
-						new String[] { "_id", "title", "duration",
-								"podcast_id", "status", "position",
-								"content_url", "shownotes", "guid",
-								"donation_url", "type" }, "_id = ?",
-						new String[] { String.valueOf(episodeId) }, null);
-		return p;
-	}
-
-	private Uri getImageUri(int show_id) {
-		Cursor p = this
-				.getActivity()
-				.getContentResolver()
-				.query(Uri
-						.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"),
-						new String[] { "_id", HipstacastProvider.PODCAST_IMAGE },
-						"_id = ?", new String[] { String.valueOf(show_id) },
-						null);
-		p.moveToFirst();
-		String fullPath = p.getString(p.getColumnIndex(HipstacastProvider.PODCAST_IMAGE));
-		p.close();
-		String[] imagePath = fullPath.split("/");
-		String imgName = imagePath[imagePath.length-1];
-		if (imgName.length() > 3) {
-			imgName = imgName.substring(0, imgName.length()-3) + "w.jpg";
-			return Uri.parse(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/hipstacast/img/"+ imgName);
-		} else {
-			return null;
 		}
-
+		
+		if (bound) {
+			this.getActivity().unbindService(mConnection);
+		}
 	}
 	
+	public void playbackToggle(ImageButton b) {
+		if (player.isPlaying()) {
+			player.pause();
+			b.setImageResource(R.drawable.ic_action_play);
+		} else {
+			player.play();
+			b.setImageResource(R.drawable.ic_action_pause);
+		}
+	}
 
 }
