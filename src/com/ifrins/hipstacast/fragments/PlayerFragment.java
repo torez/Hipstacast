@@ -1,14 +1,12 @@
 package com.ifrins.hipstacast.fragments;
 
-import com.ifrins.hipstacast.Hipstacast;
 import com.ifrins.hipstacast.HipstacastPlayerService;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.HipstacastPlayerService.LocalBinder;
 import com.ifrins.hipstacast.model.PodcastEpisode;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
-import com.ifrins.hipstacast.tasks.OnTaskCompleted;
+import com.ifrins.hipstacast.utils.HipstacastLogging;
 import com.ifrins.hipstacast.utils.PlayerCallbacks;
-import com.ifrins.hipstacast.utils.PlayerUIUtils;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -22,17 +20,15 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.SeekBar;
-import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
 
 public class PlayerFragment extends Fragment {
 
-	int podcast_id;
+	int episodeId;
 	int show_id;
 	HipstacastPlayerService player;
 	Boolean bound = false;
@@ -42,7 +38,6 @@ public class PlayerFragment extends Fragment {
 	Boolean complete = false;
 	Handler seekBarUpdateHandler = new Handler();
 	SeekBar seekBar = null;
-	TextView timeCounter = null;
 	ImageButton playToggleButton = null;
 	Boolean showingControls = true;
 	String name;
@@ -57,9 +52,9 @@ public class PlayerFragment extends Fragment {
 		@Override
 		public void onPrepared() {
 			PlayerFragment.this.getView()
-				.findViewById(R.id.playerControls)
-				.setVisibility(View.VISIBLE);
-			seekBar.setMax(player.getDuration());
+			.findViewById(R.id.playerControls)
+			.setVisibility(View.VISIBLE);
+
 		}
 
 		@Override
@@ -68,8 +63,24 @@ public class PlayerFragment extends Fragment {
 			int seekPos = (int) (seekBar.getMax() * percentage);
 			seekBar.setSecondaryProgress(seekPos);
 		}
+
+		@Override
+		public void onStartDoingUIWork() {
+			View fragmentView = PlayerFragment.this.getView();
+			
+			fragmentView.findViewById(R.id.mainPlayerView).setVisibility(View.VISIBLE);
+			fragmentView.findViewById(R.id.loadingProgress).setVisibility(View.GONE);
+			
+			HipstacastLogging.log(("We are ready!"));
+			
+			TextView titleView = (TextView)fragmentView.findViewById(R.id.playerEpisodeName);
+			
+			titleView.setText(player.getEpisodeTitle());
+			titleView.setSelected(true);
+		}
 		
 	};
+	
 	
 	private ServiceConnection mConnection = new ServiceConnection() {
 		@Override
@@ -81,15 +92,13 @@ public class PlayerFragment extends Fragment {
 			player = binder.getService();
 			bound = true;
 			
-			if (player != null) {
-				player.initMediaPlayer(mPodcast, mPlayerCallbacks);
-			}
+			player.registerForCallbacks(mPlayerCallbacks);
 			
-			if (player != null && player.isPlaying()) {
-				playToggleButton.setImageResource(R.drawable.ic_action_pause);
-				seekBarUpdateHandler.post(updateRunnable);
+			if (player.isAlreadyPrepared(episodeId)) {
+				player.recover();
+			} else {
+				player.prepare(episodeId);
 			}
-
 		}
 
 		@Override
@@ -99,221 +108,40 @@ public class PlayerFragment extends Fragment {
 		}
 	};
 
-	private OnClickListener playToggleClickListener = new OnClickListener() {
-
-		@Override
-		public void onClick(View v) {
-			if (player != null && !player.isPlaying()) {
-				((ImageButton)v).setImageResource(R.drawable.ic_action_pause);
-				startPlaying();
-			} else if (player != null && player.isPlaying()) {
-				((ImageButton)v).setImageResource(R.drawable.ic_action_play);
-				stopPlaying();
-			}
-		}
-	};
-	
-	private OnClickListener fastForwardClickListener = new OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if (player != null && player.isPlaying()) {
-				int newPosition = player.getCurrentPosition() + 30000;
-				player.seekTo(newPosition);
-				seekBar.setProgress(newPosition);
-				timeCounter.setText(PlayerUIUtils.convertSecondsToDuration(newPosition/1000));
-			}
-		}
-	};
-	
-	private OnClickListener rewindClickListener = new OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if (player != null && player.isPlaying()) {
-				int newPosition = player.getCurrentPosition() - 30000;
-				player.seekTo(newPosition);
-				seekBar.setProgress(newPosition);
-				timeCounter.setText(PlayerUIUtils.convertSecondsToDuration(newPosition/1000));
-			}
-		}
-	};
-	
-	private OnClickListener pictureClickListener = new OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			if (player != null && player.isPlaying()) {
-				if (showingControls) {
-					getView().findViewById(R.id.playerEpisodeName).setSelected(false);
-					getView().findViewById(R.id.playerDetails).animate().alpha(0);
-					seekBarUpdateHandler.removeCallbacks(updateRunnable);
-					showingControls = false;
-				} else {
-					getView().findViewById(R.id.playerDetails).animate().alpha(1);
-					getView().findViewById(R.id.playerEpisodeName).setSelected(true);
-					seekBarUpdateHandler.post(updateRunnable);
-					showingControls = true;
-				}
-			}
-		}
-	};
-	
-	private OnSeekBarChangeListener seekBarChangeListener = new OnSeekBarChangeListener() {
-
-		@Override
-		public void onProgressChanged(SeekBar seekBar, int progress,
-				boolean fromUser) {
-			
-			if (fromUser && player != null) {
-				player.seekTo(progress);
-				timeCounter.setText(PlayerUIUtils.convertSecondsToDuration(progress/1000));
-			}
-		}
-
-		@Override
-		public void onStartTrackingTouch(SeekBar seekBar) {
-		}
-
-		@Override
-		public void onStopTrackingTouch(SeekBar seekBar) {
-		}
-		
-	};
-	
-	public OnTaskCompleted completionListener = new OnTaskCompleted() {
-
-		@Override
-		public void onTaskCompleted(String task) {
-			Log.d("HIP-TASK", task);
-			if (task.equals(Hipstacast.TASK_PLAYBACK_COMPLETED)) {
-				playToggleButton.setImageResource(R.drawable.ic_action_play);
-				seekBarUpdateHandler.removeCallbacks(updateRunnable);
-				seekBar.setProgress(player.getDuration());
-				timeCounter.setText(PlayerUIUtils.convertSecondsToDuration(player.getDuration()/1000));
-				start_position = 0;
-				player.destroy();
-				PlayerUIUtils.setEpisodeAsListened(getActivity(), podcast_id);
-			} else if (task.equals(Hipstacast.TASK_OPEN_WEBPAGE)) {
-				if (websiteLink.length() > 0) {
-					Intent openIntent = new Intent(Intent.ACTION_VIEW);
-					openIntent.setData(Uri.parse(websiteLink));
-					startActivity(openIntent);
-				}
-			} else if (task.equals(Hipstacast.TASK_OPEN_DONATIONS)) {
-				if (donationLink.length() > 0) {
-					Intent donateIntent = new Intent(Intent.ACTION_VIEW);
-					donateIntent.setData(Uri.parse(donationLink));
-					startActivity(donateIntent);
-				}
-			} else if (task.equals(Hipstacast.TASK_SHARE)) {
-
-					Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-					sharingIntent.setType("text/plain");
-					sharingIntent.putExtra(
-							android.content.Intent.EXTRA_TEXT,
-							String.format(getString(R.string.share_text), name + " - "
-									+ websiteLink));
-					startActivity(Intent.createChooser(sharingIntent,
-							getString(R.string.share)));
-
-			}
-		}
-		
-	};
-	
-	
-	final Runnable updateRunnable = new Runnable()
-	{
-	    public void run() 
-	    {
-	        if (player.isPlaying()) {
-	        	seekBar.setProgress(player.getCurrentPosition());
-	        	timeCounter.setText(PlayerUIUtils.convertSecondsToDuration(player.getCurrentPosition()/1000));
-	        	seekBarUpdateHandler.postDelayed(updateRunnable, 1100);
-	        }
-	    }
-	};
-
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		episodeId = this.getArguments().getInt("episode_id");
+		
 		Intent intent = new Intent(this.getActivity(), HipstacastPlayerService.class);
 
 		this.getActivity().startService(intent);
 		this.getActivity().bindService(intent, mConnection, Context.BIND_DEBUG_UNBIND);
 		
-		podcast_id = this.getArguments().getInt("podcast_id");
-		Cursor episode = getEpisodeDetails();
-		episode.moveToFirst();
-		show_id = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_PODCAST_ID));
-		//name = episode.getString(episode.getColumnIndex(HipstacastProvider.EPISODE_TITLE));
-		//type = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_TYPE));
-		websiteLink = episode.getString(episode.getColumnIndex("guid"));
-		donationLink = episode.getString(episode.getColumnIndex(HipstacastProvider.EPISODE_DONATION));
-		
-		mPodcast.podcast_id = podcast_id;
-		mPodcast.title = episode.getString(episode.getColumnIndex(HipstacastProvider.EPISODE_TITLE));
-		mPodcast.type = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_TYPE));
-		mPodcast.content_url = episode.getString(episode.getColumnIndex(HipstacastProvider.EPISODE_CONTENT_URL));
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View finalView = inflater.inflate(R.layout.player, null);
-		Cursor episode = getEpisodeDetails();
-		episode.moveToFirst();
-		show_id = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_PODCAST_ID));
-		name = episode.getString(episode.getColumnIndex(HipstacastProvider.EPISODE_TITLE));
-		type = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_TYPE));
-		websiteLink = episode.getString(episode.getColumnIndex("guid"));
-		donationLink = episode.getString(episode.getColumnIndex(HipstacastProvider.EPISODE_DONATION));
-		
-		TextView episodeTitle = (TextView)finalView.findViewById(R.id.playerEpisodeName);
-		episodeTitle.setText(episode.getString(episode.getColumnIndex(HipstacastProvider.EPISODE_TITLE)));
-		episodeTitle.setSelected(true);
-		
-		ImageView coverImage = (ImageView)finalView.findViewById(R.id.playerCoverImage);
-		Uri coverImageUri = getImageUri(episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_PODCAST_ID)));
-		if (coverImageUri != null) {
-			coverImage.setImageURI(coverImageUri);
-		}
-		coverImage.setOnClickListener(pictureClickListener);
-
-		
-		duration = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_DURATION));
-		
-		seekBar = (SeekBar)finalView.findViewById(R.id.playerSeekBar);
-		seekBar.setMax(episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_DURATION))*1000);
-		seekBar.setOnSeekBarChangeListener(seekBarChangeListener);
-		
-		int currentPosition = episode.getInt(episode.getColumnIndex(HipstacastProvider.EPISODE_CURRENT_POSITION));
-
-		if (currentPosition > 0) {
-			seekBar.setProgress(currentPosition * 1000);
-			start_position = currentPosition * 1000;
-		}
-		
-		playToggleButton = (ImageButton)finalView.findViewById(R.id.playToggleButton);
-		playToggleButton.setOnClickListener(playToggleClickListener);
-		((ImageButton)finalView.findViewById(R.id.playerFastForward)).setOnClickListener(fastForwardClickListener);
-		((ImageButton)finalView.findViewById(R.id.playerRewind)).setOnClickListener(rewindClickListener);
-		
-		episode.close();
-		return finalView;
+		View playerView = inflater.inflate(R.layout.player, null);
+		((ProgressBar)playerView.findViewById(R.id.loadingProgress)).setIndeterminate(true);
+		return playerView;
 	}
 	
 	@Override
 	public void onDetach() {
 		super.onDetach();
-		Log.d("HIP-DETACH", "Detach");
+		/*Log.d("HIP-DETACH", "Detach");
 		if (player != null && !player.isPlaying())
 			player.destroy();
 		if (bound)
 			this.getActivity().unbindService(mConnection);
 		seekBarUpdateHandler.removeCallbacks(updateRunnable);
+		*/
 	}
 
 	private Cursor getEpisodeDetails() {
-		Log.d("HIP_ID", String.valueOf(podcast_id));
+		Log.d("HIP_ID", String.valueOf(episodeId));
 		Cursor p = this
 				.getActivity()
 				.getContentResolver()
@@ -323,7 +151,7 @@ public class PlayerFragment extends Fragment {
 								"podcast_id", "status", "position",
 								"content_url", "shownotes", "guid",
 								"donation_url", "type" }, "_id = ?",
-						new String[] { String.valueOf(podcast_id) }, null);
+						new String[] { String.valueOf(episodeId) }, null);
 		return p;
 	}
 
@@ -350,18 +178,5 @@ public class PlayerFragment extends Fragment {
 
 	}
 	
-	private void startPlaying() {
-		player.clean();
-		player.play(start_position);
-		seekBarUpdateHandler.postDelayed(updateRunnable, 1100);
-		Log.d("HIP-STATUS", "Should start");
-	}
-	
-	private void stopPlaying() {
-		player.pause();
-		start_position = player.mediaPlayer.getCurrentPosition();
-		PlayerUIUtils.savePosition(this.getActivity(), podcast_id, start_position);
-		Log.d("HIP-STATUS", "Should stop");
-	}
 
 }

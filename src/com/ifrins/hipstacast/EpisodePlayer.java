@@ -132,7 +132,7 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
     		Bundle args = new Bundle();
     		if (fromNotification)
     			args.putBoolean("from_notification", fromNotification);
-    		args.putInt("podcast_id", podcast_id);
+    		args.putInt("episode_id", podcast_id);
     		playerFragment.setArguments(args);
     		sF = new ShownotesFragment();
     		Bundle argsSF = new Bundle();

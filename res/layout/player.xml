@@ -6,13 +6,15 @@
     android:orientation="vertical" >
 
     <LinearLayout
+        android:id="@+id/mainPlayerView"
         style="@style/CardParent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top"
         android:background="@color/card_foreground_color"
         android:gravity="top"
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:visibility="gone" >
 
         <LinearLayout
             android:id="@+id/playerDetails"
@@ -87,5 +89,12 @@
                 android:src="@drawable/ic_action_ff" />
         </LinearLayout>
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/loadingProgress"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal" />
 
 </LinearLayout>

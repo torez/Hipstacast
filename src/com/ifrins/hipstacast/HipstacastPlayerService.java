@@ -1,108 +1,56 @@
 package com.ifrins.hipstacast;
 
+
 import java.io.IOException;
 
-import com.ifrins.hipstacast.model.PodcastEpisode;
-import com.ifrins.hipstacast.tasks.OnTaskCompleted;
+import com.ifrins.hipstacast.HipstacastPlayerService.Preparation.PlayerStatus;
+import com.ifrins.hipstacast.provider.HipstacastProvider;
+import com.ifrins.hipstacast.utils.HipstacastLogging;
 import com.ifrins.hipstacast.utils.PlayerCallbacks;
-import com.ifrins.hipstacast.utils.PlayerUIUtils;
 
-import android.app.Notification;
 import android.app.Service;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
+import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnCompletionListener;
+import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.IBinder;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
-import android.util.Log;
-import android.view.SurfaceHolder;
 
-public class HipstacastPlayerService extends Service implements
-		AudioManager.OnAudioFocusChangeListener {
-	
-	AudioManager audioManager;
-	WakeLock mWakeLock;
-	PodcastEpisode mPodcast;
-	
-	public MediaPlayer mediaPlayer;
-	public String podcastToPlayUrl;
-	private final IBinder mBinder = new LocalBinder();
-	public int start_position;
-	public SurfaceHolder surface;
-	public Notification n;
-	public OnTaskCompleted completionListener = null;
-	
-	private final BroadcastReceiver brodcastReceiver = new BroadcastReceiver() {
+public class HipstacastPlayerService extends Service {
 
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if (intent.getAction().equals(
-					android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY)) {
-				Log.d("HIP-MUSIC", "Audio becoming noisy");
-				if (mediaPlayer != null && mediaPlayer.isPlaying())
-					mediaPlayer.stop();
-				destroy();
-			}
-		}
-	};
-
-	private final OnCompletionListener onCompletionListener = new OnCompletionListener() {
-
-		@Override
-		public void onCompletion(MediaPlayer mp) {
-			mp.pause();
-			stopForeground(true);
-			if (completionListener != null) {
-				completionListener.onTaskCompleted(Hipstacast.TASK_PLAYBACK_COMPLETED);
-			}
-		}
-	};
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-		IntentFilter fAudio = new IntentFilter(
-				android.media.AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-		this.registerReceiver(brodcastReceiver, fAudio);
-		return startId;
-
-	}
-
-	public class LocalBinder extends Binder {
-		public HipstacastPlayerService getService() {
-			// Return this instance of LocalService so clients can call public
-			// methods
-			return HipstacastPlayerService.this;
-		}
-	}
+	AudioManager mAudioManager;
+	Preparation mPreparation;
+	MediaPlayer mPlayer;
+	PlayerCallbacks mPlayerCallbacks;
 	
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		mediaPlayer = new MediaPlayer();
-		mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		mediaPlayer.setOnCompletionListener(onCompletionListener);
-
-		audioManager = (AudioManager) this.getSystemService(Context.AUDIO_SERVICE);
-		
-		//TODO: audioManager.registerMediaButtonEventReceiver(eventReceiver);
-		
-		PowerManager pm = (PowerManager) this.getSystemService(Context.POWER_SERVICE);
-		mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, this.getClass().getName());
+        mAudioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        //TODO: mAudioManager.registerMediaButtonEventReceiver(rec);
+        //TODO: mAudioManager.registerRemoteControlClient(rcClient);
+        
+        mPlayer = new MediaPlayer();
+	}
+	
+	@Override
+	public IBinder onBind(Intent intent) {
+		return new LocalBinder();
+	}
+	
+	public void registerForCallbacks(PlayerCallbacks mPlayerCallbacks) {
+		this.mPlayerCallbacks = mPlayerCallbacks;
 	}
 
-	public void initMediaPlayer(PodcastEpisode podcast, PlayerCallbacks callback) {
-		mPodcast = podcast;
-		
+	public void prepare(int episodeId) {
+		mPreparation = new Preparation(this, episodeId);
+		mPlayer.reset();
+		mPlayer.setAudioSessionId(episodeId);
+		mPlayer.setOnPreparedListener(mPreparedListener);
 		try {
-			mediaPlayer.setDataSource(podcast.content_url);
-			mediaPlayer.setOnPreparedListener(PlayerUIUtils.getOnPlayerPreparedListener(callback));
-			mediaPlayer.setOnBufferingUpdateListener(PlayerUIUtils.getOnBufferingUpdateListner(callback));
-			mediaPlayer.prepareAsync();
+			mPlayer.setDataSource(mPreparation.getPath());
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -116,100 +64,107 @@ public class HipstacastPlayerService extends Service implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+		mPlayerCallbacks.onStartDoingUIWork();
+		mPlayer.prepareAsync();
 	}
-
-	public void onAudioFocusChange(int focusChange) {
-		/*
-		switch (focusChange) {
-		case AudioManager.AUDIOFOCUS_GAIN:
-			if (mediaPlayer == null)
-				//initMediaPlayer();
-			else if (!mediaPlayer.isPlaying())
-				mediaPlayer.start();
-			mediaPlayer.setVolume(1.0f, 1.0f);
-			break;
-		case AudioManager.AUDIOFOCUS_LOSS:
-			if (mediaPlayer != null && mediaPlayer.isPlaying())
-				mediaPlayer.stop();
-			destroy();
-			break;
-		case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT:
-			if (mediaPlayer != null && mediaPlayer.isPlaying())
-				mediaPlayer.pause();
-			break;
-		case AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK:
-			if (mediaPlayer != null && mediaPlayer.isPlaying())
-				mediaPlayer.setVolume(0.1f, 0.1f);
-			break;
+	
+	public void recover() {
+		if (this.isAlreadyPrepared()) {
+			mPlayerCallbacks.onStartDoingUIWork();
+			mPlayerCallbacks.onPrepared();
 		}
-		*/
 	}
-
-	@Override
-	public IBinder onBind(Intent intent) {
-		return mBinder;
-	}
-
-	public boolean isPlaying() {
-		if (mediaPlayer == null) {
+	
+	
+	public Boolean isAlreadyPrepared() {
+		if (mPreparation == null) {
 			return false;
-		} else {
-			return mediaPlayer.isPlaying();
 		}
+		return true;
 	}
-
-	public void stop() {
-		if (mediaPlayer != null) {
-			mediaPlayer.pause();
+	
+	public Boolean isAlreadyPrepared(int episodeId) {
+		if (mPreparation != null && mPreparation.episodeId == episodeId) {
+			return true;
 		}
+		return false;
 	}
-
+	
+	// PLAYER CONTROLS 
+	
 	public void play() {
-		if (mediaPlayer != null) {
-			mediaPlayer.start();
+		if (mPlayer != null && mPreparation.status == PlayerStatus.PREPARED) {
+			mPlayer.start();
 		}
-	}
-	
-	public void play(int seek) {
-		if (mediaPlayer != null) {
-			mediaPlayer.seekTo(seek);
-			mediaPlayer.start();
-		}
-	}
-	
-	public void seekTo(int pos) {
-
 	}
 	
 	public void pause() {
-		if (mediaPlayer != null) {
-			mediaPlayer.pause();
-		}
-	}
-
-	public void destroy() {
-	
-	}
-
-	public void clean() {
-	
-	}
-	
-	public int getCurrentPosition() {
-		if (mediaPlayer != null) {
-			return mediaPlayer.getCurrentPosition();
-		} else {
-			return -1;
+		if (mPlayer != null && mPreparation.status == PlayerStatus.PREPARED) {
+			mPlayer.pause();
 		}
 	}
 	
-	public int getDuration() {
-		if (mediaPlayer != null)
-			return mediaPlayer.getDuration();
-		else
-			Log.d("HIP-PLAY", "getDuration() invalid value");
-			return -1;
-
+	// GET DATA
+	
+	public String getEpisodeTitle() {
+		return mPreparation.getEpisodeTitle();
 	}
+	
+	private OnPreparedListener mPreparedListener = new OnPreparedListener() {
+
+		@Override
+		public void onPrepared(MediaPlayer mp) {
+			if (mp.getAudioSessionId() == mPreparation.episodeId) {
+				mPreparation.status = PlayerStatus.PREPARED;
+				mPlayerCallbacks.onPrepared();
+			}
+			
+		}
+		
+	};
+
+	// OTHER CLASSES
+	
+	public class LocalBinder extends Binder {
+		public HipstacastPlayerService getService() {
+			return HipstacastPlayerService.this;
+		}
+	}
+
+	public static class Preparation {
+		public PlayerStatus status = PlayerStatus.EMPTY;
+		public int episodeId = -1;
+		public Cursor episodeCursor;
+		
+		public enum PlayerStatus {
+			EMPTY,
+			PREPARED
+		}
+		
+		public Preparation(Context context, int episodeId) {
+			HipstacastLogging.log("episode_id", episodeId);
+			this.episodeId = episodeId;
+			this.episodeCursor = context.getContentResolver()
+											.query(HipstacastProvider.EPISODES_URI, 
+													HipstacastProvider.EPISODES_PLAYBACK_PROJECTION, 
+													"_id = ?", 
+													new String[] {String.valueOf(episodeId)}, 
+													null);
+		}
+		
+		public String getPath() {
+			HipstacastLogging.log("count", episodeCursor.getCount());
+			episodeCursor.moveToFirst();
+			return episodeCursor.getString(episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_CONTENT_URL));
+		}
+		
+		public String getEpisodeTitle() {
+			if (episodeCursor.getPosition() != 0) {
+				episodeCursor.moveToFirst();
+			}
+			return episodeCursor.getString(episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_TITLE));
+		}
+	}
+
+	
 }
