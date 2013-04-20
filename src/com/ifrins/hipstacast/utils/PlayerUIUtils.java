@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
 import android.util.Log;
@@ -119,6 +120,22 @@ public class PlayerUIUtils {
 			@Override
 			public void onPrepared(MediaPlayer arg0) {
 				callbacks.onPrepared();
+			}
+		};
+	}
+	
+	public static OnBufferingUpdateListener getOnBufferingUpdateListner(final PlayerCallbacks callbacks) {
+		
+		return new OnBufferingUpdateListener(){
+			int timesO = 0;
+			@Override
+			public void onBufferingUpdate(MediaPlayer mp, int percent) {
+				if (percent == 100) {
+					timesO++;
+				}
+				if (timesO < 2) {
+					callbacks.onBufferingUpdate(percent);
+				}
 			}
 		};
 	}

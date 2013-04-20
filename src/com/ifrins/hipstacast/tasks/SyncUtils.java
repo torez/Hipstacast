@@ -8,7 +8,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 public class SyncUtils {
-	public static final String START_HTML = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><style>body{background-color:#000;color:#fff;}body a{color:#33b5e5;} img{max-width:100%}iframe{width:99%; height:auto;border:0; margin-top:5px}</style></head><body><center><iframe data-aa='336' src='http://ad.a-ads.com/336?background_color=000000&text_color=ffffff' scrolling='no' style='width:234px; height:60px; border:0px; padding:0;overflow:hidden'></iframe></center>";
+	public static final String START_HTML = "<!DOCTYPE html><html><head><meta name=\"viewport\" content=\"width=device-width\"/><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><style>body{background-color:#000;color:#fff;}body a{color:#33b5e5;} img{max-width:100%}iframe{width:99%; height:auto;border:0; margin-top:5px}</style></head><body>";
 	public static final String END_HTML = "</body></html>";
 	
 	public static final int convertDurationToSeconds(String duration) {

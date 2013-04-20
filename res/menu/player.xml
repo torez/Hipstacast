@@ -12,13 +12,8 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/openEpisodeWebsite"/>
     <item
-        android:id="@+id/menuPlayDonate"
-        android:icon="@drawable/ic_action_website"
-        android:showAsAction="ifRoom|withText"
-        android:title="@string/donate"/>
-    <item
         android:id="@+id/menuPlaySoundConfig"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/soundConfig" />
+        android:title="@string/soundConfig"/>
 
 </menu>

@@ -59,6 +59,14 @@ public class PlayerFragment extends Fragment {
 			PlayerFragment.this.getView()
 				.findViewById(R.id.playerControls)
 				.setVisibility(View.VISIBLE);
+			seekBar.setMax(player.getDuration());
+		}
+
+		@Override
+		public void onBufferingUpdate(int progress) {
+			double percentage = progress * 0.01;
+			int seekPos = (int) (seekBar.getMax() * percentage);
+			seekBar.setSecondaryProgress(seekPos);
 		}
 		
 	};

@@ -101,6 +101,7 @@ public class HipstacastPlayerService extends Service implements
 		try {
 			mediaPlayer.setDataSource(podcast.content_url);
 			mediaPlayer.setOnPreparedListener(PlayerUIUtils.getOnPlayerPreparedListener(callback));
+			mediaPlayer.setOnBufferingUpdateListener(PlayerUIUtils.getOnBufferingUpdateListner(callback));
 			mediaPlayer.prepareAsync();
 		} catch (IllegalArgumentException e) {
 			// TODO Auto-generated catch block
@@ -159,12 +160,22 @@ public class HipstacastPlayerService extends Service implements
 	}
 
 	public void stop() {
-		if (mediaPlayer != null)
+		if (mediaPlayer != null) {
 			mediaPlayer.pause();
+		}
 	}
 
 	public void play() {
-		mediaPlayer.start();
+		if (mediaPlayer != null) {
+			mediaPlayer.start();
+		}
+	}
+	
+	public void play(int seek) {
+		if (mediaPlayer != null) {
+			mediaPlayer.seekTo(seek);
+			mediaPlayer.start();
+		}
 	}
 	
 	public void seekTo(int pos) {
@@ -172,7 +183,9 @@ public class HipstacastPlayerService extends Service implements
 	}
 	
 	public void pause() {
-	
+		if (mediaPlayer != null) {
+			mediaPlayer.pause();
+		}
 	}
 
 	public void destroy() {

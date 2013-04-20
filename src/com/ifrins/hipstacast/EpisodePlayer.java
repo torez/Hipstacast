@@ -4,6 +4,8 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.PlayerFragment;
 import com.ifrins.hipstacast.fragments.ShownotesFragment;
 import com.ifrins.hipstacast.tasks.OnTaskCompleted;
+import com.ifrins.hipstacast.utils.HipstacastUtils;
+
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
 import android.app.Notification;
@@ -32,7 +34,6 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 	Boolean videoShowingControls = true;
 	
 	PlayerFragment playerFragment = null;
-	
 	OnTaskCompleted performActionInFragment = null;
 
 
@@ -41,27 +42,28 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 		super.onCreate(savedInstanceState);
 		show_id = getIntent().getExtras().getInt("show_id");
 		podcast_id = getIntent().getExtras().getInt("episode_id");
-		type = getIntent().getExtras().getInt("type");
-		if (type == 0) {
-			setContentView(R.layout.activity_hipstacast_search_neue);
-			pager = (ViewPager)findViewById(R.id.pager);
-	        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this);
-	        final ActionBar actionBar = getActionBar();
-	        getActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-	        pager.setAdapter(mSectionsPagerAdapter);
-	        pager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-	            @Override
-	            public void onPageSelected(int position) {
-	                actionBar.setSelectedNavigationItem(position);
-	            }
-	        });
-	        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-	            actionBar.addTab(
-	                    actionBar.newTab()
-	                            .setText(mSectionsPagerAdapter.getPageTitle(i))
-	                            .setTabListener(this));
+		
+		setContentView(R.layout.activity_hipstacast_search_neue);
+		pager = (ViewPager)findViewById(R.id.pager);
+	    mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this);
+	    
+	    final ActionBar actionBar = getActionBar();
+	    actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+	    
+	    pager.setAdapter(mSectionsPagerAdapter);
+	    pager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+	    	@Override
+	        public void onPageSelected(int position) {
+	            actionBar.setSelectedNavigationItem(position);
 	        }
-		}
+	    });
+	    for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+	        actionBar.addTab(
+	                actionBar.newTab()
+	                        .setText(mSectionsPagerAdapter.getPageTitle(i))
+	                        .setTabListener(this));
+	    }
+		
 	}
 
 	@Override
@@ -81,32 +83,24 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 		MenuInflater inflater = getMenuInflater();
 		inflater.inflate(R.menu.player, menu);
 		
-		if (!HUtils.hasBeatsSoundConfig(getApplicationContext()))
+		if (!HipstacastUtils.hasBeatsSoundConfig(getApplicationContext())) {
 			menu.findItem(R.id.menuPlaySoundConfig).setVisible(false);
+		}
 		return true;
 	}
 
 
 	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle item selection
-		String action = null;
-		int itemId = item.getItemId();
-		if (itemId == R.id.menuPlayShare) {
-			action = Hipstacast.TASK_SHARE;
-		} else if (itemId == R.id.menuPlayDonate) {
-			action = Hipstacast.TASK_OPEN_DONATIONS;
-		} else if (itemId == R.id.menuPlayWebsite) {
-			action = Hipstacast.TASK_OPEN_WEBPAGE;
-		} else if (itemId == R.id.menuPlaySoundConfig) {
+		
+		switch (item.getItemId()) {
+		case R.id.menuPlaySoundConfig: 
 			Intent enhanceSoundIntent = new Intent("com.htc.HtcSoundEnhancerSetting.ShowSettingPage");
 			startActivity(enhanceSoundIntent);
-		}
-		if (action != null && playerFragment != null && playerFragment.completionListener != null) {
-			playerFragment.completionListener.onTaskCompleted(action);
 			return true;
-		} else {
+		default:
 			return super.onOptionsItemSelected(item);
 		}
+		
 	}
 
 	@Override
@@ -130,12 +124,10 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 
 	
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
-    	private Context context;
     	private ShownotesFragment sF;
     	
         public SectionsPagerAdapter(FragmentManager fm, Context ctx) {
             super(fm);
-        	context = ctx;
     		playerFragment = new PlayerFragment();
     		Bundle args = new Bundle();
     		if (fromNotification)
@@ -170,8 +162,8 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
         @Override
         public CharSequence getPageTitle(int position) {
             switch (position) {
-                case 0: return getString(R.string.player).toUpperCase();
-                case 1: return getString(R.string.shownotes).toUpperCase();
+                case 0: return getString(R.string.player);
+                case 1: return getString(R.string.shownotes);
             }
             return null;
         }
