@@ -13,7 +13,6 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -33,17 +32,7 @@ public class PlayerFragment extends Fragment {
 	HipstacastPlayerService player;
 	Boolean bound = false;
 	Boolean fromNotification = false;
-	int start_position;
-	int duration;
-	Boolean complete = false;
-	Handler seekBarUpdateHandler = new Handler();
 	SeekBar seekBar = null;
-	ImageButton playToggleButton = null;
-	Boolean showingControls = true;
-	String name;
-	String websiteLink;
-	String donationLink;
-	int type;
 	
 	PodcastEpisode mPodcast = new PodcastEpisode();
 	
