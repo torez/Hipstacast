@@ -10,7 +10,6 @@ import com.ifrins.hipstacast.utils.PlayerUIUtils;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
@@ -57,9 +56,11 @@ public class PlayerFragment extends Fragment {
 			if (player.isPlaying()) {
 				button.setImageResource(R.drawable.ic_action_play);
 				player.pause();
+				seekBar.removeCallbacks(seekbarUpdaterRunnable);
 			} else {
 				button.setImageResource(R.drawable.ic_action_pause);
 				player.play();
+				seekBar.postDelayed(seekbarUpdaterRunnable, 1500);
 			}
 		}
 	};
@@ -78,6 +79,17 @@ public class PlayerFragment extends Fragment {
 		}
 	};
 	
+	Runnable seekbarUpdaterRunnable = new Runnable() {
+
+		@Override
+		public void run() {
+			HipstacastLogging.log("playbackprogress", player.getCurrentPosition());
+			seekBar.setProgress(player.getCurrentPosition());
+			seekBar.postDelayed(seekbarUpdaterRunnable, 1500);
+		}
+		
+	};
+	
 	PlayerCallbacks mPlayerCallbacks = new PlayerCallbacks() {
 
 		@Override
@@ -86,7 +98,15 @@ public class PlayerFragment extends Fragment {
 			.findViewById(R.id.playerControls)
 			.setVisibility(View.VISIBLE);
 			
-			seekBar.setMax(player.getEpisodeDuration());
+			ImageButton playbackToggle = (ImageButton) PlayerFragment.this.getView().findViewById(R.id.playToggleButton);
+			
+			if (player.isPlaying()) {
+				playbackToggle.setImageResource(R.drawable.ic_action_pause);
+			} else {
+				playbackToggle.setImageResource(R.drawable.ic_action_play);
+			}
+			
+			seekBar.setMax(player.getMPEpisodeDuration());
 
 		}
 
@@ -161,7 +181,7 @@ public class PlayerFragment extends Fragment {
 		Intent intent = new Intent(this.getActivity(), HipstacastPlayerService.class);
 
 		this.getActivity().startService(intent);
-		this.getActivity().bindService(intent, mConnection, Context.BIND_DEBUG_UNBIND);
+		this.getActivity().bindService(intent, mConnection, 0);
 		
 	}
 
@@ -183,6 +203,8 @@ public class PlayerFragment extends Fragment {
 		if (bound) {
 			this.getActivity().unbindService(mConnection);
 		}
+		seekBar.removeCallbacks(seekbarUpdaterRunnable);
+
 	}
 	
 	public void playbackToggle(ImageButton b) {

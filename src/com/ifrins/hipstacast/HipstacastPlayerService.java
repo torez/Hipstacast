@@ -38,6 +38,7 @@ public class HipstacastPlayerService extends Service {
 	
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
+		HipstacastLogging.log("onStartCommand");
 		return START_STICKY;
 	}
 	
@@ -57,7 +58,7 @@ public class HipstacastPlayerService extends Service {
 
 	public void prepare(int episodeId) {
 		mPreparation = new Preparation(this, episodeId);
-		mPlayer.reset();
+		mPlayer = new MediaPlayer();
 		mPlayer.setAudioSessionId(episodeId);
 		mPlayer.setOnPreparedListener(mPreparedListener);
 		mPlayer.setOnBufferingUpdateListener(mBufferingUpdateListener);
@@ -90,7 +91,7 @@ public class HipstacastPlayerService extends Service {
 	
 	
 	public Boolean isAlreadyPrepared() {
-		if (mPreparation == null) {
+		if (mPreparation == null || mPreparation.status == PlayerStatus.EMPTY) {
 			return false;
 		}
 		return true;
@@ -148,6 +149,20 @@ public class HipstacastPlayerService extends Service {
 		if (mPlayer != null) {
 			mPlayer.seekTo(position);
 		}
+	}
+	
+	public int getCurrentPosition() {
+		if (mPlayer != null) {
+			return mPlayer.getCurrentPosition();
+		}
+		return -1;
+	}
+	
+	public int getMPEpisodeDuration() {
+		if (mPlayer != null) {
+			return mPlayer.getDuration();
+		}
+		return -1;
 	}
 	
 	// GET DATA
@@ -216,6 +231,10 @@ public class HipstacastPlayerService extends Service {
 		public enum PlayerStatus {
 			EMPTY,
 			PREPARED
+		}
+		
+		public Preparation() {
+		
 		}
 		
 		public Preparation(Context context, int episodeId) {
