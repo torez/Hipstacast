@@ -3,7 +3,6 @@ package com.ifrins.hipstacast.fragments;
 import com.ifrins.hipstacast.Hipstacast;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
-import com.ifrins.hipstacast.tasks.LoadRemoteEpisodesTask;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -29,7 +28,6 @@ public class EpisodeDetailsFragment extends Fragment {
 		((TextView)v.findViewById(R.id.showDetailsTitle)).setText(Html.fromHtml(show.getString(show.getColumnIndex(HipstacastProvider.PODCAST_TITLE))));
 		((TextView)v.findViewById(R.id.showDetailsDescription)).setText(Html.fromHtml(show.getString(show.getColumnIndex(HipstacastProvider.PODCAST_DESCRIPTION))));
 
-		new LoadRemoteEpisodesTask(getActivity(), show.getString(show.getColumnIndex(HipstacastProvider.PODCAST_FEED)), show_id).execute();
 		return v;
 	}
 	

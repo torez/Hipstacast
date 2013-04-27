@@ -2,7 +2,6 @@ package com.ifrins.hipstacast;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
@@ -11,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import com.ifrins.hipstacast.model.Podcast;
-import com.ifrins.hipstacast.tasks.AddPodcastProvider;
 import com.ifrins.hipstacast.tasks.OnTaskCompleted;
 import com.ifrins.hipstacast.tasks.UpgradeTask;
 
@@ -146,7 +144,6 @@ public class HipstacastWelcome extends Activity {
 				.setMessage(getString(R.string.podcast_url_alert_add_fetching));
 		progressDialog.setCancelable(false);
 		progressDialog.show();
-		new AddPodcastProvider(this, listener).execute(Arrays.copyOf(toSubscribe.toArray(), toSubscribe.toArray().length, String[].class), progressDialog);
 		
 	}
 	private OnTaskCompleted listener = new OnTaskCompleted() {

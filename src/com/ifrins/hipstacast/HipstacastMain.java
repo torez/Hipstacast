@@ -24,6 +24,7 @@ import com.ifrins.hipstacast.fragments.SubscriptionsFragment;
 import com.ifrins.hipstacast.tasks.CheckForUpdates;
 import com.ifrins.hipstacast.tasks.ExportTask;
 import com.ifrins.hipstacast.tasks.ImportTask;
+import com.ifrins.hipstacast.utils.HipstacastLogging;
 
 public class HipstacastMain extends SherlockFragmentActivity {
 
@@ -55,7 +56,10 @@ public class HipstacastMain extends SherlockFragmentActivity {
 			this.onSearchRequested();
 			return true;
 		case R.id.menuRefresh:
-			startService(new Intent(this, HipstacastSyncService.class));
+			HipstacastLogging.log("Click refresh");
+			Intent mSyncIntent = new Intent(this, HipstacastSync.class);
+			mSyncIntent.setAction(HipstacastSync.ACTION_SYNC);
+			this.startService(mSyncIntent);
 			return true;
 		case R.id.menuSettings:
 			startActivity(new Intent(this, HipstacastSettings.class));
@@ -78,7 +82,8 @@ public class HipstacastMain extends SherlockFragmentActivity {
 	public void onStart() {
 		super.onStart();
 		EasyTracker.getInstance().activityStart(this);
-		Intent newIntent = new Intent(this, HipstacastSyncService.class);
+		Intent newIntent = new Intent(this, HipstacastSync.class);
+		newIntent.setAction(HipstacastSync.ACTION_SYNC);
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
 				newIntent, 0);
 		long d = SystemClock.elapsedRealtime() + 100;

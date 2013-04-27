@@ -31,8 +31,6 @@
 
         <service android:name=".HipstacastPlayerService" >
         </service>
-        <service android:name=".HipstacastSyncService" >
-        </service>
         <service android:name=".HipstacastSync" >
         </service>
         <service

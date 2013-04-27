@@ -7,17 +7,18 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import com.ifrins.hipstacast.HipstacastSync;
 import com.ifrins.hipstacast.R;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -82,9 +83,12 @@ public class ImportTask extends AsyncTask<Integer, Void, Void> {
 			}
 		}
 		if (urls.size() > 0) {
-			new AddPodcastProvider(context, null).execute(Arrays.copyOf(urls.toArray(), urls.toArray().length, String[].class),
-				progress,
-				context);
+			for (int i = 0; i < urls.size(); i++) {
+				Intent mSubscriptionIntent = new Intent(context, HipstacastSync.class);
+				mSubscriptionIntent.setAction(HipstacastSync.ACTION_SUBSCRIBE);
+				mSubscriptionIntent.putExtra("feedUrl", urls.get(0));
+				context.startService(mSubscriptionIntent);
+			}
 		}
 	
 
