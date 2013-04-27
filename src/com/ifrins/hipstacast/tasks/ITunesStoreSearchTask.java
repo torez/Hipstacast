@@ -89,10 +89,10 @@ public class ITunesStoreSearchTask extends AsyncTask<String, Void, List<Podcast>
 
 	@Override
 	protected void onPostExecute(List<Podcast> result) {
-		Object[] r = null;
+		Podcast[] r = null;
 		
 		if (result != null) {
-			r = result.toArray();
+			r = result.toArray(new Podcast[result.size()]);
 		}
 		
 		completitionCallback.onSearchFinished(context, r);

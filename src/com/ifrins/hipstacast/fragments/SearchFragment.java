@@ -63,7 +63,7 @@ public class SearchFragment extends SherlockListFragment {
 	OnSearchFinished mSearchFinished = new OnSearchFinished() {
 
 		@Override
-		public void onSearchFinished(Context context, Object[] results) {
+		public void onSearchFinished(Context context, Podcast[] results) {
 			if (results != null && results.length > 0 && context != null) {
 				mAdapter = new SubscriptionsSearchCursorAdapter(context, results);
 				SearchFragment.this.setListAdapter(mAdapter);

@@ -1,6 +1,8 @@
 package com.ifrins.hipstacast.adapters;
 
 import com.ifrins.hipstacast.R;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
+
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
@@ -26,8 +28,7 @@ public class SubscriptionsCursorAdapter extends CursorAdapter {
 		int show = cursor.getInt(cursor.getColumnIndex("_id"));
 		String title = cursor.getString(cursor.getColumnIndex("title"));
 		holder.name.setText(title);
-		holder.image.setImageURI(Uri.parse(cursor.getString(cursor
-				.getColumnIndex("imageUrl"))));
+		UrlImageViewHelper.setUrlDrawable(holder.image, cursor.getString(cursor.getColumnIndex("imageUrl")));
 		holder.author
 				.setText(cursor.getString(cursor.getColumnIndex("author")));
 		Cursor cur =  context.getContentResolver()
@@ -55,7 +56,7 @@ public class SubscriptionsCursorAdapter extends CursorAdapter {
 		LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-		View v = inflater.inflate(R.layout.podcasts_list, null);
+		View v = inflater.inflate(R.layout.subscriptions_list, null);
 
 		Holder holder = new Holder();
 

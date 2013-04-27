@@ -12,32 +12,46 @@ import android.widget.TextView;
 
 public class SubscriptionsSearchCursorAdapter extends ArrayAdapter<Object> {
 
-	private Context ctx;
-	private Object[] podcsts;
+	private Context context;
+	private Podcast[] podcasts;
 
-	public SubscriptionsSearchCursorAdapter(Context context, Object[] podcasts) {
-		super(context, R.layout.podcasts_list, podcasts);
-		ctx = context;
-		podcsts = podcasts;
+	public SubscriptionsSearchCursorAdapter(Context context, Podcast[] podcasts) {
+		super(context, R.layout.subscriptions_list, podcasts);
+		this.context = context;
+		this.podcasts = (Podcast[]) podcasts;
 	}
 
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
-		LayoutInflater inflater = (LayoutInflater) ctx
+		ViewHolder holder;
+		if (convertView == null) {
+			LayoutInflater inflater = (LayoutInflater) context
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			convertView = inflater.inflate(R.layout.subscriptions_list, null);
+			holder = new ViewHolder();
+			holder.title = (TextView) convertView.findViewById(R.id.podcastTitle);
+			holder.author = (TextView) convertView.findViewById(R.id.podcastAuthor);
+			holder.coverView = (ImageView) convertView .findViewById(R.id.podcastLogo);
+			holder.unlistenedCount = convertView.findViewById(R.id.podcastUnlistenedCount);
+			
+			convertView.setTag(holder);
+		} else {
+			holder = (ViewHolder) convertView.getTag();
+		}
 
-		View rowView = inflater.inflate(R.layout.podcasts_list, parent, false);
-		TextView textView = (TextView) rowView.findViewById(R.id.podcastTitle);
-		TextView author = (TextView) rowView.findViewById(R.id.podcastAuthor);
-		author.setText(((Podcast)podcsts[position]).author);
-		ImageView imageView = (ImageView) rowView
-				.findViewById(R.id.podcastLogo);
-		textView.setText(((Podcast) podcsts[position]).title);
-		UrlImageViewHelper.setUrlDrawable(imageView,
-				((Podcast) podcsts[position]).imageUrl);
-		((TextView)rowView.findViewById(R.id.podcastUnlistenedCount)).setVisibility(View.GONE);
+		holder.title.setText(podcasts[position].title);
+		holder.author.setText(podcasts[position].author);
+		holder.unlistenedCount.setVisibility(View.GONE);
 
-		return rowView;
+		UrlImageViewHelper.setUrlDrawable(holder.coverView, podcasts[position].imageUrl);		
+		return convertView;
+	}
+	
+	private class ViewHolder {
+		TextView title;
+		TextView author;
+		ImageView coverView;
+		View unlistenedCount;
 	}
 
 }
