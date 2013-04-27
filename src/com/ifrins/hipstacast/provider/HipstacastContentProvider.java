@@ -115,6 +115,8 @@ public class HipstacastContentProvider extends ContentProvider {
 		final int match = sUriMatcher.match(uri);
 		int count;
 		switch (match) {
+			case PODCASTS:
+				count = db.update("podcasts", values, selection, selectionArgs);
 			case PODCASTS_ID:
 				count = db.update("podcasts", values, selection, selectionArgs);
 				break;

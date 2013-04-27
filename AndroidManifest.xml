@@ -33,6 +33,8 @@
         </service>
         <service android:name=".HipstacastSyncService" >
         </service>
+        <service android:name=".HipstacastSync" >
+        </service>
         <service
             android:name=".HipstacastHTCLockScreenService"
             android:enabled="false"

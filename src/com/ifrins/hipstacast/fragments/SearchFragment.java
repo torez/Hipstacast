@@ -1,23 +1,23 @@
 package com.ifrins.hipstacast.fragments;
 
 import com.actionbarsherlock.app.SherlockListFragment;
+import com.ifrins.hipstacast.HipstacastSync;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.SubscriptionsSearchCursorAdapter;
 import com.ifrins.hipstacast.model.Podcast;
-import com.ifrins.hipstacast.tasks.AddPodcastProvider;
 import com.ifrins.hipstacast.tasks.ITunesStoreSearchTask;
 import com.ifrins.hipstacast.tasks.OnSearchFinished;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class SearchFragment extends SherlockListFragment {
 	
@@ -39,22 +39,14 @@ public class SearchFragment extends SherlockListFragment {
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
 									dialog.dismiss();
-									String value = c.feed_link;
-
-									ProgressDialog progressDialog;
-									progressDialog = new ProgressDialog(mContext);
-									progressDialog
-											.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-									progressDialog
-											.setMessage(getString(R.string.podcast_url_alert_add_fetching));
-									progressDialog.setCancelable(false);
-									progressDialog.show();
-									Log.i("HIP-POD-URL", value);
-
-									new AddPodcastProvider(mContext, null).execute(new String[]{value},
-											progressDialog,
-											mContext);
-								}
+									String feedUrl = c.feed_link;
+									
+									Intent subscribeIntent = new Intent(SearchFragment.this.getActivity(), HipstacastSync.class);
+									subscribeIntent.setAction(HipstacastSync.ACTION_SUBSCRIBE);
+									subscribeIntent.putExtra("feedUrl", feedUrl);
+									SearchFragment.this.getActivity().startService(subscribeIntent);
+									Toast.makeText(SearchFragment.this.getActivity(), "Subscribing to " + c.title, Toast.LENGTH_LONG).show();
+								}								
 							})
 					.setNegativeButton(R.string.cancel,
 							new DialogInterface.OnClickListener() {
