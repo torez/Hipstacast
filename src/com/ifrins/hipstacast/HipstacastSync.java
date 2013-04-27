@@ -86,7 +86,7 @@ public class HipstacastSync extends IntentService {
 			
 			for (int ii = 0; ii < podcastItemsCount; ii++) {
 				PodcastItem mPodcastItem = mPodcastItems.get(ii);
-				if (!checkIfEpisodeAlreadyExists(mPodcastItem.guid)) {
+				if (!checkIfEpisodeAlreadyExists(mPodcastItem.link)) {
 					saveEpisode(mPodcastItem, mCurrentPodcast.id);
 				}
 			}
