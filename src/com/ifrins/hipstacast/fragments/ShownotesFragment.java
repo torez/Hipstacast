@@ -2,6 +2,7 @@ package com.ifrins.hipstacast.fragments;
 
 import java.io.IOException;
 
+import com.ifrins.hipstacast.provider.HipstacastProvider;
 import org.apache.commons.io.IOUtils;
 
 import com.ifrins.hipstacast.R;
@@ -65,10 +66,10 @@ public class ShownotesFragment extends Fragment {
 			int episodeId = ShownotesFragment.this.getArguments().getInt("episode_id");
 			Cursor p = ShownotesFragment.this.getActivity().getContentResolver()
 					.query(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/episodes"),
-							new String[] { "_id", "shownotes" }, "_id = ?", new String[] { String.valueOf(episodeId) }, null);
+							new String[] { "_id", HipstacastProvider.EPISODE_DESCRIPTION}, "_id = ?", new String[] { String.valueOf(episodeId) }, null);
 			p.moveToFirst();
 
-			String shownotesData = p.getString(p.getColumnIndex("shownotes"));
+			String shownotesData = p.getString(p.getColumnIndex(HipstacastProvider.EPISODE_DESCRIPTION));
 			p.close();
 			
 			try {
