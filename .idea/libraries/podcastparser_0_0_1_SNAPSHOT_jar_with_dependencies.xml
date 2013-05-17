@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="podcastparser-0.0.1-SNAPSHOT-jar-with-dependencies">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/libs/podcastparser-0.0.1-SNAPSHOT-jar-with-dependencies.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

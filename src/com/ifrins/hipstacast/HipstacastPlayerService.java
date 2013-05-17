@@ -287,16 +287,8 @@ public class HipstacastPlayerService extends Service {
 
 			String fullPath = subscription.getString(subscription.getColumnIndex(HipstacastProvider.PODCAST_IMAGE));
 			subscription.close();
-			String[] imagePath = fullPath.split("/");
-			String imgName = imagePath[imagePath.length-1];
-			
-			if (imgName.length() > 3) {
-				imgName = imgName.substring(0, imgName.length()-3) + "w.jpg";
-				
-				return android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/hipstacast/img/"+ imgName;
-			}
-			
-			return null;
+
+            return fullPath;
 		}
 	}
 

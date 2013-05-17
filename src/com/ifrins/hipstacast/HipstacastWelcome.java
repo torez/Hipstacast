@@ -131,8 +131,8 @@ public class HipstacastWelcome extends Activity {
 			}
 			
 		});
-		if (featuredList != null && presp != null)
-			featuredList.setAdapter(new SubscriptionsSearchCursorAdapter(this, presp.toArray()));
+		//if (featuredList != null && presp != null)
+			//featuredList.setAdapter(new SubscriptionsSearchCursorAdapter(this, presp.toArray()));
 	}
 	
 	private void startSubscribing() {

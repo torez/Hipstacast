@@ -9,7 +9,6 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
-import android.util.Log;
 import android.view.SurfaceView;
 import android.widget.ListView;
 

@@ -32,7 +32,7 @@
                 android:layout_height="40dp"
                 android:fontFamily="sans-serif-light"
                 android:minLines="1"
-                android:text="Accidental Tech Podcast"
+                android:text="{Podcast Title}"
                 android:textColor="#ffffff" />
 
             <TextView

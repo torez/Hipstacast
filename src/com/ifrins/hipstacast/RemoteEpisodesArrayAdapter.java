@@ -15,7 +15,7 @@ public class RemoteEpisodesArrayAdapter extends ArrayAdapter<PodcastEpisode> {
 	private PodcastEpisode[] episodes;
 
 	public RemoteEpisodesArrayAdapter(Context context, PodcastEpisode[] episodes) {
-		super(context, R.layout.podcasts_list, episodes);
+		super(context, R.layout.subscriptions_list, episodes);
 		this.context = context;
 		this.episodes = episodes;
 	}

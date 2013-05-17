@@ -121,6 +121,7 @@ public class PlayerFragment extends Fragment {
 			titleView.setSelected(true);
 			
 			ImageView coverView = (ImageView)fragmentView.findViewById(R.id.playerCoverImage);
+
 			UrlImageViewHelper.setUrlDrawable(coverView, PlayerUIUtils.fixCoverPath(
 																player.getCoverPath(PlayerFragment.this.getActivity())));
 			

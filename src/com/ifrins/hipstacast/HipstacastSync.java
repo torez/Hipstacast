@@ -231,7 +231,7 @@ public class HipstacastSync extends IntentService {
 		mContentValues.put(HipstacastProvider.EPISODE_PODCAST_ID, subscription);
 		mContentValues.put(HipstacastProvider.EPISODE_PUB_DATE, pubdate);
 		mContentValues.put(HipstacastProvider.EPISODE_AUTHOR, "");
-		mContentValues.put(HipstacastProvider.EPISODE_DURATION, 0);
+		mContentValues.put(HipstacastProvider.EPISODE_DURATION, mPodcastItem.duration);
 		mContentValues.put(HipstacastProvider.EPISODE_TYPE, 0);
 		
 		if (timeDiff > 2592000 * 1000) {
@@ -245,8 +245,7 @@ public class HipstacastSync extends IntentService {
 		ContentValues mContentValues = new ContentValues();
 		mContentValues.put(HipstacastProvider.PODCAST_TITLE, parsedSubscription.title);
 		mContentValues.put(HipstacastProvider.PODCAST_LINK, parsedSubscription.link);
-		//TODO: mContentValues.put(HipstacastProvider.PODCAST_AUTHOR, parsedSubscription.);
-		mContentValues.put(HipstacastProvider.PODCAST_AUTHOR, "Author");
+		mContentValues.put(HipstacastProvider.PODCAST_AUTHOR, parsedSubscription.author);
 		mContentValues.put(HipstacastProvider.PODCAST_DESCRIPTION, parsedSubscription.description);
 		mContentValues.put(HipstacastProvider.PODCAST_IMAGE, parsedSubscription.image.href);
 		mContentValues.put(HipstacastProvider.PODCAST_FEED, feedUrl);

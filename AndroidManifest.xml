@@ -33,18 +33,6 @@
         </service>
         <service android:name=".HipstacastSync" >
         </service>
-        <service
-            android:name=".HipstacastHTCLockScreenService"
-            android:enabled="false"
-            android:permission="com.htc.idlescreen.permission.IDLESCREEN_SERVICE" >
-            <intent-filter>
-                <action android:name="com.htc.lockscreen.idlescreen.IdleScreenService" />
-            </intent-filter>
-
-            <meta-data
-                android:name="com.htc.lockscreen.idlescreen"
-                android:resource="@xml/idlescreen" />
-        </service>
 
         <receiver
             android:name=".DownloadReceiver"
