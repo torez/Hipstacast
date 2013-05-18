@@ -1,21 +1,11 @@
 package com.ifrins.hipstacast.utils;
 
-import android.app.Notification;
-import android.app.PendingIntent;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnBufferingUpdateListener;
-import android.media.MediaPlayer.OnPreparedListener;
 import android.net.Uri;
-import android.view.SurfaceView;
 import android.widget.ListView;
 
-import com.ifrins.hipstacast.EpisodePlayer;
 import com.ifrins.hipstacast.EpisodeListCursorAdapter;
-import com.ifrins.hipstacast.HipstacastPlayerService;
-import com.ifrins.hipstacast.R;
 
 public class PlayerUIUtils {
 	
@@ -24,31 +14,6 @@ public class PlayerUIUtils {
 			return "file://" + url;
 		}
 		return url;
-	}
-
-	public static void startPlaying(HipstacastPlayerService player,
-			int show_id, int episode_id, int type, Notification n,
-			int start_position, SurfaceView surface) {
-		
-		/*
-		
-		player.podcastToPlayUrl = android.os.Environment
-				.getExternalStorageDirectory().getAbsolutePath()
-				+ "/Android/data/com.ifrins.hipstacast/files/shows/"
-				+ show_id
-				+ "/" + episode_id + ".mp3";
-		player.type = type;
-		if (type == 1) {
-			player.surface = surface.getHolder();
-		}
-		player.podcast_id = episode_id;
-		player.show_id = show_id;
-		player.n = n;
-		Log.d("HIP-NW-SP", String.valueOf(start_position));
-		player.start_position = start_position;
-		player.play();
-		Log.d("HIP-STATUS", "Should start");
-		*/
 	}
 
 	public static String convertSecondsToDuration(int seconds) {
@@ -86,26 +51,6 @@ public class PlayerUIUtils {
 
 	}
 
-	public static Notification buildNotification(Context context, String title,
-			int show_id, int episode_id, int type) {
-
-		Intent newIntent = new Intent(context, EpisodePlayer.class);
-		newIntent.putExtra("from_notif", true);
-		newIntent.putExtra("show_id", show_id);
-		newIntent.putExtra("episode_id", episode_id);
-		newIntent.putExtra("type", type);
-		PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-				newIntent, 0);
-
-		Notification n = new Notification.Builder(context)
-				.setContentTitle("Hipstacast")
-				.setSmallIcon(R.drawable.ic_stat_playing).setContentText(title)
-				.setOngoing(true).setContentIntent(contentIntent)
-				.setTicker(title).getNotification();
-
-		return n;
-
-	}
 	public static void setEpisodeAsListened(Context context, int episode_id) {
 		ContentValues c = new ContentValues();
 		c.put("position", 0);
@@ -119,31 +64,6 @@ public class PlayerUIUtils {
 	public static void markAsListenedAndUpdate(Context context, int episode_id, ListView listView) {
 		setEpisodeAsListened(context, episode_id);
 		((EpisodeListCursorAdapter)listView.getAdapter()).notifyDataSetChanged();
-	}
-
-	public static OnPreparedListener getOnPlayerPreparedListener(final PlayerCallbacks callbacks) {
-		return new OnPreparedListener() {
-			@Override
-			public void onPrepared(MediaPlayer arg0) {
-				callbacks.onPrepared();
-			}
-		};
-	}
-	
-	public static OnBufferingUpdateListener getOnBufferingUpdateListner(final PlayerCallbacks callbacks) {
-		
-		return new OnBufferingUpdateListener(){
-			int timesO = 0;
-			@Override
-			public void onBufferingUpdate(MediaPlayer mp, int percent) {
-				if (percent == 100) {
-					timesO++;
-				}
-				if (timesO < 2) {
-					callbacks.onBufferingUpdate(percent);
-				}
-			}
-		};
 	}
 
 }
