@@ -90,8 +90,10 @@ public class PlayerFragment extends Fragment {
 			} else {
 				playbackToggle.setImageResource(R.drawable.ic_action_play);
 			}
-			
+
 			seekBar.setMax(player.getMPEpisodeDuration());
+			seekBar.setProgress(player.getCurrentPosition());
+			seekBar.setVisibility(View.VISIBLE);
 
 		}
 
@@ -122,7 +124,8 @@ public class PlayerFragment extends Fragment {
 			
 			seekBar = (SeekBar) fragmentView.findViewById(R.id.playerSeekBar);
 			seekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);
-			
+			seekBar.setVisibility(View.INVISIBLE);
+
 			ImageButton playbackToggle = (ImageButton) fragmentView.findViewById(R.id.playToggleButton);
 			playbackToggle.setOnClickListener(playbackToggleClickListener);
 			

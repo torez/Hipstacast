@@ -170,8 +170,9 @@ public class HipstacastPlayerService extends Service {
 	
 	public void pause() {
 		if (mPlayer != null && mPreparation.status == PlayerStatus.PREPARED) {
-			mAudioManager.abandonAudioFocus(mAudioFocusListener);
 			mPlayer.pause();
+			saveCurrentPosition();
+			mAudioManager.abandonAudioFocus(mAudioFocusListener);
 			this.setRemoteControlState(false);
 		}
 	}
@@ -233,6 +234,10 @@ public class HipstacastPlayerService extends Service {
 	public String getSubscriptionName() {
 		return  mPreparation.getSubscriptionName();
 	}
+
+	public int getSavedPosition() {
+		return mPreparation.getSavedPosition();
+	}
 	
 	private OnPreparedListener mPreparedListener = new OnPreparedListener() {
 
@@ -240,6 +245,7 @@ public class HipstacastPlayerService extends Service {
 		public void onPrepared(MediaPlayer mp) {
 		if (mp.getAudioSessionId() == mPreparation.episodeId) {
 			mPreparation.status = PlayerStatus.PREPARED;
+			seekTo(getSavedPosition());
 			mPlayerCallbacks.onPrepared();
 		}
 			
@@ -305,12 +311,25 @@ public class HipstacastPlayerService extends Service {
 		}
 	}
 
-	private  void setRemoteControlState(boolean nowPlaying) {
+	private void setRemoteControlState(boolean nowPlaying) {
 		if (mRemoteControlClient != null && nowPlaying) {
 			mRemoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PLAYING);
 		} else if (mRemoteControlClient != null && !nowPlaying) {
 			mRemoteControlClient.setPlaybackState(RemoteControlClient.PLAYSTATE_PAUSED);
 		}
+	}
+
+	private void saveCurrentPosition() {
+		int currentPosition = this.getCurrentPosition();
+
+		ContentValues mEpisodeUpdate = new ContentValues();
+		mEpisodeUpdate.put(HipstacastProvider.EPISODE_CURRENT_POSITION, currentPosition);
+		mEpisodeUpdate.put(HipstacastProvider.EPISODE_STATUS, 1);
+
+		this.getContentResolver().update(HipstacastProvider.EPISODES_URI,
+				mEpisodeUpdate,
+				"_id = ?",
+				new String[] { String.valueOf(mPreparation.episodeId) });
 	}
 
 	// OTHER CLASSES
@@ -331,10 +350,6 @@ public class HipstacastPlayerService extends Service {
 		public enum PlayerStatus {
 			EMPTY,
 			PREPARED
-		}
-		
-		public Preparation() {
-		
 		}
 		
 		public Preparation(Context context, int episodeId) {
@@ -411,6 +426,14 @@ public class HipstacastPlayerService extends Service {
 			subscription.close();
 
             return fullPath;
+		}
+
+		public int getSavedPosition() {
+			if (episodeCursor.getPosition() != 0) {
+				episodeCursor.moveToFirst();
+			}
+
+			return episodeCursor.getInt(episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_CURRENT_POSITION));
 		}
 	}
 
