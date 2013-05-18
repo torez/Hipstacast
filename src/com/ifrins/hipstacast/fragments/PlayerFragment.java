@@ -49,7 +49,7 @@ public class PlayerFragment extends Fragment {
 			} else {
 				button.setImageResource(R.drawable.ic_action_pause);
 				player.play();
-				seekBar.postDelayed(seekbarUpdaterRunnable, 1500);
+				seekBar.postDelayed(seekbarUpdaterRunnable, 3000);
 			}
 		}
 	};
@@ -184,6 +184,8 @@ public class PlayerFragment extends Fragment {
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+
+		seekBar.removeCallbacks(seekbarUpdaterRunnable);
 		
 		if (player != null && !player.isPlaying()) {
 			player.destroy();
@@ -192,7 +194,6 @@ public class PlayerFragment extends Fragment {
 		if (bound) {
 			this.getActivity().unbindService(mConnection);
 		}
-		seekBar.removeCallbacks(seekbarUpdaterRunnable);
 
 	}
 	
