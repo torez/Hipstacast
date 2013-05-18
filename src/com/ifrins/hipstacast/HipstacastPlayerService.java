@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import android.app.PendingIntent;
 import android.content.*;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.media.RemoteControlClient;
@@ -171,12 +170,14 @@ public class HipstacastPlayerService extends Service {
 	
 	public void pause() {
 		if (mPlayer != null && mPreparation.status == PlayerStatus.PREPARED) {
+			mAudioManager.abandonAudioFocus(mAudioFocusListener);
 			mPlayer.pause();
 			this.setRemoteControlState(false);
 		}
 	}
 	
 	public void destroy() {
+		mAudioManager.abandonAudioFocus(mAudioFocusListener);
 		if (mPlayer != null) {
 			mPlayer.release();
 			mPreparation = null;
