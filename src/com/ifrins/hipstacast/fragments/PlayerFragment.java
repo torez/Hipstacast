@@ -101,7 +101,6 @@ public class PlayerFragment extends Fragment {
 
 		@Override
 		public void onBufferingUpdate(int progress) {
-			HipstacastLogging.log("progress", progress);
 			double percentage = progress * 0.01;
 			int seekPos = (int) (seekBar.getMax() * percentage);
 			seekBar.setSecondaryProgress(seekPos);
@@ -183,8 +182,8 @@ public class PlayerFragment extends Fragment {
 	}
 	
 	@Override
-	public void onDetach() {
-		super.onDetach();
+	public void onDestroy() {
+		super.onDestroy();
 		
 		if (player != null && !player.isPlaying()) {
 			player.destroy();

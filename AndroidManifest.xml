@@ -1,106 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ifrins.hipstacast"
-    android:versionCode="20"
-    android:versionName="2.0" >
+          package="com.ifrins.hipstacast"
+          android:versionCode="20"
+          android:versionName="2.0">
 
-    <uses-sdk android:minSdkVersion="15" />
+    <uses-sdk android:minSdkVersion="15"/>
 
-    <uses-permission android:name="com.htc.idlescreen.permission.IDLESCREEN_SERVICE" />
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.htc.idlescreen.permission.IDLESCREEN_SERVICE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
-        android:name=".Hipstacast"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+            android:name=".Hipstacast"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme">
         <uses-library
-            android:name="com.htc.lockscreen.fusion"
-            android:required="false" />
+                android:name="com.htc.lockscreen.fusion"
+                android:required="false"/>
         <uses-library
-            android:name="com.htc.fusion.fx"
-            android:required="false" />
+                android:name="com.htc.fusion.fx"
+                android:required="false"/>
 
         <provider
-            android:name="com.ifrins.hipstacast.provider.HipstacastContentProvider"
-            android:authorities="com.ifrins.hipstacast.provider.HipstacastContentProvider"
-            android:exported="false" />
+                android:name="com.ifrins.hipstacast.provider.HipstacastContentProvider"
+                android:authorities="com.ifrins.hipstacast.provider.HipstacastContentProvider"
+                android:exported="false"/>
 
-        <service android:name=".HipstacastPlayerService" >
+        <service android:name=".HipstacastPlayerService">
         </service>
-        <service android:name=".HipstacastSync" >
+        <service android:name=".HipstacastSync">
         </service>
 
         <receiver
-            android:name=".DownloadReceiver"
-            android:exported="true" >
-            <intent-filter android:priority="100" >
-                <action android:name="android.intent.action.DOWNLOAD_COMPLETE" />
-                <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED" />
+                android:name=".DownloadReceiver"
+                android:exported="true">
+            <intent-filter android:priority="100">
+                <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
+                <action android:name="android.intent.action.DOWNLOAD_NOTIFICATION_CLICKED"/>
+            </intent-filter>
+        </receiver>
+
+        <receiver
+                android:name=".remotecontrol.RemoteControlEventReceiver"
+                android:exported="true">
+
+            <intent-filter android:priority="100">
+                <action android:name="com.ifrins.hipstacast.action.PLAY"/>
+                <action android:name="com.ifrins.hipstacast.action.PAUSE"/>
+                <action android:name="com.ifrins.hipstacast.action.PLAY_PAUSE"/>
             </intent-filter>
         </receiver>
 
         <activity
-            android:name=".HipstacastMain"
-            android:label="@string/app_name" >
+                android:name=".HipstacastMain"
+                android:label="@string/app_name">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
 
             <meta-data
-                android:name="android.app.default_searchable"
-                android:value=".HipstacastSearch" />
+                    android:name="android.app.default_searchable"
+                    android:value=".HipstacastSearch"/>
         </activity>
         <activity
-            android:name=".HipstacastWelcome"
-            android:label="@string/welcome_to_hipstacast"
-            android:theme="@android:style/Theme.Holo.NoActionBar" >
+                android:name=".HipstacastWelcome"
+                android:label="@string/welcome_to_hipstacast"
+                android:theme="@android:style/Theme.Holo.NoActionBar">
         </activity>
         <activity
-            android:name=".HipstacastEpisodeView"
-            android:label="@string/app_name" >
+                android:name=".HipstacastEpisodeView"
+                android:label="@string/app_name">
         </activity>
         <activity
-            android:name=".EpisodePlayer"
-            android:label="@string/app_name" >
+                android:name=".EpisodePlayer"
+                android:label="@string/app_name">
         </activity>
         <activity
-            android:name=".HipstacastSettings"
-            android:label="@string/settings" >
+                android:name=".HipstacastSettings"
+                android:label="@string/settings">
         </activity>
         <activity
-            android:name=".HipstacastSearch"
-            android:label="@string/menu_search" >
+                android:name=".HipstacastSearch"
+                android:label="@string/menu_search">
             <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
+                <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
 
             <meta-data
-                android:name="android.app.searchable"
-                android:resource="@xml/searchable" />
+                    android:name="android.app.searchable"
+                    android:resource="@xml/searchable"/>
         </activity>
         <activity
-            android:name=".HipstacastSearchNeue"
-            android:label="@string/menu_search" >
+                android:name=".HipstacastSearchNeue"
+                android:label="@string/menu_search">
         </activity>
         <activity
-            android:name=".HipstacastVideoEpisodePlayer"
-            android:label="@string/menu_search"
-            android:launchMode="singleInstance"
-            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen" >
+                android:name=".HipstacastVideoEpisodePlayer"
+                android:label="@string/menu_search"
+                android:launchMode="singleInstance"
+                android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen">
         </activity>
         <activity
-            android:name=".HipstacastAbout"
-            android:label="@string/about" />
+                android:name=".HipstacastAbout"
+                android:label="@string/about"/>
 
         <meta-data
-            android:name="com.crashlytics.ApiKey"
-            android:value="450aa570a5e6b349ef7a66d64772c93f12031b58" />
+                android:name="com.crashlytics.ApiKey"
+                android:value="450aa570a5e6b349ef7a66d64772c93f12031b58"/>
     </application>
 
 </manifest>
