@@ -61,7 +61,13 @@ public class HipstacastSync extends IntentService {
 		int subscriptionId = addSubscription(mParsedPodcast.channel, feedUrl);
 		
 		for (int i = 0; i < episodesCount; i++) {
-			saveEpisode(mParsedPodcast.channel.items.get(i), subscriptionId);
+			boolean isOld;
+			if (i == 0) {
+				isOld = false;
+			} else {
+				isOld = true;
+			}
+			saveEpisode(mParsedPodcast.channel.items.get(i), subscriptionId, isOld);
 		}
 		
 		notifyAddedSubscription(mParsedPodcast.channel.title);
@@ -87,7 +93,7 @@ public class HipstacastSync extends IntentService {
 			for (int ii = 0; ii < podcastItemsCount; ii++) {
 				PodcastItem mPodcastItem = mPodcastItems.get(ii);
 				if (!checkIfEpisodeAlreadyExists(mPodcastItem.link)) {
-					saveEpisode(mPodcastItem, mCurrentPodcast.id);
+					saveEpisode(mPodcastItem, mCurrentPodcast.id, false);
 				}
 			}
 		}
@@ -217,7 +223,7 @@ public class HipstacastSync extends IntentService {
 		return true;
 	}
 	
-	private void saveEpisode(PodcastItem mPodcastItem, int subscription) {
+	private void saveEpisode(PodcastItem mPodcastItem, int subscription, boolean isOld) {
 		long pubdate = mPodcastItem.pubdate.getTime();
 		long timeDiff = new Date().getTime() - pubdate;
 		HipstacastLogging.log("GUID " + mPodcastItem.link);
@@ -233,8 +239,10 @@ public class HipstacastSync extends IntentService {
 		mContentValues.put(HipstacastProvider.EPISODE_AUTHOR, "");
 		mContentValues.put(HipstacastProvider.EPISODE_DURATION, mPodcastItem.duration);
 		mContentValues.put(HipstacastProvider.EPISODE_TYPE, 0);
-		
-		if (timeDiff > 2592000 * 1000) {
+
+		if (!isOld) {
+			mContentValues.put(HipstacastProvider.EPISODE_STATUS, HipstacastProvider.EPISODE_STATUS_UNDOWNLOADED);
+		} else {
 			mContentValues.put(HipstacastProvider.EPISODE_STATUS, HipstacastProvider.EPISODE_STATUS_FINISHED);
 		}
 		

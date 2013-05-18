@@ -324,7 +324,7 @@ public class HipstacastPlayerService extends Service {
 
 		ContentValues mEpisodeUpdate = new ContentValues();
 		mEpisodeUpdate.put(HipstacastProvider.EPISODE_CURRENT_POSITION, currentPosition);
-		mEpisodeUpdate.put(HipstacastProvider.EPISODE_STATUS, 1);
+		mEpisodeUpdate.put(HipstacastProvider.EPISODE_STATUS, HipstacastProvider.EPISODE_STATUS_STARTED);
 
 		this.getContentResolver().update(HipstacastProvider.EPISODES_URI,
 				mEpisodeUpdate,

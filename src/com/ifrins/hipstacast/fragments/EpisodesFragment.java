@@ -6,7 +6,7 @@ import com.actionbarsherlock.app.SherlockListFragment;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
-import com.ifrins.hipstacast.EpisodeListCursorAdapter;
+import com.ifrins.hipstacast.adapters.EpisodeListCursorAdapter;
 import com.ifrins.hipstacast.EpisodePlayer;
 import com.ifrins.hipstacast.Hipstacast;
 import com.ifrins.hipstacast.HipstacastMain;

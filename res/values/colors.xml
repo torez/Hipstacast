@@ -4,4 +4,6 @@
     <color name="card_foreground_color">#FFFFFF</color>
     <color name="link_text">#ff33b5e5</color>
 
+    <color name="episodes_list_color_primary">#ff000000</color>
+    <color name="episodes_list_color_disabled">#ffb2b2b2</color>
 </resources>
