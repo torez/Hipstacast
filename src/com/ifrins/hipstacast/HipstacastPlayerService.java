@@ -39,24 +39,24 @@ public class HipstacastPlayerService extends Service {
     BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-	        HipstacastLogging.log("Broadcast receiver from service");
-            if (intent.getAction().equals(HipstacastPlayerService.ACTION_PLAY)) {
-                play();
-            } else if (intent.getAction().equals(HipstacastPlayerService.ACTION_PAUSE)) {
-                pause();
-            } else if (intent.getAction().equals(HipstacastPlayerService.ACTION_TOGGLE)) {
-	            if (HipstacastPlayerService.this.isPlaying()) {
-		            pause();
-	            } else {
-		            play();
-	            }
-            }
+		HipstacastLogging.log("Broadcast receiver from service");
+        if (intent.getAction().equals(HipstacastPlayerService.ACTION_PLAY)) {
+            play();
+        } else if (intent.getAction().equals(HipstacastPlayerService.ACTION_PAUSE)) {
+            pause();
+        } else if (intent.getAction().equals(HipstacastPlayerService.ACTION_TOGGLE)) {
+	        if (HipstacastPlayerService.this.isPlaying()) {
+		        pause();
+	        } else {
+		        play();
+	        }
+        }
         }
     };
 
 	private AudioManager.OnAudioFocusChangeListener mAudioFocusListener = new AudioManager.OnAudioFocusChangeListener() {
 		public void onAudioFocusChange(int focusChange) {
-			HipstacastLogging.log("FocusChange", focusChange);
+		HipstacastLogging.log("FocusChange", focusChange);
 		}
 	};
 
@@ -104,6 +104,7 @@ public class HipstacastPlayerService extends Service {
 		mPlayer.setOnPreparedListener(mPreparedListener);
 		mPlayer.setOnBufferingUpdateListener(mBufferingUpdateListener);
 		mPlayer.setOnErrorListener(mOnErrorListener);
+		mPlayer.setOnCompletionListener(mOnCompletionListener);
 
 		try {
 			mPlayer.setDataSource(mPreparation.getPath());
@@ -276,6 +277,13 @@ public class HipstacastPlayerService extends Service {
 		}
 	};
 
+	private MediaPlayer.OnCompletionListener mOnCompletionListener = new MediaPlayer.OnCompletionListener() {
+		@Override
+		public void onCompletion(MediaPlayer mediaPlayer) {
+			setEpisodeListened();
+		}
+	};
+
     private void registerBroadcastReceiver() {
         IntentFilter filter = new IntentFilter();
         filter.addAction(HipstacastPlayerService.ACTION_PAUSE);
@@ -325,6 +333,17 @@ public class HipstacastPlayerService extends Service {
 		ContentValues mEpisodeUpdate = new ContentValues();
 		mEpisodeUpdate.put(HipstacastProvider.EPISODE_CURRENT_POSITION, currentPosition);
 		mEpisodeUpdate.put(HipstacastProvider.EPISODE_STATUS, HipstacastProvider.EPISODE_STATUS_STARTED);
+
+		this.getContentResolver().update(HipstacastProvider.EPISODES_URI,
+				mEpisodeUpdate,
+				"_id = ?",
+				new String[] { String.valueOf(mPreparation.episodeId) });
+	}
+
+	private void setEpisodeListened() {
+		ContentValues mEpisodeUpdate = new ContentValues();
+		mEpisodeUpdate.put(HipstacastProvider.EPISODE_CURRENT_POSITION, 0);
+		mEpisodeUpdate.put(HipstacastProvider.EPISODE_STATUS, HipstacastProvider.EPISODE_STATUS_FINISHED);
 
 		this.getContentResolver().update(HipstacastProvider.EPISODES_URI,
 				mEpisodeUpdate,
