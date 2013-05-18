@@ -1,7 +1,5 @@
 package com.ifrins.hipstacast;
 
-import java.io.File;
-
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.ActionBar.TabListener;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -9,11 +7,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.EpisodeDetailsFragment;
 import com.ifrins.hipstacast.fragments.EpisodesFragment;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,7 +17,6 @@ import android.support.v4.view.ViewPager;
 
 public class HipstacastEpisodeView extends SherlockFragmentActivity implements TabListener {
 	int show_id;
-	int episodes_count;
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
 
@@ -32,7 +25,7 @@ public class HipstacastEpisodeView extends SherlockFragmentActivity implements T
 		super.onCreate(savedInstanceState);
 		
         setContentView(R.layout.activity_hipstacast_search_neue);
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         final ActionBar actionBar = this.getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
@@ -77,7 +70,14 @@ public class HipstacastEpisodeView extends SherlockFragmentActivity implements T
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.menuEpisodeUnsubscribe:
-			new UnsubscribeTask(this).execute(show_id);
+			Intent unsubscriptionIntent = new Intent(this, HipstacastSync.class);
+			unsubscriptionIntent.setAction(HipstacastSync.ACTION_UNSUBSCRIBE);
+			unsubscriptionIntent.putExtra(HipstacastSync.EXTRA_UNSUBSCRIPTION_ID, show_id);
+			startService(unsubscriptionIntent);
+
+			Intent goTopIntent = new Intent(this, HipstacastMain.class);
+			goTopIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+			startActivity(goTopIntent);
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -106,10 +106,6 @@ public class HipstacastEpisodeView extends SherlockFragmentActivity implements T
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
-        public SectionsPagerAdapter(FragmentManager fm, Context ctx) {
-            super(fm);
-        }
- 
 
         @Override
         public Fragment getItem(int i) {
@@ -144,55 +140,4 @@ public class HipstacastEpisodeView extends SherlockFragmentActivity implements T
             return null;
         }
     }
-
-
-	private class UnsubscribeTask extends AsyncTask<Integer, Void, Void> {
-		ProgressDialog progressDialog;
-
-		public UnsubscribeTask(Context c) {
-			progressDialog = new ProgressDialog(c);
-			progressDialog.setCancelable(false);
-			progressDialog.setMessage(getString(R.string.unsubscribing));
-			progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-			progressDialog.setProgress(0);
-			progressDialog.show();
-
-		}
-
-		@Override
-		protected Void doInBackground(Integer... params) {
-			int id = params[0];
-
-			getApplicationContext()
-					.getContentResolver()
-					.delete(Uri
-							.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"),
-							"_id = ?", new String[] { String.valueOf(id) });
-			getApplicationContext()
-					.getContentResolver()
-					.delete(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
-							+ id + "/episodes"), "podcast_id = ?",
-							new String[] { String.valueOf(id) });
-			File f = new File(android.os.Environment
-					.getExternalStorageDirectory().getAbsolutePath()
-					+ "/Android/data/com.ifrins.hipstacast/files/shows/" + id);
-			if (f.isDirectory()) {
-				String[] children = f.list();
-				int len = children.length;
-				for (int i = 0; i < len; i++) {
-					new File(f, children[i]).delete();
-				}
-			}
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void r) {
-			progressDialog.dismiss();
-			Intent i = new Intent(getApplicationContext(), HipstacastMain.class);
-			i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			startActivity(i);
-		}
-
-	}
 }

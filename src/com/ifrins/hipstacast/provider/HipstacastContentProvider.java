@@ -60,6 +60,7 @@ public class HipstacastContentProvider extends ContentProvider {
 		} else {
 			status = db.delete("episodes", where, whereArgs);
 		}
+		getContext().getContentResolver().notifyChange(uri, null);
 		return status;
 	}
 
@@ -130,7 +131,7 @@ public class HipstacastContentProvider extends ContentProvider {
 			default:
 				throw new UnsupportedOperationException("Unknown uri: " + uri);
 		}
-
+		getContext().getContentResolver().notifyChange(uri, null);
 		return count;
 	}
 

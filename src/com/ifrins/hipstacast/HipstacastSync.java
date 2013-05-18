@@ -33,6 +33,10 @@ public class HipstacastSync extends IntentService {
 	
 	public final static String ACTION_SYNC = "com.ifrins.hipstacast.ACTION_SYNC";
 	public final static String ACTION_SUBSCRIBE = "com.ifrins.hipstacast.ACTION_SUBSCRIBE";
+	public final static String ACTION_UNSUBSCRIBE = "com.ifrins.hipstacast.ACTION_UNSUBSCRIBE";
+
+	public final static String EXTRA_FEED_URL = "feedUrl";
+	public final static String EXTRA_UNSUBSCRIPTION_ID = "subscriptionIds";
 
 	Parser mParser = new Parser();
 
@@ -43,10 +47,12 @@ public class HipstacastSync extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		HipstacastLogging.log("SyncService");
-		if (intent.getAction().equals(HipstacastSync.ACTION_SYNC)) {
+		if (intent.getAction().equals(ACTION_SYNC)) {
 			handleSyncIntent();
-		} else if (intent.getAction().equals(HipstacastSync.ACTION_SUBSCRIBE)) {
-			handleSubscribeIntent(intent.getStringExtra("feedUrl"));
+		} else if (intent.getAction().equals(ACTION_SUBSCRIBE)) {
+			handleSubscribeIntent(intent.getStringExtra(EXTRA_FEED_URL));
+		} else if (intent.getAction().equals(ACTION_UNSUBSCRIBE)) {
+			handleUnsubscribeIntent(intent.getIntExtra(EXTRA_UNSUBSCRIPTION_ID, -1));
 		}
 	}
 	
@@ -97,7 +103,18 @@ public class HipstacastSync extends IntentService {
 				}
 			}
 		}
+	}
 
+	private void handleUnsubscribeIntent(int subscription_id) {
+		getContentResolver().delete(HipstacastProvider.EPISODES_URI,
+				HipstacastProvider.EPISODE_PODCAST_ID + " = ?",
+				new String[] { String.valueOf(subscription_id) });
+
+		getContentResolver().delete(HipstacastProvider.SUBSCRIPTIONS_URI,
+				"_id = ?",
+				new String[] { String.valueOf(subscription_id) });
+
+		//TODO: Handle file deletions
 	}
 	
 	private List<Podcast> getSubscriptionList() {

@@ -17,6 +17,7 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.app.SherlockListFragment;
 import com.ifrins.hipstacast.HipstacastEpisodeView;
+import com.ifrins.hipstacast.HipstacastSync;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.adapters.SubscriptionsCursorAdapter;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
@@ -108,10 +109,15 @@ public class SubscriptionsFragment extends SherlockListFragment implements Loade
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
 	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+		Cursor selectedSubscription = (Cursor) this.getListView().getItemAtPosition(info.position);
+		int show_id = selectedSubscription.getInt(selectedSubscription.getColumnIndex("_id"));
 	    
 	    switch(item.getItemId()) {
 	    	case R.id.menu_delete_subscription:
-	    		//TODO: Delete subscription
+			    Intent unsubscriptionIntent = new Intent(this.getActivity(), HipstacastSync.class);
+			    unsubscriptionIntent.setAction(HipstacastSync.ACTION_UNSUBSCRIBE);
+			    unsubscriptionIntent.putExtra(HipstacastSync.EXTRA_UNSUBSCRIPTION_ID, show_id);
+			    this.getActivity().startService(unsubscriptionIntent);
 	    		return true;
 	    	case R.id.menu_report_subscription:
 	    		//TODO: Report subscription
