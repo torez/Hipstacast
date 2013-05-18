@@ -3,7 +3,6 @@ package com.ifrins.hipstacast.fragments;
 import com.ifrins.hipstacast.HipstacastPlayerService;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.HipstacastPlayerService.LocalBinder;
-import com.ifrins.hipstacast.model.PodcastEpisode;
 import com.ifrins.hipstacast.utils.HipstacastLogging;
 import com.ifrins.hipstacast.utils.PlayerCallbacks;
 import com.ifrins.hipstacast.utils.PlayerUIUtils;
@@ -28,14 +27,11 @@ import android.widget.TextView;
 public class PlayerFragment extends Fragment {
 
 	int episodeId;
-	int show_id;
 	HipstacastPlayerService player;
 	Boolean bound = false;
-	Boolean fromNotification = false;
-	SeekBar seekBar = null;
+	SeekBar seekBar;
 	
-	PodcastEpisode mPodcast = new PodcastEpisode();
-	
+
 	OnClickListener playbackToggleClickListener = new OnClickListener() {
 
 		@Override
@@ -125,6 +121,7 @@ public class PlayerFragment extends Fragment {
 																player.getCoverPath(PlayerFragment.this.getActivity())));
 			
 			seekBar = (SeekBar) fragmentView.findViewById(R.id.playerSeekBar);
+			seekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);
 			
 			ImageButton playbackToggle = (ImageButton) fragmentView.findViewById(R.id.playToggleButton);
 			playbackToggle.setOnClickListener(playbackToggleClickListener);
@@ -159,6 +156,21 @@ public class PlayerFragment extends Fragment {
 		public void onServiceDisconnected(ComponentName arg0) {
 			bound = false;
 		}
+	};
+
+	SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+		@Override
+		public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser) {
+			if (fromUser && player != null) {
+				player.seekTo(position);
+			}
+		}
+
+		@Override
+		public void onStartTrackingTouch(SeekBar seekBar) {}
+
+		@Override
+		public void onStopTrackingTouch(SeekBar seekBar) {}
 	};
 
 	
