@@ -11,20 +11,22 @@
 # generated files
 bin/
 gen/
-target/
 
 # Local configuration file (sdk path, etc)
 local.properties
-
-# Eclipse project files
-.classpath
-.project
 .DS_Store
 
-lint.xml
+# Eclipse stuff
+.classpath
+.project
+.settings
+*.iml
+*.iws
+*.ipr
+local.properties
+*~
+*.swp
 
-*/.idea/workspace.xml
-*/.idea/tasks.xml
-
-!actionbarsherlock/actionbarsherlock.iml
-actionbarsherlock/
+# Gradle stuff
+.gradle
+build/
