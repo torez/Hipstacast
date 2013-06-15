@@ -3,7 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/Hipstacast.iml" filepath="$PROJECT_DIR$/Hipstacast.iml" />
-      <module fileurl="file://$PROJECT_DIR$/actionbarsherlock/actionbarsherlock.iml" filepath="$PROJECT_DIR$/actionbarsherlock/actionbarsherlock.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Hipstacast/Hipstacast-Hipstacast.iml" filepath="$PROJECT_DIR$/Hipstacast/Hipstacast-Hipstacast.iml" />
     </modules>
   </component>
 </project>

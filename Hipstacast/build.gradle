@@ -1,0 +1,37 @@
+buildscript {
+    repositories {
+        maven { url 'http://repo1.maven.org/maven2' }
+        maven { url 'http://download.crashlytics.com/maven' }
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:0.4.1'
+        classpath 'com.crashlytics.tools.gradle:crashlytics-gradle:1.0.0'
+
+    }
+}
+apply plugin: 'android'
+apply plugin: 'crashlytics'
+
+android {
+    compileSdkVersion 17
+    buildToolsVersion "17.0.0"
+
+    repositories {
+        maven { url 'http://download.crashlytics.com/maven' }
+    }
+
+    dependencies {
+        compile 'com.android.support:support-v4:13.0.0'
+        compile files('libs/commons-io-2.4.jar')
+        compile 'com.crashlytics.android:crashlytics:[1.0.0,)'
+        compile files('libs/libGoogleAnalyticsV2.jar')
+        compile files('libs/podcastparser-0.0.1-SNAPSHOT-jar-with-dependencies.jar')
+    }
+
+
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 17
+    }
+}
