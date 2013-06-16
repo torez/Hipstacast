@@ -41,7 +41,7 @@ public class HipstacastSync extends IntentService {
 	Parser mParser = new Parser();
 
 	public HipstacastSync() {
-		super("com.ifrins.hipstacast.HipstacastSync");
+		super(HipstacastSync.class.getName());
 	}
 
 	@Override

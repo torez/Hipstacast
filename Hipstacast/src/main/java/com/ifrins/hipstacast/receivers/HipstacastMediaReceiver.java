@@ -1,4 +1,4 @@
-package com.ifrins.hipstacast;
+package com.ifrins.hipstacast.receivers;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;

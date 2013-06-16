@@ -33,9 +33,10 @@
         </service>
         <service android:name=".HipstacastSync">
         </service>
+        <service android:name=".HipstacastDownloadsScheduler"/>
 
         <receiver
-                android:name=".DownloadReceiver"
+                android:name=".receivers.DownloadReceiver"
                 android:exported="true">
             <intent-filter android:priority="100">
                 <action android:name="android.intent.action.DOWNLOAD_COMPLETE"/>
@@ -94,10 +95,6 @@
             <meta-data
                     android:name="android.app.searchable"
                     android:resource="@xml/searchable"/>
-        </activity>
-        <activity
-                android:name=".HipstacastSearchNeue"
-                android:label="@string/menu_search">
         </activity>
         <activity
                 android:name=".HipstacastVideoEpisodePlayer"
