@@ -2,16 +2,20 @@ package com.ifrins.hipstacast;
 
 import android.app.DownloadManager;
 import android.app.IntentService;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 
+import android.provider.MediaStore;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
 import com.ifrins.hipstacast.utils.HipstacastLogging;
+import com.ifrins.hipstacast.utils.HipstacastUtils;
 
 /**
  * Created by francesc on 15/06/13.
@@ -19,7 +23,7 @@ import com.ifrins.hipstacast.utils.HipstacastLogging;
 public class HipstacastDownloadsScheduler extends IntentService {
 
     public final static String ACTION_ADD_DOWNLOAD = "com.ifrins.hipstacast.ACTION_ADD_DOWNLOAD";
-    public final static String ACTION_DOWNLOAD_COMPLETED = "com.ifrins.hipstacast.ACT_DOWN_FINISHED";
+    public final static String ACTION_DOWNLOAD_COMPLETED = "com.ifrins.hipstacast.ACTION_DOWNLOAD_FINISHED";
     public final static String ACTION_ADD_DOWNLOAD_EPISODE_ID = "episode_id";
 
     public HipstacastDownloadsScheduler() {
@@ -67,12 +71,7 @@ public class HipstacastDownloadsScheduler extends IntentService {
                 )
         );
 
-        Uri externalDir = Uri.parse(
-                "file://" +
-                this.getExternalFilesDir(Environment.DIRECTORY_PODCASTS).getAbsolutePath()
-        );
-        Uri futureFile = Uri.withAppendedPath(externalDir, String.format("%d.mp3", episodeId));
-        request.setDestinationUri(futureFile);
+        request.setDestinationUri(HipstacastUtils.getLocalUriForEpisodeId(this, episodeId));
 
         String episodeTitle = episodeCursor.getString(
                 episodeCursor.getColumnIndex(
@@ -99,6 +98,61 @@ public class HipstacastDownloadsScheduler extends IntentService {
     }
 
     private void doDownloadCompleted(Intent intent) {
+	    DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
+	    int downloadId = intent.getIntExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+
+	    if (downloadId == -1) {
+		    return;
+	    }
+		Cursor downloadedQuery = downloadManager.query(new DownloadManager.Query().setFilterById(downloadId));
+	    if (downloadedQuery.getCount() == 0) {
+		    return;
+	    }
+	    downloadedQuery.moveToFirst();
+
+	    int status = downloadedQuery.getInt(
+			    downloadedQuery.getColumnIndex(DownloadManager.COLUMN_STATUS)
+	    );
+	    Uri downloadedFileUri = Uri.parse(
+			    downloadedQuery.getString(downloadedQuery.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI))
+	    );
+
+	    int episodeId = HipstacastUtils.getEpisodeIdFromFile(downloadedFileUri);
+	    if (episodeId == -1) {
+		    return;
+	    }
+
+	    if (status == DownloadManager.STATUS_SUCCESSFUL) {
+		    //Set file as not media
+		    MediaScannerConnection.scanFile(
+				    this,
+				    new String[] { downloadedFileUri.toString() },
+				    null,
+				    new MediaScannerConnection.OnScanCompletedListener() {
+			            @Override
+			            public void onScanCompleted(String path, Uri uri) {
+						    HipstacastLogging.log("Finished scan of " + uri.toString());
+						    ContentValues fileContentValues = new ContentValues();
+						    fileContentValues.put(
+								    MediaStore.Files.FileColumns.MEDIA_TYPE,
+								    MediaStore.Files.FileColumns.MEDIA_TYPE_NONE
+						    );
+						    getContentResolver().update(uri, fileContentValues, null, null);
+			            }
+		    });
+
+		    //Register it on our DB
+		    ContentValues hContentValues = new ContentValues();
+		    hContentValues.put(HipstacastProvider.EPISODE_DOWNLOADED, 1);
+
+		    getContentResolver().update(
+				    HipstacastProvider.EPISODES_URI,
+				    hContentValues, "_id = ?",
+				    new String[] { String.valueOf(episodeId) }
+		    );
+
+
+	    }
 
     }
 }

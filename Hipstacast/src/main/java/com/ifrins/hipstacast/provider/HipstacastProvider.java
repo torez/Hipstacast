@@ -28,6 +28,7 @@ public class HipstacastProvider {
 	public final static String EPISODE_STATUS = "status";
 	public final static String EPISODE_TYPE = "type";
 	public final static String EPISODE_GUID = "guid";
+	public final static String EPISODE_DOWNLOADED = "downloaded";
 	
 	public final static int EPISODE_STATUS_UNDOWNLOADED = 0;
 	public final static int EPISODE_STATUS_DOWNLOADED = 1;
@@ -41,5 +42,5 @@ public class HipstacastProvider {
 	public final static Uri EPISODES_URI = Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/episodes");
 
 	public final static String[] EPISODES_PLAYBACK_PROJECTION = new String[]{"_id", EPISODE_TITLE, EPISODE_STATUS, EPISODE_CURRENT_POSITION, EPISODE_AUTHOR, EPISODE_PUB_DATE,
-																				EPISODE_PODCAST_ID, EPISODE_CONTENT_URL, EPISODE_SHOWNOTES, EPISODE_DURATION};
+																				EPISODE_PODCAST_ID, EPISODE_CONTENT_URL, EPISODE_SHOWNOTES, EPISODE_DURATION, EPISODE_DOWNLOADED};
 }

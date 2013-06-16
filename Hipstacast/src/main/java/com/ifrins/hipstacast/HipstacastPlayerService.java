@@ -1,5 +1,6 @@
 package com.ifrins.hipstacast;
 
+import java.io.File;
 import java.io.IOException;
 
 import android.app.PendingIntent;
@@ -12,6 +13,7 @@ import com.ifrins.hipstacast.HipstacastPlayerService.Preparation.PlayerStatus;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
 import com.ifrins.hipstacast.remotecontrol.RemoteControlEventReceiver;
 import com.ifrins.hipstacast.utils.HipstacastLogging;
+import com.ifrins.hipstacast.utils.HipstacastUtils;
 import com.ifrins.hipstacast.utils.PlayerCallbacks;
 
 import android.app.Service;
@@ -376,7 +378,7 @@ public class HipstacastPlayerService extends Service {
 			this.episodeId = episodeId;
 			this.episodeCursor = context.getContentResolver()
 											.query(HipstacastProvider.EPISODES_URI, 
-													HipstacastProvider.EPISODES_PLAYBACK_PROJECTION, 
+													HipstacastProvider.EPISODES_PLAYBACK_PROJECTION,
 													"_id = ?", 
 													new String[] {String.valueOf(episodeId)}, 
 													null);
@@ -386,7 +388,21 @@ public class HipstacastPlayerService extends Service {
 		public String getPath() {
 			HipstacastLogging.log("count", episodeCursor.getCount());
 			episodeCursor.moveToFirst();
-			return episodeCursor.getString(episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_CONTENT_URL));
+			String originalRemotePath = episodeCursor.getString(
+					episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_CONTENT_URL)
+			);
+
+			if (episodeCursor.getInt(episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_DOWNLOADED)) == 0) {
+				return originalRemotePath;
+			} else {
+				File localFile = new File(HipstacastUtils.getLocalUriForEpisodeId(this.context, this.episodeId).getPath());
+				if (localFile.exists()) {
+					return localFile.getPath();
+				} else {
+					return originalRemotePath;
+				}
+			}
+
 		}
 		
 		public String getEpisodeTitle() {
