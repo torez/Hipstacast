@@ -6,7 +6,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.InflaterInputStream;
@@ -241,8 +240,11 @@ public class HipstacastSync extends IntentService {
 	}
 	
 	private void saveEpisode(PodcastItem mPodcastItem, int subscription, boolean isOld) {
+		if (mPodcastItem.enclosure == null || mPodcastItem.enclosure.url == null) {
+			return;
+		}
+
 		long pubdate = mPodcastItem.pubdate.getTime();
-		long timeDiff = new Date().getTime() - pubdate;
 		HipstacastLogging.log("GUID " + mPodcastItem.link);
 		
 		ContentValues mContentValues = new ContentValues();
