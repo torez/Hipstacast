@@ -19,12 +19,14 @@ android {
     buildToolsVersion "17.0.0"
 
     repositories {
+        mavenCentral()
         maven { url 'http://download.crashlytics.com/maven' }
     }
 
     dependencies {
         compile 'com.android.support:support-v4:13.0.0'
         compile 'com.crashlytics.android:crashlytics:[1.0.0,)'
+        compile 'com.squareup.okhttp:okhttp:1.1.0'
         compile files('libs/commons-io-2.4.jar')
         compile files('libs/libGoogleAnalyticsV2.jar')
         compile files('libs/podcastparser-0.0.1-SNAPSHOT-jar-with-dependencies.jar')

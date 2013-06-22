@@ -16,11 +16,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 
+import android.widget.Toast;
 import com.ifrins.hipstacast.HipstacastEpisodeView;
 import com.ifrins.hipstacast.HipstacastSync;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.adapters.SubscriptionsCursorAdapter;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
+import com.ifrins.hipstacast.utils.HipstacastLogging;
 
 public class SubscriptionsFragment extends ListFragment implements LoaderManager.LoaderCallbacks<Cursor> {
 	
@@ -75,7 +77,7 @@ public class SubscriptionsFragment extends ListFragment implements LoaderManager
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		return new CursorLoader(this.getActivity(),
 								HipstacastProvider.SUBSCRIPTIONS_URI, 
-								new String[] { "_id", "title", "imageUrl", "author" },
+								new String[] { "_id", "title", "imageUrl", "author", "feed_link" },
 								null,
 								null,
 								"title ASC");
@@ -111,6 +113,9 @@ public class SubscriptionsFragment extends ListFragment implements LoaderManager
 	    AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 		Cursor selectedSubscription = (Cursor) this.getListView().getItemAtPosition(info.position);
 		int show_id = selectedSubscription.getInt(selectedSubscription.getColumnIndex("_id"));
+		String feedUrl = selectedSubscription.getString(
+				selectedSubscription.getColumnIndex(HipstacastProvider.PODCAST_FEED)
+		);
 	    
 	    switch(item.getItemId()) {
 	    	case R.id.menu_delete_subscription:
@@ -120,8 +125,9 @@ public class SubscriptionsFragment extends ListFragment implements LoaderManager
 			    this.getActivity().startService(unsubscriptionIntent);
 	    		return true;
 	    	case R.id.menu_report_subscription:
-	    		//TODO: Report subscription
-	    		return true;
+			    HipstacastLogging.reportFeedError(feedUrl);
+			    Toast.makeText(this.getActivity(), R.string.thanks_feed_report, Toast.LENGTH_LONG).show();
+			    return true;
 	    	default:
 	    		return super.onContextItemSelected(item);
 	    }

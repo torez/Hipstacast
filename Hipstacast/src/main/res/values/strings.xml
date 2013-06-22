@@ -91,5 +91,6 @@
     <string name="version_number">1.0.8</string>
     <string name="about">About</string>
     <string name="loveCat">Created with &#9829; in Catalonia</string>
+    <string name="thanks_feed_report">Thanks for reporting the feed. We\'ll take a look. Promise!</string>
 
 </resources>
