@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
@@ -21,6 +22,7 @@ import android.os.SystemClock;
 import android.preference.PreferenceManager;
 
 import com.google.analytics.tracking.android.EasyTracker;
+import com.ifrins.hipstacast.fragments.AddUrlDialogFragment;
 import com.ifrins.hipstacast.fragments.SubscriptionsFragment;
 import com.ifrins.hipstacast.tasks.CheckForUpdates;
 import com.ifrins.hipstacast.tasks.ExportTask;
@@ -73,6 +75,9 @@ public class HipstacastMain extends FragmentActivity {
 			return true;
 		case R.id.menuAbout:
 			startActivity(new Intent(this, HipstacastAbout.class));
+			return true;
+		case R.id.menuAddFeedWithUrl:
+			showAddUrlDialog();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -147,6 +152,12 @@ public class HipstacastMain extends FragmentActivity {
 						// Do nothing.
 					}
 				}).show();
+
+	}
+
+	public void showAddUrlDialog() {
+		DialogFragment dialog = new AddUrlDialogFragment();
+		dialog.show(getSupportFragmentManager(), "AddUrlDialogFragment");
 
 	}
 }

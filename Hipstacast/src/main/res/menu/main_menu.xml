@@ -12,6 +12,10 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/menu_refresh"/>
     <item
+        android:id="@+id/menuAddFeedWithUrl"
+        android:showAsAction="never"
+        android:title="@string/menu_add_URL"/>
+    <item
         android:id="@+id/menuSettings"
         android:showAsAction="ifRoom|withText"
         android:title="@string/settings"/>
