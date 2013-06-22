@@ -114,10 +114,12 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
                 );
 
                 downloadSchedulingIntent.setAction(HipstacastDownloadsScheduler.ACTION_ADD_DOWNLOAD);
+	            Cursor c = (Cursor) this.getListAdapter().getItem(info.position);
+	            int episodeId = c.getInt(c.getColumnIndex("_id"));
 
                 downloadSchedulingIntent.putExtra(
                         HipstacastDownloadsScheduler.ACTION_ADD_DOWNLOAD_EPISODE_ID,
-                        info.position
+                        episodeId
                 );
                 getActivity().startService(downloadSchedulingIntent);
             return true;

@@ -392,11 +392,14 @@ public class HipstacastPlayerService extends Service {
 					episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_CONTENT_URL)
 			);
 
-			if (episodeCursor.getInt(episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_DOWNLOADED)) == 0) {
+			int downloaded = episodeCursor.getInt(episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_DOWNLOADED));
+			HipstacastLogging.log("Downloaded status", downloaded);
+			if (downloaded == 0) {
 				return originalRemotePath;
 			} else {
 				File localFile = new File(HipstacastUtils.getLocalUriForEpisodeId(this.context, this.episodeId).getPath());
 				if (localFile.exists()) {
+					HipstacastLogging.log("Using local path");
 					return localFile.getPath();
 				} else {
 					return originalRemotePath;

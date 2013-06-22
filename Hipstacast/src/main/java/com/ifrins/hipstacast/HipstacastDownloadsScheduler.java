@@ -9,7 +9,6 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import android.provider.MediaStore;
@@ -48,7 +47,6 @@ public class HipstacastDownloadsScheduler extends IntentService {
         );
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-
 
         Cursor episodeCursor = getContentResolver().query(HipstacastProvider.EPISODES_URI,
                 HipstacastProvider.EPISODES_PLAYBACK_PROJECTION,
@@ -99,7 +97,7 @@ public class HipstacastDownloadsScheduler extends IntentService {
 
     private void doDownloadCompleted(Intent intent) {
 	    DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
-	    int downloadId = intent.getIntExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
+	    long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
 
 	    if (downloadId == -1) {
 		    return;
