@@ -22,7 +22,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import com.squareup.picasso.Picasso;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class PlayerFragment extends Fragment {
 
@@ -118,12 +118,8 @@ public class PlayerFragment extends Fragment {
 			titleView.setSelected(true);
 			
 			ImageView coverView = (ImageView)fragmentView.findViewById(R.id.playerCoverImage);
+            UrlImageViewHelper.setUrlDrawable(coverView, PlayerUIUtils.fixCoverPath(player.getCoverPath(getActivity())));
 
-			Picasso
-					.with(getActivity())
-					.load(PlayerUIUtils.fixCoverPath(player.getCoverPath(getActivity())))
-					.into(coverView);
-			
 			seekBar = (SeekBar) fragmentView.findViewById(R.id.playerSeekBar);
 			seekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);
 			seekBar.setVisibility(View.INVISIBLE);

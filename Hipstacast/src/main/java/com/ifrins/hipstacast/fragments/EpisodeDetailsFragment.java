@@ -19,7 +19,7 @@ public class EpisodeDetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 		show_id = this.getArguments().getInt("show_id");
-		
+
 		View v = inflater.inflate(R.layout.podcast_details, null);
 		
 		Cursor show = getCursor();
@@ -32,8 +32,12 @@ public class EpisodeDetailsFragment extends Fragment {
 	}
 	
 	private Cursor getCursor() {
-    	return getActivity().getContentResolver().query(Hipstacast.SUBSCRIPTIONS_PROVIDER_URI, new String[] { "_id", "title",
-    			"description", HipstacastProvider.PODCAST_FEED}, "_id = ?", new String[] { String.valueOf(show_id) }, null);
+    	return getActivity().getContentResolver().query(
+                Hipstacast.SUBSCRIPTIONS_PROVIDER_URI,
+                HipstacastProvider.SUBSCRIPTIONS_DEFAULT_PROJECTION,
+                "_id = ?",
+                new String[] { String.valueOf(show_id) },
+                null);
 
 	}
 

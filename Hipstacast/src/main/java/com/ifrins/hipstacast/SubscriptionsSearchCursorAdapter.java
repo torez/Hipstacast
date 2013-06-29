@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.squareup.picasso.Picasso;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class SubscriptionsSearchCursorAdapter extends ArrayAdapter<Object> {
 
@@ -42,10 +42,7 @@ public class SubscriptionsSearchCursorAdapter extends ArrayAdapter<Object> {
 		holder.title.setText(podcasts[position].title);
 		holder.author.setText(podcasts[position].author);
 		holder.unlistenedCount.setVisibility(View.GONE);
-		Picasso
-				.with(context)
-				.load(podcasts[position].imageUrl)
-				.into(holder.coverView);
+        UrlImageViewHelper.setUrlDrawable(holder.coverView, podcasts[position].imageUrl);
 
 		return convertView;
 	}

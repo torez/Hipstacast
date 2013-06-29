@@ -60,4 +60,12 @@
         <item name="android:textSize">16sp</item>
     </style>
 
+    <style name="UnlistenedWidgetBadge">
+        <item name="android:shadowColor">#000000</item>
+        <item name="android:shadowDx">1</item>
+        <item name="android:shadowDy">1</item>
+        <item name="android:shadowRadius">1</item>
+        <item name="android:textColor">#FFFFFF</item>
+    </style>
+
 </resources>

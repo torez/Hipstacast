@@ -41,8 +41,32 @@ public class HipstacastProvider {
 	public final static Uri SUBSCRIPTIONS_URI = Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts");
 	public final static Uri EPISODES_URI = Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/episodes");
 
-	public final static String[] EPISODES_PLAYBACK_PROJECTION = new String[]{"_id", EPISODE_TITLE, EPISODE_STATUS, EPISODE_CURRENT_POSITION, EPISODE_AUTHOR, EPISODE_PUB_DATE,
-																				EPISODE_PODCAST_ID, EPISODE_CONTENT_URL, EPISODE_SHOWNOTES, EPISODE_DURATION, EPISODE_DOWNLOADED};
+	public final static String[] EPISODES_PLAYBACK_PROJECTION = new String[]{"_id",
+            EPISODE_TITLE,
+            EPISODE_STATUS,
+            EPISODE_CURRENT_POSITION,
+            EPISODE_AUTHOR,
+            EPISODE_PUB_DATE,
+            EPISODE_PODCAST_ID,
+            EPISODE_CONTENT_URL,
+            EPISODE_SHOWNOTES,
+            EPISODE_DURATION,
+            EPISODE_DOWNLOADED
+    };
 
-	public final static String[] SUBSCRIPTIONS_DEFAULT_PROJECTION = new String[]{"_id", PODCAST_TITLE, PODCAST_IMAGE};
+	public final static String[] SUBSCRIPTIONS_DEFAULT_PROJECTION = new String[]{
+            "_id",
+            PODCAST_TITLE,
+            PODCAST_IMAGE,
+            PODCAST_DESCRIPTION
+    };
+    public final static String[] SUBSCRIPTIONS_DEFAULT_COUNT_PROJECTION = new String[] {
+            "_id",
+            PODCAST_TITLE,
+            PODCAST_IMAGE,
+            PODCAST_AUTHOR,
+            PODCAST_FEED,
+            "(SELECT COUNT(*) FROM 'episodes' where episodes.podcast_id = podcasts._id AND episodes.status != 3 )"
+    };
+
 }

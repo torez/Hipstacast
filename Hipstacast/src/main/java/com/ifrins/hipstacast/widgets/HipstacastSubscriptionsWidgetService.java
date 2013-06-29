@@ -4,17 +4,18 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
-import com.crashlytics.android.Crashlytics;
 import com.ifrins.hipstacast.HipstacastEpisodeView;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
-import com.squareup.picasso.Picasso;
+import com.ifrins.hipstacast.utils.HipstacastLogging;
+import com.ifrins.hipstacast.utils.PlayerUIUtils;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
-import java.io.IOException;
+import java.io.File;
 
 /**
  * Created by francesc on 28/06/13.
@@ -43,7 +44,7 @@ public class HipstacastSubscriptionsWidgetService extends RemoteViewsService {
 		public void onCreate() {
 			mSubscriptionsCursor = mContext.getContentResolver().query(
 					HipstacastProvider.SUBSCRIPTIONS_URI,
-					HipstacastProvider.SUBSCRIPTIONS_DEFAULT_PROJECTION,
+					HipstacastProvider.SUBSCRIPTIONS_DEFAULT_COUNT_PROJECTION,
 					null,
 					null,
 					null
@@ -67,21 +68,31 @@ public class HipstacastSubscriptionsWidgetService extends RemoteViewsService {
 
 		public RemoteViews getViewAt(int position) {
 			mSubscriptionsCursor.moveToPosition(position);
-			final RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.subscriptions_widget_item);
-			Bitmap b = null;
-			try {
-				b = Picasso
-						.with(mContext)
-						.load(mSubscriptionsCursor.getString(
-								mSubscriptionsCursor.getColumnIndex(HipstacastProvider.PODCAST_IMAGE)
-						))
-						.get();
-			} catch (IOException e) {
-				Crashlytics.logException(e);
-			}
-			if (b != null) {
-				rv.setImageViewBitmap(R.id.subscription_cover_image, b);
-			}
+            final RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.subscriptions_widget_item);
+
+            String url = mSubscriptionsCursor.getString(
+                    mSubscriptionsCursor.getColumnIndex(HipstacastProvider.PODCAST_IMAGE)
+            );
+
+            final String filename = mContext.getFileStreamPath(
+                    UrlImageViewHelper.getFilenameForUrl(url)
+            ).getAbsolutePath();
+
+            final File file = new File(filename);
+            if (file.exists()) {
+                rv.setImageViewBitmap(
+                        R.id.subscription_cover_image,
+                        UrlImageViewHelper.loadBitmapFromStream(
+                                mContext,
+                                url,
+                                filename,
+                                600,
+                                600
+                        )
+                );
+            }
+
+            rv.setTextViewText(R.id.subscription_cover_badge, String.valueOf(mSubscriptionsCursor.getInt(5)));
 
 			Bundle extras = new Bundle();
 			extras.putInt(

@@ -4,14 +4,13 @@ import com.ifrins.hipstacast.R;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.squareup.picasso.Picasso;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class SubscriptionsCursorAdapter extends CursorAdapter {
 
@@ -25,22 +24,14 @@ public class SubscriptionsCursorAdapter extends CursorAdapter {
 	@Override
 	public void bindView(View view, Context context, Cursor cursor) {
 		Holder holder = (Holder) view.getTag();
-		int show = cursor.getInt(cursor.getColumnIndex("_id"));
 		String title = cursor.getString(cursor.getColumnIndex("title"));
 		String imageUrl = cursor.getString(cursor.getColumnIndex("imageUrl"));
 
 		holder.name.setText(title);
-		Picasso.with(context).load(imageUrl).into(holder.image);
+        UrlImageViewHelper.setUrlDrawable(holder.image, imageUrl);
 		holder.author
 				.setText(cursor.getString(cursor.getColumnIndex("author")));
-		Cursor cur =  context.getContentResolver()
-				.query(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts/"
-						+ show + "/episodes"),
-						new String[] { "_id", "status" },
-						"podcast_id = ? AND status != ? ",
-						new String[] { String.valueOf(show), "3"}, null);
-		int c = cur.getCount();
-		cur.close();
+        int c = cursor.getInt(5);
 		if (c > 0 && c < 10) {
 			holder.listenCount.setText(String.valueOf(c));
 			holder.listenCount.setVisibility(View.VISIBLE);

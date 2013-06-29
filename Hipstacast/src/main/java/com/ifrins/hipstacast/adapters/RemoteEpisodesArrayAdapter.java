@@ -1,5 +1,6 @@
-package com.ifrins.hipstacast;
+package com.ifrins.hipstacast.adapters;
 
+import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.model.PodcastEpisode;
 import com.ifrins.hipstacast.utils.PlayerUIUtils;
 import android.content.Context;

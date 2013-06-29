@@ -37,7 +37,7 @@ public class SubscriptionsFragment extends ListFragment implements LoaderManager
 			Intent openIntent = new Intent(SubscriptionsFragment.this.getActivity(),
 					HipstacastEpisodeView.class);
 			openIntent.putExtra("show_id",
-					c.getString(c.getColumnIndex("_id")));
+					c.getInt(c.getColumnIndex("_id")));
 			openIntent.putExtra("img_url",
 					c.getString(c.getColumnIndex("imageUrl")));
 			openIntent.putExtra("show_title", c.getString(c.getColumnIndex("title")));
@@ -77,7 +77,7 @@ public class SubscriptionsFragment extends ListFragment implements LoaderManager
 	public Loader<Cursor> onCreateLoader(int id, Bundle args) {
 		return new CursorLoader(this.getActivity(),
 								HipstacastProvider.SUBSCRIPTIONS_URI, 
-								new String[] { "_id", "title", "imageUrl", "author", "feed_link" },
+								HipstacastProvider.SUBSCRIPTIONS_DEFAULT_COUNT_PROJECTION,
 								null,
 								null,
 								"title ASC");
@@ -85,7 +85,7 @@ public class SubscriptionsFragment extends ListFragment implements LoaderManager
 
 	@Override
 	public void onLoadFinished(Loader<Cursor> loader, Cursor newCursor) {
-		mAdapter.swapCursor(newCursor);
+        mAdapter.swapCursor(newCursor);
 		
 		if (this.isResumed()) {
 			this.setListShown(true);
