@@ -92,5 +92,10 @@
     <string name="about">About</string>
     <string name="loveCat">Created with &#9829; in Catalonia</string>
     <string name="thanks_feed_report">Thanks for reporting the feed. We\'ll take a look. Promise!</string>
+    <string name="nowplaying_settings_title">#nowplaying</string>
+    <string name="nowplaying_share_title">Share which podcasts are you listening to</string>
+    <string name="nowplaying_share_facebook">Share to Facebook</string>
+    <string name="nowplaying_share_twitter">Share to Twitter</string>
+    <string name="empty_view_text">No subscriptions</string>
 
 </resources>
