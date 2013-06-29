@@ -13,6 +13,9 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 
 public class HipstacastEpisodeView extends FragmentActivity implements ActionBar.TabListener {
+	public static final String EXTRA_SUBSCRIPTION_ID = "show_id";
+	public static final String EXTRA_SUBSCRIPTION_TITLE = "show_title";
+
 	int show_id;
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
@@ -45,10 +48,9 @@ public class HipstacastEpisodeView extends FragmentActivity implements ActionBar
 
 		
 		getActionBar()
-				.setTitle(getIntent().getExtras().getString("show_title"));
+				.setTitle(getIntent().getExtras().getString(EXTRA_SUBSCRIPTION_TITLE));
 		
-		show_id = Integer
-				.parseInt(getIntent().getExtras().getString("show_id"));
+		show_id = getIntent().getExtras().getInt(EXTRA_SUBSCRIPTION_ID);
 	}
 	
 	@Override

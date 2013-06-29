@@ -106,6 +106,19 @@
                 android:name=".HipstacastAbout"
                 android:label="@string/about"/>
 
+        <receiver
+                android:name=".widgets.HipstacastSubscriptionsWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider"
+                       android:resource="@xml/subscriptions_widget"/>
+
+        </receiver>
+
+        <service android:name=".widgets.HipstacastSubscriptionsWidgetService"
+                 android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         <meta-data
                 android:name="com.crashlytics.ApiKey"
                 android:value="450aa570a5e6b349ef7a66d64772c93f12031b58"/>
