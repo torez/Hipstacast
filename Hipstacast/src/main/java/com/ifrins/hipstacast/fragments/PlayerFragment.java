@@ -7,7 +7,6 @@ import com.ifrins.hipstacast.HipstacastPlayerService.LocalBinder;
 import com.ifrins.hipstacast.utils.HipstacastLogging;
 import com.ifrins.hipstacast.utils.PlayerCallbacks;
 import com.ifrins.hipstacast.utils.PlayerUIUtils;
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 import android.content.ComponentName;
 import android.content.Intent;
@@ -23,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import com.squareup.picasso.Picasso;
 
 public class PlayerFragment extends Fragment {
 
@@ -119,8 +119,10 @@ public class PlayerFragment extends Fragment {
 			
 			ImageView coverView = (ImageView)fragmentView.findViewById(R.id.playerCoverImage);
 
-			UrlImageViewHelper.setUrlDrawable(coverView, PlayerUIUtils.fixCoverPath(
-																player.getCoverPath(PlayerFragment.this.getActivity())));
+			Picasso
+					.with(getActivity())
+					.load(PlayerUIUtils.fixCoverPath(player.getCoverPath(getActivity())))
+					.into(coverView);
 			
 			seekBar = (SeekBar) fragmentView.findViewById(R.id.playerSeekBar);
 			seekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);

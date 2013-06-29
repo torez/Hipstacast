@@ -1,7 +1,6 @@
 package com.ifrins.hipstacast.adapters;
 
 import com.ifrins.hipstacast.R;
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -12,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.squareup.picasso.Picasso;
 
 public class SubscriptionsCursorAdapter extends CursorAdapter {
 
@@ -27,8 +27,10 @@ public class SubscriptionsCursorAdapter extends CursorAdapter {
 		Holder holder = (Holder) view.getTag();
 		int show = cursor.getInt(cursor.getColumnIndex("_id"));
 		String title = cursor.getString(cursor.getColumnIndex("title"));
+		String imageUrl = cursor.getString(cursor.getColumnIndex("imageUrl"));
+
 		holder.name.setText(title);
-		UrlImageViewHelper.setUrlDrawable(holder.image, cursor.getString(cursor.getColumnIndex("imageUrl")));
+		Picasso.with(context).load(imageUrl).into(holder.image);
 		holder.author
 				.setText(cursor.getString(cursor.getColumnIndex("author")));
 		Cursor cur =  context.getContentResolver()

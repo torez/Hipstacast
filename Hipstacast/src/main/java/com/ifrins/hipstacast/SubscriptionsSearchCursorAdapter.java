@@ -1,7 +1,6 @@
 package com.ifrins.hipstacast;
 
 import com.ifrins.hipstacast.model.Podcast;
-import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.squareup.picasso.Picasso;
 
 public class SubscriptionsSearchCursorAdapter extends ArrayAdapter<Object> {
 
@@ -18,7 +18,7 @@ public class SubscriptionsSearchCursorAdapter extends ArrayAdapter<Object> {
 	public SubscriptionsSearchCursorAdapter(Context context, Podcast[] podcasts) {
 		super(context, R.layout.subscriptions_list, podcasts);
 		this.context = context;
-		this.podcasts = (Podcast[]) podcasts;
+		this.podcasts = podcasts;
 	}
 
 	@Override
@@ -42,8 +42,11 @@ public class SubscriptionsSearchCursorAdapter extends ArrayAdapter<Object> {
 		holder.title.setText(podcasts[position].title);
 		holder.author.setText(podcasts[position].author);
 		holder.unlistenedCount.setVisibility(View.GONE);
+		Picasso
+				.with(context)
+				.load(podcasts[position].imageUrl)
+				.into(holder.coverView);
 
-		UrlImageViewHelper.setUrlDrawable(holder.coverView, podcasts[position].imageUrl);		
 		return convertView;
 	}
 	
