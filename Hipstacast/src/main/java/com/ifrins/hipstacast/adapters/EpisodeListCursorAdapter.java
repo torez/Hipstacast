@@ -32,6 +32,8 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
 
         if (isDownloaded == HipstacastProvider.EPISODE_STATUS_DOWNLOADED) {
             holder.name.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_downloaded, 0, 0, 0);
+        } else {
+            holder.name.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
         }
 
 		if (status == HipstacastProvider.EPISODE_STATUS_STARTED) {

@@ -63,9 +63,7 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
 		this.getLoaderManager().initLoader(0, null, this);
 		
 		show_id = this.getArguments().getInt("show_id");
-		this.setHasOptionsMenu(true);
     	registerForContextMenu(this.getListView());
-
 
 	}
 	
