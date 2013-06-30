@@ -1,5 +1,6 @@
 package com.ifrins.hipstacast;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -27,6 +28,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
+import com.ifrins.hipstacast.utils.HipstacastUtils;
 
 public class HipstacastSync extends IntentService {
 	
@@ -105,15 +107,37 @@ public class HipstacastSync extends IntentService {
 	}
 
 	private void handleUnsubscribeIntent(int subscription_id) {
-		getContentResolver().delete(HipstacastProvider.EPISODES_URI,
+        Cursor episodes = getContentResolver().query(
+                HipstacastProvider.EPISODES_URI,
+                HipstacastProvider.EPISODES_PLAYBACK_PROJECTION,
+                HipstacastProvider.EPISODE_PODCAST_ID + " = ?",
+                new String[] { String.valueOf(subscription_id) },
+                null
+        );
+
+        while (episodes.moveToNext()) {
+            int episode_id = episodes.getInt(episodes.getColumnIndex("_id"));
+            Uri episodeUri = HipstacastUtils.getLocalUriForEpisodeId(this, episode_id);
+            File file = new File(episodeUri.getPath());
+            if (file.exists()) {
+                file.delete();
+            }
+        }
+
+        episodes.close();
+
+		getContentResolver().delete(
+                HipstacastProvider.EPISODES_URI,
 				HipstacastProvider.EPISODE_PODCAST_ID + " = ?",
-				new String[] { String.valueOf(subscription_id) });
+				new String[] { String.valueOf(subscription_id) }
+        );
 
-		getContentResolver().delete(HipstacastProvider.SUBSCRIPTIONS_URI,
+		getContentResolver().delete(
+                HipstacastProvider.SUBSCRIPTIONS_URI,
 				"_id = ?",
-				new String[] { String.valueOf(subscription_id) });
+				new String[] { String.valueOf(subscription_id) }
+        );
 
-		//TODO: Handle file deletions
 	}
 	
 	private List<Podcast> getSubscriptionList() {
@@ -260,7 +284,7 @@ public class HipstacastSync extends IntentService {
 		mContentValues.put(HipstacastProvider.EPISODE_TYPE, 0);
 
 		if (!isOld) {
-			mContentValues.put(HipstacastProvider.EPISODE_STATUS, HipstacastProvider.EPISODE_STATUS_UNDOWNLOADED);
+			mContentValues.put(HipstacastProvider.EPISODE_STATUS, HipstacastProvider.EPISODE_STATUS_NOT_LISTENED);
 		} else {
 			mContentValues.put(HipstacastProvider.EPISODE_STATUS, HipstacastProvider.EPISODE_STATUS_FINISHED);
 		}

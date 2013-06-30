@@ -1,5 +1,6 @@
 package com.ifrins.hipstacast.fragments;
 
+import android.content.ContentValues;
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -113,7 +114,14 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
 
         switch (item.getItemId()) {
             case 1:
-                // TODO: Mark as listened
+                ContentValues listenedValues = new ContentValues();
+                listenedValues.put(HipstacastProvider.EPISODE_STATUS, HipstacastProvider.EPISODE_STATUS_NOT_LISTENED);
+                getActivity().getContentResolver().update(
+                        HipstacastProvider.EPISODES_URI,
+                        listenedValues,
+                        "_id = ?",
+                        new String[] { String.valueOf(episodeId) }
+                );
                 return true;
 
             case 2:
@@ -126,7 +134,6 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
             return true;
 
             case 3:
-                // TODO: Delete file
                 Intent removeIntent = new Intent(this.getActivity(), HipstacastDownloadsScheduler.class);
                 removeIntent.setAction(HipstacastDownloadsScheduler.ACTION_REMOVE_DOWNLOAD);
                 removeIntent.putExtra(HipstacastDownloadsScheduler.EXTRA_EPISODE_ID, episodeId);

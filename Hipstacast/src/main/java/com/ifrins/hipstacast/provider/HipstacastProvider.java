@@ -31,6 +31,7 @@ public class HipstacastProvider {
 	public final static String EPISODE_DOWNLOADED = "downloaded";
 	
 	public final static int EPISODE_STATUS_UNDOWNLOADED = 0;
+    public final static int EPISODE_STATUS_NOT_LISTENED = 0;
 	public final static int EPISODE_STATUS_DOWNLOADED = 1;
 	public final static int EPISODE_STATUS_STARTED = 2;
 	public final static int EPISODE_STATUS_FINISHED = 3;
