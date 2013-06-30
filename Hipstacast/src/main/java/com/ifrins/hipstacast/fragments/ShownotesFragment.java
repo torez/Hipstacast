@@ -21,8 +21,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class ShownotesFragment extends Fragment {
-	WebView shownotesView;
-	
+    public static final String EXTRA_EPISODE_ID = "episode_id";
+
+    WebView shownotesView;
+
 	private WebViewClient wVClient = new WebViewClient() {
         @Override
         public boolean shouldOverrideUrlLoading (WebView view, String url) {
@@ -63,17 +65,21 @@ public class ShownotesFragment extends Fragment {
 
 		@Override
 		protected String doInBackground(Void... arg0) {
-			int episodeId = ShownotesFragment.this.getArguments().getInt("episode_id");
-			Cursor p = ShownotesFragment.this.getActivity().getContentResolver()
-					.query(Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/episodes"),
-							new String[] { "_id", HipstacastProvider.EPISODE_DESCRIPTION}, "_id = ?", new String[] { String.valueOf(episodeId) }, null);
+			int episodeId = ShownotesFragment.this.getArguments().getInt(EXTRA_EPISODE_ID);
+			Cursor p = getActivity().getContentResolver().query(
+                    HipstacastProvider.EPISODES_URI,
+					new String[] { "_id", HipstacastProvider.EPISODE_DESCRIPTION},
+                    "_id = ?",
+                    new String[] { String.valueOf(episodeId) },
+                    null
+            );
 			p.moveToFirst();
 
 			String shownotesData = p.getString(p.getColumnIndex(HipstacastProvider.EPISODE_DESCRIPTION));
 			p.close();
 			
 			try {
-				String template = IOUtils.toString(ShownotesFragment.this.getActivity().getAssets().open("index.html"));
+				String template = IOUtils.toString(getActivity().getAssets().open("index.html"));
 				return template + shownotesData;
 			} catch (IOException e) {
 				e.printStackTrace();

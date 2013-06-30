@@ -7,16 +7,12 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.view.*;
 
-import com.ifrins.hipstacast.HipstacastDownloadsScheduler;
+import com.ifrins.hipstacast.*;
 import com.ifrins.hipstacast.adapters.EpisodeListCursorAdapter;
-import com.ifrins.hipstacast.EpisodePlayer;
-import com.ifrins.hipstacast.Hipstacast;
-import com.ifrins.hipstacast.R;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
 import com.ifrins.hipstacast.utils.HipstacastLogging;
@@ -141,7 +137,9 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
                 getActivity().startService(removeIntent);
 
             case 4:
-                // TODO: Show more information
+                Intent infoIntent = new Intent(this.getActivity(), HipstacastSingleShownotes.class);
+                infoIntent.putExtra(HipstacastSingleShownotes.EXTRA_EPISODE_ID, episodeId);
+                getActivity().startActivity(infoIntent);
 
             default:
                 return super.onContextItemSelected(item);
