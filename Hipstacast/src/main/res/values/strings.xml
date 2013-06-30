@@ -97,5 +97,6 @@
     <string name="nowplaying_share_facebook">Share to Facebook</string>
     <string name="nowplaying_share_twitter">Share to Twitter</string>
     <string name="empty_view_text">No subscriptions</string>
+    <string name="more_information">More information</string>
 
 </resources>

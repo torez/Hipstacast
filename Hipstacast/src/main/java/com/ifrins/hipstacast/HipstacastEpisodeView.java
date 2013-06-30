@@ -4,6 +4,8 @@ import android.app.ActionBar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.EpisodeDetailsFragment;
@@ -64,8 +66,15 @@ public class HipstacastEpisodeView extends FragmentActivity implements ActionBar
 		super.onStop();
 		EasyTracker.getInstance().activityStop(this);
 	}
-	
-	public boolean onOptionsItemSelected(MenuItem item) {
+
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        getMenuInflater().inflate(R.menu.episodes, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.menuEpisodeUnsubscribe:

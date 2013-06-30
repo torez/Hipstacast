@@ -16,6 +16,8 @@ import com.ifrins.hipstacast.provider.HipstacastProvider;
 import com.ifrins.hipstacast.utils.HipstacastLogging;
 import com.ifrins.hipstacast.utils.HipstacastUtils;
 
+import java.io.File;
+
 /**
  * Created by francesc on 15/06/13.
  */
@@ -23,7 +25,8 @@ public class HipstacastDownloadsScheduler extends IntentService {
 
     public final static String ACTION_ADD_DOWNLOAD = "com.ifrins.hipstacast.ACTION_ADD_DOWNLOAD";
     public final static String ACTION_DOWNLOAD_COMPLETED = "com.ifrins.hipstacast.ACTION_DOWNLOAD_FINISHED";
-    public final static String ACTION_ADD_DOWNLOAD_EPISODE_ID = "episode_id";
+    public final static String ACTION_REMOVE_DOWNLOAD = "com.ifrins.hipstacast.ACTION_REMOVE_DOWNLOAD";
+    public final static String EXTRA_EPISODE_ID = "episode_id";
 
     public HipstacastDownloadsScheduler() {
         super(HipstacastDownloadsScheduler.class.getName());
@@ -34,17 +37,17 @@ public class HipstacastDownloadsScheduler extends IntentService {
         String action = intent.getAction();
         HipstacastLogging.log(action);
 
-       if (action.equals(HipstacastDownloadsScheduler.ACTION_ADD_DOWNLOAD)) {
+       if (action.equals(ACTION_ADD_DOWNLOAD)) {
             doAddDownload(intent);
-        } else if (action.equals(HipstacastDownloadsScheduler.ACTION_DOWNLOAD_COMPLETED)) {
+        } else if (action.equals(ACTION_DOWNLOAD_COMPLETED)) {
            doDownloadCompleted(intent);
+       } else if (action.equals(ACTION_REMOVE_DOWNLOAD)) {
+           doRemoveDownload(intent);
        }
     }
 
     private void doAddDownload(Intent intent) {
-        int episodeId = intent.getIntExtra(
-                HipstacastDownloadsScheduler.ACTION_ADD_DOWNLOAD_EPISODE_ID, -1
-        );
+        int episodeId = intent.getIntExtra(EXTRA_EPISODE_ID, -1);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -151,6 +154,31 @@ public class HipstacastDownloadsScheduler extends IntentService {
 
 
 	    }
+
+    }
+
+    private void doRemoveDownload(Intent intent) {
+        int episode_id = intent.getIntExtra(EXTRA_EPISODE_ID, -1);
+        if (episode_id == -1) {
+            return;
+        }
+
+        Uri localPath = HipstacastUtils.getLocalUriForEpisodeId(this, episode_id);
+        File file = new File(localPath.getPath());
+
+        if (file.exists()) {
+            file.delete();
+        }
+
+        ContentValues notDownloaded = new ContentValues();
+        notDownloaded.put(HipstacastProvider.EPISODE_DOWNLOADED, HipstacastProvider.EPISODE_STATUS_UNDOWNLOADED);
+
+        getContentResolver().update(
+                HipstacastProvider.EPISODES_URI,
+                notDownloaded,
+                "_id = ?",
+                new String[] { String.valueOf(episode_id) }
+        );
 
     }
 }

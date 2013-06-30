@@ -88,11 +88,19 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
 		menu.setHeaderTitle(c.getString(c.getColumnIndex("title")));
 
         int status = c.getInt(c.getColumnIndex(HipstacastProvider.EPISODE_STATUS));
+        int downloaded = c.getInt(c.getColumnIndex(HipstacastProvider.EPISODE_DOWNLOADED));
+
         if (status != HipstacastProvider.EPISODE_STATUS_FINISHED) {
             menu.add(0, 1, 1, R.string.mark_as_listened);
         }
 
-        menu.add(0, 2, 2, R.string.download);
+        if (downloaded != HipstacastProvider.EPISODE_STATUS_DOWNLOADED) {
+            menu.add(0, 2, 2, R.string.download);
+        } else {
+            menu.add(0, 3, 3, R.string.delete);
+        }
+
+        menu.add(0, 4, 4, R.string.more_information);
 
 	}
 
@@ -101,49 +109,40 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         HipstacastLogging.log("onContextItemSelected");
         HipstacastLogging.log("Selected CI id", item.getItemId());
+        Cursor c = (Cursor) this.getListAdapter().getItem(info.position);
+        int episodeId = c.getInt(c.getColumnIndex("_id"));
+
 
         switch (item.getItemId()) {
+            case 1:
+                // TODO: Mark as listened
+                return true;
+
             case 2:
-                Intent downloadSchedulingIntent = new Intent(
-                        this.getActivity(),
-                        HipstacastDownloadsScheduler.class
-                );
-
+                Intent downloadSchedulingIntent = new Intent(this.getActivity(), HipstacastDownloadsScheduler.class);
                 downloadSchedulingIntent.setAction(HipstacastDownloadsScheduler.ACTION_ADD_DOWNLOAD);
-	            Cursor c = (Cursor) this.getListAdapter().getItem(info.position);
-	            int episodeId = c.getInt(c.getColumnIndex("_id"));
 
-                downloadSchedulingIntent.putExtra(
-                        HipstacastDownloadsScheduler.ACTION_ADD_DOWNLOAD_EPISODE_ID,
-                        episodeId
-                );
+
+                downloadSchedulingIntent.putExtra(HipstacastDownloadsScheduler.EXTRA_EPISODE_ID, episodeId);
                 getActivity().startService(downloadSchedulingIntent);
             return true;
+
+            case 3:
+                // TODO: Delete file
+                Intent removeIntent = new Intent(this.getActivity(), HipstacastDownloadsScheduler.class);
+                removeIntent.setAction(HipstacastDownloadsScheduler.ACTION_REMOVE_DOWNLOAD);
+                removeIntent.putExtra(HipstacastDownloadsScheduler.EXTRA_EPISODE_ID, episodeId);
+
+                getActivity().startService(removeIntent);
+
+            case 4:
+                // TODO: Show more information
 
             default:
                 return super.onContextItemSelected(item);
         }
 
 
-    }
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		AdapterContextMenuInfo info = (AdapterContextMenuInfo) item
-				.getMenuInfo();
-		Cursor c = (Cursor) this.getListView().getAdapter().getItem(info.position);
-		int pid = c.getInt(c.getColumnIndex("_id"));
-        HipstacastLogging.log("OptionItemSelected");
-		switch (item.getItemId()) {
-		default:
-			return super.onOptionsItemSelected(item);
-		}
-	}
-	
-    @Override
-    public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-        inflater.inflate(R.menu.episodes, menu);
-        super.onCreateOptionsMenu(menu, inflater);
     }
 
 	@Override
