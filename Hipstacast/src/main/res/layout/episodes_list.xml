@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp" >
+    android:padding="16dp">
 
     <TextView
         android:id="@+id/episodeTitle"
@@ -11,8 +12,9 @@
         android:layout_weight="0.40"
         android:gravity="left"
         android:maxLines="2"
+        android:drawablePadding="5dp"
         android:text="Title"
-        android:textAppearance="?android:attr/textAppearanceMedium" >
+        android:textAppearance="?android:attr/textAppearanceMedium">
     </TextView>
 
     <TextView
@@ -23,7 +25,7 @@
         android:gravity="right"
         android:text="Length"
         android:singleLine="true"
-        android:textAppearance="?android:attr/textAppearanceSmall" >
+        android:textAppearance="?android:attr/textAppearanceSmall">
 
     </TextView>
 

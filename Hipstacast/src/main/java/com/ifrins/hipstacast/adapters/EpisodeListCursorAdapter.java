@@ -28,6 +28,11 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
 		int totalDuration = cursor.getInt(cursor.getColumnIndex(HipstacastProvider.EPISODE_DURATION));
 		int currentPosition = cursor.getInt(cursor.getColumnIndex(HipstacastProvider.EPISODE_CURRENT_POSITION)) / 1000;
 		int status = cursor.getInt(cursor.getColumnIndex(HipstacastProvider.EPISODE_STATUS));
+        int isDownloaded = cursor.getInt(cursor.getColumnIndex(HipstacastProvider.EPISODE_DOWNLOADED));
+
+        if (isDownloaded == HipstacastProvider.EPISODE_STATUS_DOWNLOADED) {
+            holder.name.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_downloaded, 0, 0, 0);
+        }
 
 		if (status == HipstacastProvider.EPISODE_STATUS_STARTED) {
 			holder.duration.setText("-" + PlayerUIUtils.convertSecondsToDuration(totalDuration - currentPosition));

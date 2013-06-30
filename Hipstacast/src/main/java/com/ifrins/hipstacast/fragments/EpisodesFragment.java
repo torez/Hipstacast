@@ -1,7 +1,5 @@
 package com.ifrins.hipstacast.fragments;
 
-import java.io.File;
-
 import android.support.v4.app.ListFragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -12,11 +10,9 @@ import com.ifrins.hipstacast.HipstacastDownloadsScheduler;
 import com.ifrins.hipstacast.adapters.EpisodeListCursorAdapter;
 import com.ifrins.hipstacast.EpisodePlayer;
 import com.ifrins.hipstacast.Hipstacast;
-import com.ifrins.hipstacast.HipstacastMain;
 import com.ifrins.hipstacast.R;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -154,10 +150,7 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		return new CursorLoader(this.getActivity(),
 								Hipstacast.EPISODES_PROVIDER_URI,
-								new String[] { "_id", "title",
-										"duration", "podcast_id", "status", "position", "description",
-										"content_url", "content_length", "publication_date",
-										"type" },
+								HipstacastProvider.EPISODES_PLAYBACK_PROJECTION,
 								"podcast_id = ?",
 								 new String[] { String.valueOf(show_id) }, 
 								 "publication_date DESC");
