@@ -28,7 +28,9 @@ public class HipstacastLogging {
 		HttpURLConnection conn;
 
 		try {
-			conn = client.open(new URL("http://hipstacast.ifrins.cat/l.gif?t=feed&f=" + URLEncoder.encode(feedUrl, "UTF-8")));
+			conn = client.open(new URL(
+					"http://beta.hipstacast.appspot.com/beacon/feed_error?f=" + URLEncoder.encode(feedUrl, "UTF-8")
+			));
 		} catch (UnsupportedEncodingException e) {
 			Crashlytics.logException(e);
 			return;
