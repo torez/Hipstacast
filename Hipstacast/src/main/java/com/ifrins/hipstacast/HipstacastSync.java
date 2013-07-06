@@ -47,7 +47,7 @@ public class HipstacastSync extends IntentService {
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		HipstacastLogging.log("SyncService");
+		HipstacastLogging.log(intent.getAction());
 		if (intent.getAction().equals(ACTION_SYNC)) {
 			handleSyncIntent();
 		} else if (intent.getAction().equals(ACTION_SUBSCRIBE)) {

@@ -16,18 +16,14 @@ import java.util.Random;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
-import android.preference.PreferenceManager;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.AddUrlDialogFragment;
 import com.ifrins.hipstacast.fragments.SubscriptionsFragment;
-import com.ifrins.hipstacast.tasks.CheckForUpdates;
 import com.ifrins.hipstacast.tasks.ExportTask;
 import com.ifrins.hipstacast.tasks.ImportTask;
-import com.ifrins.hipstacast.utils.HipstacastLogging;
 
 public class HipstacastMain extends FragmentActivity {
 
@@ -59,7 +55,6 @@ public class HipstacastMain extends FragmentActivity {
 			this.onSearchRequested();
 			return true;
 		case R.id.menuRefresh:
-			HipstacastLogging.log("Click refresh");
 			Intent mSyncIntent = new Intent(this, HipstacastSync.class);
 			mSyncIntent.setAction(HipstacastSync.ACTION_SYNC);
 			this.startService(mSyncIntent);
@@ -88,22 +83,15 @@ public class HipstacastMain extends FragmentActivity {
 	public void onStart() {
 		super.onStart();
 		EasyTracker.getInstance().activityStart(this);
-		Intent newIntent = new Intent(this, HipstacastSync.class);
-		newIntent.setAction(HipstacastSync.ACTION_SYNC);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-				newIntent, 0);
+
+		// Periodical sync registration
+		Intent syncIntent = new Intent(this, HipstacastSync.class);
+		syncIntent.setAction(HipstacastSync.ACTION_SYNC);
+		PendingIntent syncPendingIntent = PendingIntent.getService(this, 0, syncIntent, 0);
 		long d = SystemClock.elapsedRealtime() + 100;
 
-		SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(this);
-
-		AlarmManager m = ((AlarmManager) getApplicationContext()
-				.getSystemService(ALARM_SERVICE));
-		m.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, d,
-				Long.parseLong(prefs.getString("fetchFrequency", "86400000")),
-				contentIntent);
-		new CheckForUpdates(this).execute();
-		
+		AlarmManager m = ((AlarmManager) getSystemService(ALARM_SERVICE));
+		m.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, d, AlarmManager.INTERVAL_HOUR, syncPendingIntent);
 	}
 	
 	@Override
@@ -158,6 +146,5 @@ public class HipstacastMain extends FragmentActivity {
 	public void showAddUrlDialog() {
 		DialogFragment dialog = new AddUrlDialogFragment();
 		dialog.show(getSupportFragmentManager(), "AddUrlDialogFragment");
-
 	}
 }
