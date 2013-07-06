@@ -34,6 +34,8 @@ public class HipstacastDatabase extends SQLiteOpenHelper {
 		if (newVersion == 2) {
 			db.execSQL("ALTER TABLE \"podcasts\" ADD COLUMN \"etag\" VARCHAR");
 			db.execSQL("ALTER TABLE \"podcasts\" ADD COLUMN \"etag_lm\" VARCHAR");
+
+			db.execSQL("ALTER TABLE \"episodes\" ADD COLUMN \"downloaded\" INTEGER");
 		}
 
 	}
