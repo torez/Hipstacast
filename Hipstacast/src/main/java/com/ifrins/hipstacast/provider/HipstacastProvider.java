@@ -52,7 +52,8 @@ public class HipstacastProvider {
             EPISODE_CONTENT_URL,
             EPISODE_SHOWNOTES,
             EPISODE_DURATION,
-            EPISODE_DOWNLOADED
+            EPISODE_DOWNLOADED,
+			EPISODE_TYPE
     };
 
 	public final static String[] SUBSCRIPTIONS_DEFAULT_PROJECTION = new String[]{
