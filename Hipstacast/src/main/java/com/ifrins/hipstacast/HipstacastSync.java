@@ -99,7 +99,7 @@ public class HipstacastSync extends IntentService {
 			
 			for (int ii = 0; ii < podcastItemsCount; ii++) {
 				PodcastItem mPodcastItem = mPodcastItems.get(ii);
-				if (!checkIfEpisodeAlreadyExists(mPodcastItem.link)) {
+				if (!checkIfEpisodeAlreadyExists(getGuid(mPodcastItem))) {
 					saveEpisode(mPodcastItem, mCurrentPodcast.id, false);
 				}
 			}
@@ -274,14 +274,14 @@ public class HipstacastSync extends IntentService {
 		ContentValues mContentValues = new ContentValues();
 		mContentValues.put(HipstacastProvider.EPISODE_TITLE, mPodcastItem.title);
 		mContentValues.put(HipstacastProvider.EPISODE_DESCRIPTION, mPodcastItem.description);
-		mContentValues.put(HipstacastProvider.EPISODE_GUID, mPodcastItem.link);
+		mContentValues.put(HipstacastProvider.EPISODE_GUID, getGuid(mPodcastItem));
 		mContentValues.put(HipstacastProvider.EPISODE_CONTENT_URL, mPodcastItem.enclosure.url);
 		mContentValues.put(HipstacastProvider.EPISODE_CONTENT_LENGTH, mPodcastItem.enclosure.length);
 		mContentValues.put(HipstacastProvider.EPISODE_PODCAST_ID, subscription);
 		mContentValues.put(HipstacastProvider.EPISODE_PUB_DATE, pubdate);
 		mContentValues.put(HipstacastProvider.EPISODE_AUTHOR, "");
 		mContentValues.put(HipstacastProvider.EPISODE_DURATION, mPodcastItem.duration);
-		mContentValues.put(HipstacastProvider.EPISODE_TYPE, 0);
+		mContentValues.put(HipstacastProvider.EPISODE_TYPE, mPodcastItem.enclosure.enclosureType);
 
 		if (!isOld) {
 			mContentValues.put(HipstacastProvider.EPISODE_STATUS, HipstacastProvider.EPISODE_STATUS_NOT_LISTENED);
@@ -316,6 +316,18 @@ public class HipstacastSync extends IntentService {
 										.build();
 		NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.notify(title, 0, mNotification);
+	}
+
+	private String getGuid(PodcastItem podcastItem) {
+		if (podcastItem.link != null) {
+			return podcastItem.link;
+		} else if (podcastItem.guid != null) {
+			return  podcastItem.guid;
+		} else if (podcastItem.enclosure.url != null) {
+			return podcastItem.enclosure.url;
+		}
+
+		return null;
 	}
 
 }
