@@ -127,7 +127,7 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
 
                 downloadSchedulingIntent.putExtra(HipstacastDownloadsScheduler.EXTRA_EPISODE_ID, episodeId);
                 getActivity().startService(downloadSchedulingIntent);
-            return true;
+                return true;
 
             case 3:
                 Intent removeIntent = new Intent(this.getActivity(), HipstacastDownloadsScheduler.class);
@@ -135,11 +135,13 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
                 removeIntent.putExtra(HipstacastDownloadsScheduler.EXTRA_EPISODE_ID, episodeId);
 
                 getActivity().startService(removeIntent);
+	            return true;
 
             case 4:
                 Intent infoIntent = new Intent(this.getActivity(), HipstacastSingleShownotes.class);
                 infoIntent.putExtra(HipstacastSingleShownotes.EXTRA_EPISODE_ID, episodeId);
                 getActivity().startActivity(infoIntent);
+	            return true;
 
             default:
                 return super.onContextItemSelected(item);
@@ -151,7 +153,7 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
 	@Override
 	public Loader<Cursor> onCreateLoader(int arg0, Bundle arg1) {
 		return new CursorLoader(this.getActivity(),
-								Hipstacast.EPISODES_PROVIDER_URI,
+								HipstacastProvider.EPISODES_URI,
 								HipstacastProvider.EPISODES_PLAYBACK_PROJECTION,
 								"podcast_id = ?",
 								 new String[] { String.valueOf(show_id) }, 
