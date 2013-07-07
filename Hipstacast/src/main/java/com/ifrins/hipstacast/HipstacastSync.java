@@ -256,8 +256,10 @@ public class HipstacastSync extends IntentService {
 										"guid = ?", 
 										new String[] { guid },
 										null);
+		int count = c.getCount();
+		c.close();
 		
-		if (c.getCount() == 0) {
+		if (count == 0) {
 			return false;
 		}
 		return true;
