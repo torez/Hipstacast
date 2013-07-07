@@ -38,6 +38,9 @@ public class HipstacastSync extends IntentService {
 
 	public final static String EXTRA_FEED_URL = "feedUrl";
 	public final static String EXTRA_UNSUBSCRIPTION_ID = "subscriptionIds";
+	public final static String EXTRA_REBUILD = "rebuild";
+
+	public final static String BROADCAST_FINISHED = "com.ifrins.hipstacast.BROADCAST_FINISHED";
 
 	Parser mParser = new Parser();
 
@@ -49,7 +52,8 @@ public class HipstacastSync extends IntentService {
 	protected void onHandleIntent(Intent intent) {
 		HipstacastLogging.log(intent.getAction());
 		if (intent.getAction().equals(ACTION_SYNC)) {
-			handleSyncIntent();
+			Boolean rebuild = intent.getBooleanExtra(EXTRA_REBUILD, false);
+			handleSyncIntent(rebuild);
 		} else if (intent.getAction().equals(ACTION_SUBSCRIBE)) {
 			handleSubscribeIntent(intent.getStringExtra(EXTRA_FEED_URL));
 		} else if (intent.getAction().equals(ACTION_UNSUBSCRIBE)) {
@@ -80,7 +84,7 @@ public class HipstacastSync extends IntentService {
 		notifyAddedSubscription(mParsedPodcast.channel.title);
 	}
 	
-	private void handleSyncIntent() {
+	private void handleSyncIntent(Boolean rebuild) {
 		HipstacastLogging.log("Init logging");
 		List<Podcast> subscriptionsList = this.getSubscriptionList();
 		int subscriptionsCount = subscriptionsList.size();
@@ -103,6 +107,15 @@ public class HipstacastSync extends IntentService {
 					saveEpisode(mPodcastItem, mCurrentPodcast.id, false);
 				}
 			}
+
+			if (rebuild) {
+				updateSubscription(mCurrentPodcast.id, mPodcast);
+			}
+		}
+
+		if (rebuild) {
+			Intent syncFinished = new Intent(BROADCAST_FINISHED);
+			sendBroadcast(syncFinished);
 		}
 	}
 
@@ -300,7 +313,11 @@ public class HipstacastSync extends IntentService {
 		mContentValues.put(HipstacastProvider.PODCAST_LINK, parsedSubscription.link);
 		mContentValues.put(HipstacastProvider.PODCAST_AUTHOR, parsedSubscription.author);
 		mContentValues.put(HipstacastProvider.PODCAST_DESCRIPTION, parsedSubscription.description);
-		mContentValues.put(HipstacastProvider.PODCAST_IMAGE, parsedSubscription.image.href);
+
+		if (parsedSubscription.image != null) {
+			mContentValues.put(HipstacastProvider.PODCAST_IMAGE, parsedSubscription.image.href);
+		}
+
 		mContentValues.put(HipstacastProvider.PODCAST_FEED, feedUrl);
 		mContentValues.put(HipstacastProvider.PODCAST_LAST_CHECK, 0);
 		mContentValues.put(HipstacastProvider.PODCAST_LAST_UPDATE, 0);
@@ -318,6 +335,18 @@ public class HipstacastSync extends IntentService {
 										.build();
 		NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
 		mNotificationManager.notify(title, 0, mNotification);
+	}
+
+	private void updateSubscription(int subscription_id, PodcastRss newPodcast) {
+		ContentValues contentValues = new ContentValues();
+		contentValues.put(HipstacastProvider.PODCAST_IMAGE, newPodcast.channel.image.href);
+
+		getContentResolver().update(
+				HipstacastProvider.SUBSCRIPTIONS_URI,
+				contentValues,
+				"_id = ?",
+				new String[] { String.valueOf(subscription_id)}
+		);
 	}
 
 	private String getGuid(PodcastItem podcastItem) {

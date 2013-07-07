@@ -9,6 +9,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.crashlytics.android.Crashlytics;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,20 +17,21 @@ import org.json.JSONException;
 import com.ifrins.hipstacast.HipstacastSync;
 import com.ifrins.hipstacast.R;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
+import org.json.JSONObject;
 
 public class ImportTask extends AsyncTask<Integer, Void, Void> {
 	Context context;
-	ProgressDialog progress;
+	OnTaskCompleted callback;
 
-	public ImportTask(Context ct, ProgressDialog pd) {
-		context = ct;
-		progress = pd;
+	public ImportTask(Context context, OnTaskCompleted callback) {
+		this.context = context;
+		this.callback = callback;
 	}
+
 	@Override
 	protected Void doInBackground(Integer... val) {
 		int sn1 = val[0];
@@ -39,17 +41,19 @@ public class ImportTask extends AsyncTask<Integer, Void, Void> {
 		
 		URL url = null;
 		try {
-			url = new URL("https://hipstacast.appspot.com/api/import?sn1="+sn1+"&sn2="+sn2);
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
+			url = new URL(
+					"http://beta.hipstacast.appspot.com/api/import?id=" +
+					String.valueOf(sn1) +
+					String.valueOf(sn2)
+			);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			Crashlytics.logException(e);
 		}
 
 		try {
-			HttpURLConnection urlConnection = (HttpURLConnection) url
-					.openConnection();
-			InputStream in = new BufferedInputStream(
-					urlConnection.getInputStream());
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			InputStream in = new BufferedInputStream(urlConnection.getInputStream());
 			int statusCode = urlConnection.getResponseCode();
 			if (statusCode == 200) {
 				response = IOUtils.toString(in);
@@ -63,36 +67,43 @@ public class ImportTask extends AsyncTask<Integer, Void, Void> {
 			urlConnection.disconnect();
 		} catch (IOException e) {
 			e.printStackTrace();
+			Crashlytics.logException(e);
 		}
-		JSONArray a = null;
+
+		JSONArray jsonArray = null;
+		if (response == null) {
+			return null;
+		}
+
 		try {
-			if (response != null) {
-				a = new JSONArray(response);
+			jsonArray = new JSONArray(response);
+			int subscriptionCount = jsonArray.length();
+
+			for (int i = 0; i < subscriptionCount; i++) {
+				JSONObject currentPodcast = jsonArray.getJSONObject(i);
+				if (currentPodcast.has("url")) {
+					urls.add(currentPodcast.getString("url"));
+				}
 			}
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		if (a != null) {
-			int len = a.length();
-			for (int i = 0; i < len; i++) {
-				try {
-					urls.add(a.getString(i));
-				} catch (JSONException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+
 		if (urls.size() > 0) {
 			for (int i = 0; i < urls.size(); i++) {
 				Intent mSubscriptionIntent = new Intent(context, HipstacastSync.class);
 				mSubscriptionIntent.setAction(HipstacastSync.ACTION_SUBSCRIBE);
-				mSubscriptionIntent.putExtra("feedUrl", urls.get(0));
+				mSubscriptionIntent.putExtra(HipstacastSync.EXTRA_FEED_URL, urls.get(i));
 				context.startService(mSubscriptionIntent);
 			}
 		}
-	
 
 		return null;
+	}
+
+	@Override
+	protected void onPostExecute(Void v) {
+		callback.onTaskCompleted(this.getClass().getName());
 	}
 	
 }

@@ -98,5 +98,15 @@
     <string name="nowplaying_share_twitter">Share to Twitter</string>
     <string name="empty_view_text">No subscriptions</string>
     <string name="more_information">More information</string>
+    <string name="migrating_old_subscriptions">Migrating&#8230;</string>
+    <string name="finish">Finish</string>
+    <string name="can_take_a_couple_of_minutes">It can take a couple of minutes. Please wait…</string>
+
+    <string name="new_import_instructions_1">To import your subscriptions, visit:</string>
+    <string name="new_import_instructions_2">on your computer. \n\nUse the following codes:</string>
+    <string name="new_import_instructions_url">http://beta.hipstacast.appspot.com/import</string>
+    <string name="importing">Importing&#8230;</string>
+    <string name="importing_after_done">After importing, the podcasts will appear shortly.</string>
+    <string name="start_using_hipstacast">Start using Hipstacast!</string>
 
 </resources>

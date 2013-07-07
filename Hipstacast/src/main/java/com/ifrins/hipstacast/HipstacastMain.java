@@ -24,6 +24,7 @@ import com.ifrins.hipstacast.fragments.AddUrlDialogFragment;
 import com.ifrins.hipstacast.fragments.SubscriptionsFragment;
 import com.ifrins.hipstacast.tasks.ExportTask;
 import com.ifrins.hipstacast.tasks.ImportTask;
+import com.ifrins.hipstacast.utils.HipstacastLogging;
 
 public class HipstacastMain extends FragmentActivity {
 
@@ -31,6 +32,12 @@ public class HipstacastMain extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Crashlytics.start(this);
+
+		if (((Hipstacast) getApplication()).shouldDisplayWelcomeActivity()) {
+			Intent welcomeIntent = new Intent(this, HipstacastWelcome.class);
+			startActivityForResult(welcomeIntent, 1);
+		}
+
 		setContentView(R.layout.basic_layout);
 		
 		Fragment mainFragment = new SubscriptionsFragment();
@@ -63,7 +70,7 @@ public class HipstacastMain extends FragmentActivity {
 			startActivity(new Intent(this, HipstacastSettings.class));
 			return true;
 		case R.id.menuImport:
-			startImport();
+			startActivity(new Intent(this, HipstacastImport.class));
 			return true;
 		case R.id.menuExport:
 			startExport();
@@ -99,47 +106,18 @@ public class HipstacastMain extends FragmentActivity {
 		super.onStop();
 		EasyTracker.getInstance().activityStop(this);
 	}
-	private 
-	void startExport() {
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		HipstacastLogging.log("Welcome Result Code", resultCode);
+	}
+
+
+	private void startExport() {
 		final int n = new Random().nextInt(9999);
 		final int s = new Random().nextInt(9999);
 
 		new ExportTask(this, null).execute(n,s);
-
-	}
-	private void startImport() {
-		Random r = new Random();
-		final int n = r.nextInt(9999);
-		final int s = r.nextInt(9999);
-		r = null;
-		final Context c = this;
-		new AlertDialog.Builder(c)
-		.setTitle(R.string.import_menu)
-		.setMessage(String.format(getString(R.string.import_msg), "http://goo.gl/yrv9e", n, s))
-		.setPositiveButton(R.string.import_menu,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,
-							int whichButton) {
-						dialog.dismiss();
-						ProgressDialog progressDialog;
-						progressDialog = new ProgressDialog(c); 
-						progressDialog
-								.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-						progressDialog
-								.setMessage(getString(R.string.import_progress));
-						progressDialog.setCancelable(false);
-						progressDialog.show();
-						new ImportTask(getApplicationContext(), progressDialog).execute(n, s);
-
-					}
-				})
-		.setNegativeButton(R.string.cancel,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,
-							int whichButton) {
-						// Do nothing.
-					}
-				}).show();
 
 	}
 

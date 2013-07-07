@@ -1,32 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/card_background_color"
+              android:orientation="vertical">
 
     <LinearLayout
-        android:id="@+id/setupContentView"
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginTop="10dp"
-        android:layout_weight="1"
-        android:gravity="top" >
+            android:id="@+id/setup_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dip"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="top">
+
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/smallBar"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom"
-        android:orientation="vertical" >
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom"
+            android:orientation="vertical">
 
         <Button
-            android:id="@+id/setupButton"
-            style="@style/ClingButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|center"
-            android:onClick="moveNext" >
+                android:id="@+id/setupButton"
+                android:text="@string/start"
+                style="@style/ClingButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center">
         </Button>
     </LinearLayout>
 

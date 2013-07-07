@@ -14,11 +14,8 @@ import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class SubscriptionsCursorAdapter extends CursorAdapter {
 
-	Context ctx;
-
 	public SubscriptionsCursorAdapter(Context context, Cursor c) {
 		super(context, c, false);
-		ctx = context;
 	}
 
 	@Override

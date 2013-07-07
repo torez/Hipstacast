@@ -8,16 +8,11 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
 
 public class Hipstacast extends Application {
+	public static final String MIGRATION2_0_DONE = "is_migration_2_done";
 	public static final String WELCOME_PREFERENCES = "WELCOME";
-	public static final String FULL_SHOW_PREFERENCES = "FULLSHOWPREFERENCES";
-	public static final String TASK_ADD_PROVIDER = "AddPodcastProvider";
-	public static final String TASK_PLAYBACK_COMPLETED = "PlaybackCompleted";
-	public static final String TASK_OPEN_WEBPAGE = "OpenWebpageFromEpisode";
-	public static final String TASK_OPEN_DONATIONS = "OpenDonationsFromEpisode";
-	public static final String TASK_SHARE ="ShareFromEpisode";
 	public static final String TASK_UPGRADE = "Upgrade";
 
-	public Boolean shouldDisplayWelcomeActivity = null;
+	private Boolean shouldDisplayWelcomeActivity = null;
 
 	@Override
 	public void onCreate() {
@@ -33,24 +28,16 @@ public class Hipstacast extends Application {
 			return shouldDisplayWelcomeActivity;
 		} else {
 			SharedPreferences pref = getSharedPreferences(WELCOME_PREFERENCES, 0);
-			shouldDisplayWelcomeActivity = pref.getBoolean("shown_"+getString(R.string.version_number), true);
-			return false;
-		} 
+			shouldDisplayWelcomeActivity = pref.getBoolean(MIGRATION2_0_DONE,  true);
+			return shouldDisplayWelcomeActivity;
+		}
 	}
 	public final void setWelcomeActivityShown() {
 		SharedPreferences pref = getSharedPreferences(WELCOME_PREFERENCES, 0);
 		Editor editor = pref.edit();
-		editor.putBoolean("shown_"+getString(R.string.version_number), false);
-		PackageInfo pInfo = null;
-		try {
-			pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-		} catch (NameNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		editor.putInt("latest-version", pInfo.versionCode);
+		editor.putBoolean(MIGRATION2_0_DONE, false);
 		editor.commit();
+
 		shouldDisplayWelcomeActivity = false;
 	}
 }

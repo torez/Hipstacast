@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@color/card_background_color">
+    <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            style="@style/CardParent">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="@string/welcome_to_hipstacast"
+                android:layout_gravity="center"
+                style="@style/CardTitle"/>
+        <ImageView
+                android:layout_width="match_parent"
+                android:layout_marginTop="20dp"
+                android:layout_height="148dp"
+                android:id="@+id/imageView"
+                android:src="@drawable/ic_launcher_web"/>
+    </LinearLayout>
+
+</LinearLayout>

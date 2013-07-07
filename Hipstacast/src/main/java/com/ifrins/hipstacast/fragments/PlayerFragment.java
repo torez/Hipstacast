@@ -209,15 +209,5 @@ public class PlayerFragment extends Fragment {
 		}
 
 	}
-	
-	public void playbackToggle(ImageButton b) {
-		if (player.isPlaying()) {
-			player.pause();
-			b.setImageResource(R.drawable.ic_action_play);
-		} else {
-			player.play();
-			b.setImageResource(R.drawable.ic_action_pause);
-		}
-	}
 
 }

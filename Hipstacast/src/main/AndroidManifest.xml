@@ -100,7 +100,7 @@
             android:name=".HipstacastVideoEpisodePlayer"
             android:label="@string/menu_search"
             android:launchMode="singleInstance"
-            android:theme="@android:style/Theme.Holo.NoActionBar.Fullscreen">
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar.Fullscreen">
         </activity>
         <activity
             android:name=".HipstacastSingleShownotes"
@@ -108,6 +108,14 @@
         <activity
             android:name=".HipstacastAbout"
             android:label="@string/about"/>
+        <activity
+            android:name=".HipstacastImport"
+            android:label="@string/import_menu"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"/>
+        <activity
+            android:name=".HipstacastExport"
+            android:label="@string/export"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"/>
 
         <receiver
             android:name=".widgets.HipstacastSubscriptionsWidgetProvider">
