@@ -30,11 +30,20 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
 			final Cursor c = (Cursor) EpisodesFragment.this.getListAdapter().getItem(position);
 			final int episode_id = c.getInt(c.getColumnIndex("_id"));
 			final int content_type = c.getInt(c.getColumnIndex("type"));
-			
-			Intent openIntent = new Intent(getActivity(), EpisodePlayer.class);
-			openIntent.putExtra("episode_id", episode_id);
-			openIntent.putExtra("type", content_type);
-			startActivity(openIntent);
+
+			Intent openIntent = null;
+
+			if (content_type == HipstacastProvider.EPISODE_TYPE_AUDIO) {
+				openIntent = new Intent(getActivity(), EpisodePlayer.class);
+			} else if (content_type == HipstacastProvider.EPISODE_TYPE_VIDEO) {
+				openIntent = new Intent(getActivity(), HipstacastVideoEpisodePlayer.class);
+			}
+
+			if (openIntent != null) {
+				openIntent.putExtra("episode_id", episode_id);
+				openIntent.putExtra("type", content_type);
+				startActivity(openIntent);
+			}
 
 		}
 
@@ -102,8 +111,6 @@ public class EpisodesFragment extends ListFragment implements LoaderManager.Load
     @Override
     public boolean onContextItemSelected (MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        HipstacastLogging.log("onContextItemSelected");
-        HipstacastLogging.log("Selected CI id", item.getItemId());
         Cursor c = (Cursor) this.getListAdapter().getItem(info.position);
         int episodeId = c.getInt(c.getColumnIndex("_id"));
 

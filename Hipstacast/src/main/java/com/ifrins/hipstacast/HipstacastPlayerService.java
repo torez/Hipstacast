@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.media.MediaMetadataRetriever;
 import android.media.RemoteControlClient;
 import android.os.Build;
+import android.view.Surface;
 import com.ifrins.hipstacast.HipstacastPlayerService.Preparation.PlayerStatus;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
 import com.ifrins.hipstacast.remotecontrol.RemoteControlEventReceiver;
@@ -218,6 +219,12 @@ public class HipstacastPlayerService extends Service {
 			return mPlayer.getDuration();
 		}
 		return -1;
+	}
+
+	public void setPlayerSurface(Surface surface) {
+		if (mPlayer != null) {
+			mPlayer.setSurface(surface);
+		}
 	}
 	
 	// GET DATA

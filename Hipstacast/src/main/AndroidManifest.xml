@@ -71,7 +71,7 @@
         <activity
             android:name=".HipstacastWelcome"
             android:label="@string/welcome_to_hipstacast"
-            android:theme="@android:style/Theme.Holo.NoActionBar">
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar">
         </activity>
         <activity
             android:name=".HipstacastEpisodeView"
