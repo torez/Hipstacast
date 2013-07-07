@@ -14,7 +14,6 @@ import android.view.View.OnClickListener;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 
-import com.ifrins.hipstacast.utils.HipstacastLogging;
 import com.ifrins.hipstacast.utils.PlayerCallbacks;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -27,16 +26,34 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 	Boolean bound = false;
 	SeekBar seekBar;
 	SurfaceView videoView;
+	Boolean showingTooltip = true;
 
 	Runnable seekbarUpdaterRunnable = new Runnable() {
 
 		@Override
 		public void run() {
-			HipstacastLogging.log("playbackprogress", player.getCurrentPosition());
 			seekBar.setProgress(player.getCurrentPosition());
 			seekBar.postDelayed(seekbarUpdaterRunnable, 1500);
 		}
 
+	};
+
+	OnClickListener surfaceClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View view) {
+			View top = findViewById(R.id.viewVideoTop);
+			View bottom = findViewById(R.id.viewVideoBottom);
+
+			if (showingTooltip) {
+				top.animate().alpha(0);
+				bottom.animate().alpha(0);
+				showingTooltip = false;
+			} else {
+				top.animate().alpha(1);
+				bottom.animate().alpha(1);
+				showingTooltip = true;
+			}
+		}
 	};
 
 	OnClickListener playbackToggleClickListener = new OnClickListener() {
@@ -102,6 +119,7 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 			seekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);
 
 			videoView = (SurfaceView)findViewById(R.id.videoPlayer);
+			videoView.setOnClickListener(surfaceClickListener);
 
 			ImageButton playbackToogle = (ImageButton) findViewById(R.id.playToggleButton);
 			playbackToogle.setOnClickListener(playbackToggleClickListener);
@@ -123,7 +141,7 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 		}
 	};
 
-		@Override
+	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.player_video);
@@ -143,7 +161,18 @@ public class HipstacastVideoEpisodePlayer extends Activity {
 	protected void onStart() {
 		super.onStart();
 		EasyTracker.getInstance().activityStart(this);
+	}
 
+	@Override
+	protected void onPause() {
+		super.onPause();
+		if (seekBar != null) {
+			seekBar.removeCallbacks(seekbarUpdaterRunnable);
+		}
+
+		if (player != null) {
+			player.pause();
+		}
 	}
 	
 	@Override

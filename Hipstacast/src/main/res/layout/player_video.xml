@@ -1,68 +1,43 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/root"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+             android:id="@+id/root"
+             android:layout_width="fill_parent"
+             android:layout_height="fill_parent">
 
-    <VideoView
-        android:id="@+id/videoPlayer"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_gravity="center" />
+    <SurfaceView
+            android:id="@+id/videoPlayer"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center"/>
 
     <LinearLayout
-        android:id="@+id/viewVideoTop"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:orientation="vertical" >
+            android:id="@+id/viewVideoTop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:orientation="vertical">
 
         <SeekBar
-            android:id="@+id/playerSeekBar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+                android:id="@+id/playerSeekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/viewVideoBottom"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom" >
+            android:id="@+id/viewVideoBottom"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="10dp">
 
         <ImageButton
-            android:id="@+id/playerRewind"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_action_rewind" />
+                android:id="@+id/playToggleButton"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_action_play_video"
+                android:scaleType="fitCenter"/>
 
-        <ImageButton
-            android:id="@+id/playToggleButton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_action_play" />
-
-        <ImageButton
-            android:id="@+id/playerFastForward"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_action_ff" />
-
-        <!--
-             <ImageButton
-            android:id="@+id/button1"
-            style="@android:style/Holo.ButtonBar.AlertDialog"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:onClick="startStopVideoToggle"
-            android:text="@string/menu_play"
-            android:textStyle="bold" />
-        -->
     </LinearLayout>
 
 </FrameLayout>
