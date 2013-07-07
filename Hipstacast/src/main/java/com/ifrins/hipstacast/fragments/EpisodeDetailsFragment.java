@@ -33,7 +33,7 @@ public class EpisodeDetailsFragment extends Fragment {
 	
 	private Cursor getCursor() {
     	return getActivity().getContentResolver().query(
-                Hipstacast.SUBSCRIPTIONS_PROVIDER_URI,
+                HipstacastProvider.SUBSCRIPTIONS_URI,
                 HipstacastProvider.SUBSCRIPTIONS_DEFAULT_PROJECTION,
                 "_id = ?",
                 new String[] { String.valueOf(show_id) },

@@ -16,9 +16,6 @@ public class Hipstacast extends Application {
 	public static final String TASK_OPEN_DONATIONS = "OpenDonationsFromEpisode";
 	public static final String TASK_SHARE ="ShareFromEpisode";
 	public static final String TASK_UPGRADE = "Upgrade";
-	
-	public static final Uri SUBSCRIPTIONS_PROVIDER_URI = Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts");
-	public static final Uri EPISODES_PROVIDER_URI = Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/episodes");
 
 	public Boolean shouldDisplayWelcomeActivity = null;
 
