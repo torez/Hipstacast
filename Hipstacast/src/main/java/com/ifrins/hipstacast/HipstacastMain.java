@@ -1,9 +1,7 @@
 package com.ifrins.hipstacast;
 
 import android.app.AlarmManager;
-import android.app.AlertDialog;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -13,8 +11,6 @@ import android.view.MenuItem;
 import com.crashlytics.android.Crashlytics;
 import java.util.Random;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
@@ -23,7 +19,6 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.AddUrlDialogFragment;
 import com.ifrins.hipstacast.fragments.SubscriptionsFragment;
 import com.ifrins.hipstacast.tasks.ExportTask;
-import com.ifrins.hipstacast.tasks.ImportTask;
 import com.ifrins.hipstacast.utils.HipstacastLogging;
 
 public class HipstacastMain extends FragmentActivity {
@@ -95,7 +90,7 @@ public class HipstacastMain extends FragmentActivity {
 		Intent syncIntent = new Intent(this, HipstacastSync.class);
 		syncIntent.setAction(HipstacastSync.ACTION_SYNC);
 		PendingIntent syncPendingIntent = PendingIntent.getService(this, 0, syncIntent, 0);
-		long d = SystemClock.elapsedRealtime() + 100;
+		long d = SystemClock.elapsedRealtime() + 10000;
 
 		AlarmManager m = ((AlarmManager) getSystemService(ALARM_SERVICE));
 		m.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, d, AlarmManager.INTERVAL_HOUR, syncPendingIntent);

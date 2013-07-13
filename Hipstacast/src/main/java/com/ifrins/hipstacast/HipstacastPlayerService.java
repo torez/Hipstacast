@@ -246,7 +246,7 @@ public class HipstacastPlayerService extends Service {
 	}
 
 	public int getSavedPosition() {
-		return mPreparation.getSavedPosition();
+		return mPreparation.getSavedPosition() * 1000;
 	}
 	
 	private OnPreparedListener mPreparedListener = new OnPreparedListener() {
@@ -340,7 +340,7 @@ public class HipstacastPlayerService extends Service {
 		int currentPosition = this.getCurrentPosition();
 
 		ContentValues mEpisodeUpdate = new ContentValues();
-		mEpisodeUpdate.put(HipstacastProvider.EPISODE_CURRENT_POSITION, currentPosition);
+		mEpisodeUpdate.put(HipstacastProvider.EPISODE_CURRENT_POSITION, currentPosition / 1000);
 		mEpisodeUpdate.put(HipstacastProvider.EPISODE_STATUS, HipstacastProvider.EPISODE_STATUS_STARTED);
 
 		this.getContentResolver().update(HipstacastProvider.EPISODES_URI,

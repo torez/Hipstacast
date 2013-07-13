@@ -26,7 +26,7 @@ public class EpisodeListCursorAdapter extends CursorAdapter {
         holder.name.setText(cursor.getString(cursor.getColumnIndex(HipstacastProvider.EPISODE_TITLE)));
 
 		int totalDuration = cursor.getInt(cursor.getColumnIndex(HipstacastProvider.EPISODE_DURATION));
-		int currentPosition = cursor.getInt(cursor.getColumnIndex(HipstacastProvider.EPISODE_CURRENT_POSITION)) / 1000;
+		int currentPosition = cursor.getInt(cursor.getColumnIndex(HipstacastProvider.EPISODE_CURRENT_POSITION));
 		int status = cursor.getInt(cursor.getColumnIndex(HipstacastProvider.EPISODE_STATUS));
         int isDownloaded = cursor.getInt(cursor.getColumnIndex(HipstacastProvider.EPISODE_DOWNLOADED));
 
