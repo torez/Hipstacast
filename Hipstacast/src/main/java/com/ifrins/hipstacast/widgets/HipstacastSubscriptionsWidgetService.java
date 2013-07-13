@@ -4,15 +4,12 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 import com.ifrins.hipstacast.HipstacastEpisodeView;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
-import com.ifrins.hipstacast.utils.HipstacastLogging;
-import com.ifrins.hipstacast.utils.PlayerUIUtils;
 import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 import java.io.File;
@@ -92,7 +89,10 @@ public class HipstacastSubscriptionsWidgetService extends RemoteViewsService {
                 );
             }
 
-            rv.setTextViewText(R.id.subscription_cover_badge, String.valueOf(mSubscriptionsCursor.getInt(5)));
+            int count = mSubscriptionsCursor.getInt(5);
+            if (count > 0) {
+                rv.setTextViewText(R.id.subscription_cover_badge, String.valueOf(count));
+            }
 
 			Bundle extras = new Bundle();
 			extras.putInt(
