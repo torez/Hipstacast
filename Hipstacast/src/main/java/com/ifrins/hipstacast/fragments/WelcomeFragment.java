@@ -52,6 +52,7 @@ public class WelcomeFragment extends Fragment {
 	}
 
 	public void moveToNextPage() {
+        HipstacastLogging.log("Move to next page from", currentPage);
 		if (currentPage == 0) {
 			Cursor subscriptionCount = getActivity().getContentResolver().query(
 					HipstacastProvider.SUBSCRIPTIONS_URI,
@@ -59,8 +60,8 @@ public class WelcomeFragment extends Fragment {
 					null,
 					null,
 					null);
-			if (subscriptionCount.getCount() == 0) {
-				setupStep(2);
+			if (subscriptionCount.getCount() > 0) {
+				setupStep(1);
 			} else {
 				setupStep(4);
 			}
