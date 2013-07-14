@@ -384,12 +384,13 @@ public class HipstacastPlayerService extends Service {
 		public Preparation(Context context, int episodeId) {
 			HipstacastLogging.log("episode_id", episodeId);
 			this.episodeId = episodeId;
-			this.episodeCursor = context.getContentResolver()
-											.query(HipstacastProvider.EPISODES_URI,
-													HipstacastProvider.EPISODES_PLAYBACK_PROJECTION,
-													"_id = ?",
-													new String[]{String.valueOf(episodeId)},
-													null);
+			this.episodeCursor = context.getContentResolver().query(
+					HipstacastProvider.EPISODES_URI,
+					HipstacastProvider.EPISODES_PLAYBACK_PROJECTION,
+					"_id = ?",
+					new String[]{String.valueOf(episodeId)},
+					null
+			);
 			this.context = context;
 		}
 		
