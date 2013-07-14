@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.EpisodeDetailsFragment;
@@ -26,7 +25,7 @@ public class HipstacastEpisodeView extends FragmentActivity implements ActionBar
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-        setContentView(R.layout.activity_hipstacast_search_neue);
+        setContentView(R.layout.basic_layout_viewpager);
         mSectionsPagerAdapter = new SectionsPagerAdapter(this.getSupportFragmentManager());
         final ActionBar actionBar = this.getActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);

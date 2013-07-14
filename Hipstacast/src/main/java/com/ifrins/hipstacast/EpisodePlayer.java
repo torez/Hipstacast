@@ -43,7 +43,7 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 		show_id = getIntent().getExtras().getInt("show_id");
 		podcast_id = getIntent().getExtras().getInt("episode_id");
 		
-		setContentView(R.layout.activity_hipstacast_search_neue);
+		setContentView(R.layout.basic_layout_viewpager);
 		pager = (ViewPager)findViewById(R.id.pager);
 	    mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this);
 	    

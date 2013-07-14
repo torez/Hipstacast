@@ -1,5 +1,6 @@
-package com.ifrins.hipstacast;
+package com.ifrins.hipstacast.adapters;
 
+import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.model.Podcast;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -25,9 +26,9 @@ public class SubscriptionsSearchCursorAdapter extends ArrayAdapter<Object> {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ViewHolder holder;
 		if (convertView == null) {
-			LayoutInflater inflater = (LayoutInflater) context
-				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			convertView = inflater.inflate(R.layout.subscriptions_list, null);
+
 			holder = new ViewHolder();
 			holder.title = (TextView) convertView.findViewById(R.id.podcastTitle);
 			holder.author = (TextView) convertView.findViewById(R.id.podcastAuthor);

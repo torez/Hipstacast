@@ -3,7 +3,7 @@ package com.ifrins.hipstacast.fragments;
 import android.support.v4.app.ListFragment;
 import com.ifrins.hipstacast.HipstacastSync;
 import com.ifrins.hipstacast.R;
-import com.ifrins.hipstacast.SubscriptionsSearchCursorAdapter;
+import com.ifrins.hipstacast.adapters.SubscriptionsSearchCursorAdapter;
 import com.ifrins.hipstacast.model.Podcast;
 import com.ifrins.hipstacast.tasks.ITunesStoreSearchTask;
 import com.ifrins.hipstacast.tasks.OnSearchFinished;
