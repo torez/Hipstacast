@@ -9,7 +9,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import com.crashlytics.android.Crashlytics;
-import java.util.Random;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,8 +17,6 @@ import android.os.SystemClock;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.AddUrlDialogFragment;
 import com.ifrins.hipstacast.fragments.SubscriptionsFragment;
-import com.ifrins.hipstacast.tasks.ExportTask;
-import com.ifrins.hipstacast.utils.HipstacastLogging;
 
 public class HipstacastMain extends FragmentActivity {
 
@@ -68,7 +65,7 @@ public class HipstacastMain extends FragmentActivity {
 			startActivity(new Intent(this, HipstacastImport.class));
 			return true;
 		case R.id.menuExport:
-			startExport();
+			startActivity(new Intent(this, HipstacastExport.class));
 			return true;
 		case R.id.menuAbout:
 			startActivity(new Intent(this, HipstacastAbout.class));
@@ -104,16 +101,6 @@ public class HipstacastMain extends FragmentActivity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		HipstacastLogging.log("Welcome Result Code", resultCode);
-	}
-
-
-	private void startExport() {
-		final int n = new Random().nextInt(9999);
-		final int s = new Random().nextInt(9999);
-
-		new ExportTask(this, null).execute(n,s);
-
 	}
 
 	public void showAddUrlDialog() {

@@ -1,108 +1,117 @@
 package com.ifrins.hipstacast.tasks;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import com.ifrins.hipstacast.R;
-import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
-import android.widget.Toast;
+import com.crashlytics.android.Crashlytics;
+import com.ifrins.hipstacast.provider.HipstacastProvider;
+import com.ifrins.hipstacast.utils.HipstacastLogging;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-public class ExportTask extends AsyncTask<Integer, Void, Void> {
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+
+public class ExportTask extends AsyncTask<Integer, Void, Boolean> {
+
 	Context context;
-	ProgressDialog progress;
-	Integer[] sns;
+	OnTaskCompleted callback;
 
-	public ExportTask(Context ct, ProgressDialog pd) {
-		context = ct;
-		progress = pd;
+	public ExportTask(Context context, OnTaskCompleted callback) {
+		this.context = context;
+		this.callback = callback;
 	}
 
 	@Override
-	protected Void doInBackground(Integer... params) {
-		int sn1 = params[0];
-		int sn2 = params[1];
-		HttpResponse response = null;
-		List<String> urls = new ArrayList<String>();
+	protected Boolean doInBackground(Integer... val) {
+		int sn1 = val[0];
+		int sn2 = val[1];
+		String jsonData = getSubscriptions();
 
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost("https://hipstacast.appspot.com/api/export");
-		Cursor c = context
-				.getContentResolver()
-				.query(Uri
-						.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts"),
-						new String[] { "_id", "feed_link" },
-						null, null, "title ASC");
-		
-		while (c.moveToNext() != false) {
-			urls.add(c.getString(c.getColumnIndex("feed_link")));
-		}
+		URL url = null;
 		try {
-			// Add your data
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(2);
-			nameValuePairs.add(new BasicNameValuePair("sn1", String
-					.valueOf(sn1)));
-			nameValuePairs.add(new BasicNameValuePair("sn2", String
-					.valueOf(sn2)));
-			nameValuePairs.add(new BasicNameValuePair("urls", new JSONArray(urls).toString()));
-			httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			url = new URL(
+					"http://beta.hipstacast.appspot.com/api/export?id=" +
+							String.valueOf(sn1) +
+							String.valueOf(sn2)
+			);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			Crashlytics.logException(e);
+		}
 
-			// Execute HTTP Post Request
-			response = httpclient.execute(httppost);
-			
+		try {
+			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+			urlConnection.setRequestMethod("POST");
+			urlConnection.setDoOutput(true);
+			HipstacastLogging.log(jsonData);
 
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
+			OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
+			wr.write(jsonData);
+			wr.flush();
+
+			int statusCode = urlConnection.getResponseCode();
+			urlConnection.disconnect();
+
+			if (statusCode >= 400) {
+				return  false;
+			} else {
+				return true;
+			}
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			Crashlytics.logException(e);
 		}
-		int statusCode = response.getStatusLine().getStatusCode();
-		if (statusCode == 200) {
-			sns = params;
-		} else if (statusCode == 404) {
-			Toast.makeText(context, R.string.import_not_found_error, Toast.LENGTH_LONG).show();
-		} else if (statusCode == 500) {
-			Toast.makeText(context, R.string.import_server_error, Toast.LENGTH_LONG).show();
-		}
-		return null;
+
+		return false;
 	}
 	
 	@Override
-	protected void onPostExecute(Void v) {
-		if (sns != null) {
-			new AlertDialog.Builder(context)
-			.setTitle(R.string.import_menu) 
-			.setMessage(String.format(context.getString(R.string.export_done), "http://goo.gl/fKpD5", sns[0], sns[1]))
-			.setPositiveButton(R.string.done,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							dialog.dismiss();
-						}
-					})
-			.setNegativeButton(R.string.cancel,
-					new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialog,
-								int whichButton) {
-							// Do nothing.
-						}
-					}).show();
-
+	protected void onPostExecute(Boolean status) {
+		if (status) {
+			callback.onTaskCompleted(this.getClass().getName());
+		} else {
+			callback.onError();
 		}
+	}
+
+	private String getSubscriptions() {
+		JSONArray podcastList = new JSONArray();
+		Cursor subscriptions = context.getContentResolver().query(
+				HipstacastProvider.SUBSCRIPTIONS_URI,
+				new String[] {
+						"_id",
+						HipstacastProvider.PODCAST_TITLE,
+						HipstacastProvider.PODCAST_FEED
+				},
+				null,
+				null,
+				null
+		);
+
+		while (subscriptions.moveToNext()) {
+			JSONObject podcast = new JSONObject();
+			try {
+				podcast.put(
+						"title",
+						subscriptions.getString(subscriptions.getColumnIndex(HipstacastProvider.PODCAST_TITLE))
+				);
+				podcast.put(
+						"url",
+						subscriptions.getString(subscriptions.getColumnIndex(HipstacastProvider.PODCAST_FEED))
+				);
+				podcastList.put(podcast);
+			} catch (JSONException e) {
+				Crashlytics.logException(e);
+			}
+		}
+
+		return podcastList.toString();
 	}
 	
 

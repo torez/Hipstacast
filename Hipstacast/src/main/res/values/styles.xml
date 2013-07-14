@@ -71,4 +71,9 @@
         <item name="android:textColor">#FFFFFF</item>
     </style>
 
+    <style name="TextError">
+        <item name="android:textColor">#FF4444</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

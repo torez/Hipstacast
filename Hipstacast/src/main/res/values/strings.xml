@@ -60,7 +60,7 @@
     <string name="featured">Featured</string>
     <string name="search_results">Search Results</string>
     <string name="import_not_found_error">We couldn\'t find your subscriptions. Please try again.</string>
-    <string name="import_server_error">There was a problem with your request. Please try again later.</string>
+    <string name="takeout_server_error">There was a problem with your import. Please try again later.</string>
     <string name="support">Support</string>
     <string name="twitter">Twitter</string>
     <string name="google_plus">Google+</string>
@@ -103,10 +103,13 @@
     <string name="can_take_a_couple_of_minutes">It can take a couple of minutes. Please wait…</string>
 
     <string name="new_import_instructions_1">To import your subscriptions, visit:</string>
-    <string name="new_import_instructions_2">on your computer. \n\nUse the following codes:</string>
+    <string name="new_export_instructions_1">To export your subscriptions, visit:</string>
+    <string name="new_takeout_instructions_2">on your computer. \n\nUse the following codes:</string>
     <string name="new_import_instructions_url">http://beta.hipstacast.appspot.com/import</string>
+    <string name="new_export_instructions_url">http://beta.hipstacast.appspot.com/export</string>
     <string name="importing">Importing&#8230;</string>
-    <string name="importing_after_done">After importing, the podcasts will appear shortly.</string>
+    <string name="exporting">Exporting&#8230;</string>
+    <string name="takeout_after_done">The podcasts will appear shortly.</string>
     <string name="start_using_hipstacast">Start using Hipstacast!</string>
 
 </resources>

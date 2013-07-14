@@ -87,10 +87,6 @@ public class WelcomeFragment extends Fragment {
 			nextButton.setText(R.string.finish);
 			nextButton.setVisibility(View.INVISIBLE);
 			getChildFragmentManager().beginTransaction().replace(R.id.setup_content, new MigrationFragment()).commit();
-		} else if (step == 2) {
-
-		} else if (step == 3) {
-
 		} else if (step == 4) {
 			((Hipstacast)getActivity().getApplication()).setWelcomeActivityShown();
 			getActivity().setResult(Activity.RESULT_OK);
@@ -114,6 +110,8 @@ public class WelcomeFragment extends Fragment {
 			public void onTaskCompleted(String task) {
 				incrementStatus();
 			}
+			@Override
+			public void onError() {}
 		};
 
 		BroadcastReceiver receiver = new BroadcastReceiver() {
@@ -137,7 +135,6 @@ public class WelcomeFragment extends Fragment {
 
 		private void incrementStatus() {
 			status++;
-			HipstacastLogging.log("Incremented status", status);
 			if (status == 2) {
 				nextButton.setVisibility(View.VISIBLE);
 				progressBar.setVisibility(View.GONE);

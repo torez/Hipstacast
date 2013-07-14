@@ -15,12 +15,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import com.ifrins.hipstacast.HipstacastSync;
-import com.ifrins.hipstacast.R;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.widget.Toast;
 import org.json.JSONObject;
 
 public class ImportTask extends AsyncTask<Integer, Void, Void> {
@@ -59,15 +57,15 @@ public class ImportTask extends AsyncTask<Integer, Void, Void> {
 				response = IOUtils.toString(in);
 			} else if (statusCode == 404) {
 				response = "[]";
-				Toast.makeText(context, R.string.import_not_found_error, Toast.LENGTH_LONG).show();
+				callback.onError();
 			} else if (statusCode == 500) {
 				response = "[]";
-				Toast.makeText(context, R.string.import_server_error, Toast.LENGTH_LONG).show();
+				callback.onError();
 			}
 			urlConnection.disconnect();
 		} catch (IOException e) {
-			e.printStackTrace();
 			Crashlytics.logException(e);
+			callback.onError();
 		}
 
 		JSONArray jsonArray = null;
