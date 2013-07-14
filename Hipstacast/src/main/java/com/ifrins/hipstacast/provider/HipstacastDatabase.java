@@ -31,7 +31,7 @@ public class HipstacastDatabase extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		if (newVersion == 2) {
+		if (oldVersion < 2) {
 			db.execSQL("ALTER TABLE \"podcasts\" ADD COLUMN \"etag\" VARCHAR");
 			db.execSQL("ALTER TABLE \"podcasts\" ADD COLUMN \"etag_lm\" VARCHAR");
 
