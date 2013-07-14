@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import android.app.PendingIntent;
 import android.content.*;
-import android.graphics.BitmapFactory;
+import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.media.RemoteControlClient;
 import android.os.Build;
@@ -26,6 +26,7 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.IBinder;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class HipstacastPlayerService extends Service {
 
@@ -317,12 +318,12 @@ public class HipstacastPlayerService extends Service {
 
 	private void setRemoteControlDetails() {
 		if (mRemoteControlClient != null) {
+			Bitmap icon = UrlImageViewHelper.getCachedBitmap(this.getCoverPath(this));
 			mRemoteControlClient.editMetadata(true)
 					.putString(MediaMetadataRetriever.METADATA_KEY_TITLE, this.getEpisodeTitle())
 					.putString(MediaMetadataRetriever.METADATA_KEY_ALBUM, this.getSubscriptionName())
 					.putLong(MediaMetadataRetriever.METADATA_KEY_DURATION, this.getEpisodeDuration())
-					.putBitmap(RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK,
-							BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher_web))
+					.putBitmap(RemoteControlClient.MetadataEditor.BITMAP_KEY_ARTWORK, icon)
 
 					.apply();
 		}
@@ -384,10 +385,10 @@ public class HipstacastPlayerService extends Service {
 			HipstacastLogging.log("episode_id", episodeId);
 			this.episodeId = episodeId;
 			this.episodeCursor = context.getContentResolver()
-											.query(HipstacastProvider.EPISODES_URI, 
+											.query(HipstacastProvider.EPISODES_URI,
 													HipstacastProvider.EPISODES_PLAYBACK_PROJECTION,
-													"_id = ?", 
-													new String[] {String.valueOf(episodeId)}, 
+													"_id = ?",
+													new String[]{String.valueOf(episodeId)},
 													null);
 			this.context = context;
 		}
@@ -459,12 +460,12 @@ public class HipstacastPlayerService extends Service {
 		
 		public String getCoverPath(Context context) {
 			Cursor subscription = context.getContentResolver().query(
-									HipstacastProvider.SUBSCRIPTIONS_URI, 
-									new String[] { "_id", HipstacastProvider.PODCAST_IMAGE}, 
-									"_id = ?", 
-									new String[] {String.valueOf(this.getSubscriptionId())}, 
+									HipstacastProvider.SUBSCRIPTIONS_URI,
+									new String[] { "_id", HipstacastProvider.PODCAST_IMAGE},
+									"_id = ?",
+									new String[] {String.valueOf(this.getSubscriptionId())},
 									null);
-			
+
 			subscription.moveToFirst();
 
 			String fullPath = subscription.getString(subscription.getColumnIndex(HipstacastProvider.PODCAST_IMAGE));

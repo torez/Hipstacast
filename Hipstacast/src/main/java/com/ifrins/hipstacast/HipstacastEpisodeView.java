@@ -1,6 +1,12 @@
 package com.ifrins.hipstacast;
 
 import android.app.ActionBar;
+import android.app.Activity;
+import android.content.Context;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -12,6 +18,8 @@ import com.ifrins.hipstacast.fragments.EpisodesFragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import com.ifrins.hipstacast.provider.HipstacastProvider;
+import com.koushikdutta.urlimageviewhelper.UrlImageViewHelper;
 
 public class HipstacastEpisodeView extends FragmentActivity implements ActionBar.TabListener {
 	public static final String EXTRA_SUBSCRIPTION_ID = "show_id";
@@ -52,6 +60,8 @@ public class HipstacastEpisodeView extends FragmentActivity implements ActionBar
 				.setTitle(getIntent().getExtras().getString(EXTRA_SUBSCRIPTION_TITLE));
 		
 		show_id = getIntent().getExtras().getInt(EXTRA_SUBSCRIPTION_ID);
+
+		new ActionBarIconLoader(this, show_id).execute();
 	}
 	
 	@Override
@@ -149,4 +159,39 @@ public class HipstacastEpisodeView extends FragmentActivity implements ActionBar
             return null;
         }
     }
+
+	private class ActionBarIconLoader extends AsyncTask<Void, Void, Bitmap> {
+		Activity activity;
+		int subscription_id;
+
+		public ActionBarIconLoader(Activity activity, int subscription_id) {
+			this.activity = activity;
+			this.subscription_id = subscription_id;
+		}
+
+		@Override
+		protected Bitmap doInBackground(Void... voids) {
+			Cursor subscription = activity.getContentResolver().query(
+					HipstacastProvider.SUBSCRIPTIONS_URI,
+					HipstacastProvider.SUBSCRIPTIONS_DEFAULT_PROJECTION,
+					"_id = ?",
+					new String[] { String.valueOf(subscription_id) },
+					null
+			);
+			subscription.moveToFirst();
+
+			String imageUrl = subscription.getString(subscription.getColumnIndex(HipstacastProvider.PODCAST_IMAGE));
+			return UrlImageViewHelper.getCachedBitmap(imageUrl);
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap icon) {
+			if (icon == null) {
+				return;
+			}
+
+			activity.getActionBar().setIcon(new BitmapDrawable(activity.getResources(), icon));
+		}
+
+	}
 }
