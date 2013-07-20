@@ -3,6 +3,7 @@ package com.ifrins.hipstacast;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.PlayerFragment;
 import com.ifrins.hipstacast.fragments.ShownotesFragment;
+import com.ifrins.hipstacast.utils.HipstacastLogging;
 import com.ifrins.hipstacast.utils.HipstacastUtils;
 
 import android.app.ActionBar;
@@ -87,19 +88,18 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 	public boolean onOptionsItemSelected(MenuItem item) {
 		
 		switch (item.getItemId()) {
-		case R.id.menuPlaySoundConfig: 
-			Intent enhanceSoundIntent = new Intent("com.htc.HtcSoundEnhancerSetting.ShowSettingPage");
-			startActivity(enhanceSoundIntent);
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
+            case R.id.menuPlaySoundConfig:
+                Intent enhanceSoundIntent = new Intent("com.htc.HtcSoundEnhancerSetting.ShowSettingPage");
+                startActivity(enhanceSoundIntent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
 		}
 		
 	}
 
 	@Override
 	protected void onDestroy() {
-		Log.d("HIP-DS", "On Destroy");
 		super.onDestroy();
 	}
 	
@@ -114,6 +114,12 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    @Override
+    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+        HipstacastLogging.log("Result code", resultCode);
+        HipstacastLogging.log("Intent action " + data.getExtras().toString());
     }
 
 	

@@ -1,6 +1,9 @@
 package com.ifrins.hipstacast.fragments;
 
+import android.net.Uri;
 import android.support.v4.app.Fragment;
+import android.view.MenuItem;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.HipstacastPlayerService;
 import com.ifrins.hipstacast.R;
 import com.ifrins.hipstacast.HipstacastPlayerService.LocalBinder;
@@ -184,6 +187,7 @@ public class PlayerFragment extends Fragment {
 
 		this.getActivity().startService(intent);
 		this.getActivity().bindService(intent, mConnection, 0);
+        this.setHasOptionsMenu(true);
 		
 	}
 
@@ -193,8 +197,30 @@ public class PlayerFragment extends Fragment {
 		((ProgressBar)playerView.findViewById(R.id.loadingProgress)).setIndeterminate(true);
 		return playerView;
 	}
-	
-	@Override
+
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menuPlayShare:
+                String msg = String.format("#nowplaying %s %s", player.getEpisodeTitle(), player.getEpisodeLink());
+                EasyTracker.getTracker().trackEvent("optionsmenu_action", "menu_press", "share", 1l);
+
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_TEXT, msg);
+                startActivity(Intent.createChooser(shareIntent, null));
+                return true;
+            case R.id.menuPlayWebsite:
+                EasyTracker.getTracker().trackEvent("optionsmenu_action", "menu_press", "website", 1l);
+                Intent webPageVisitIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(player.getEpisodeLink()));
+                startActivity(webPageVisitIntent);
+            default:
+                HipstacastLogging.log("menu item id", item.getItemId());
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
 	public void onDestroy() {
 		super.onDestroy();
 

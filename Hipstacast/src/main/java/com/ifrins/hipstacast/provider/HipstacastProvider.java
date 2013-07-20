@@ -42,7 +42,8 @@ public class HipstacastProvider {
 	public final static Uri SUBSCRIPTIONS_URI = Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/podcasts");
 	public final static Uri EPISODES_URI = Uri.parse("content://com.ifrins.hipstacast.provider.HipstacastContentProvider/episodes");
 
-	public final static String[] EPISODES_PLAYBACK_PROJECTION = new String[]{"_id",
+	public final static String[] EPISODES_PLAYBACK_PROJECTION = new String[]{
+            "_id",
             EPISODE_TITLE,
             EPISODE_STATUS,
             EPISODE_CURRENT_POSITION,
@@ -53,7 +54,8 @@ public class HipstacastProvider {
             EPISODE_SHOWNOTES,
             EPISODE_DURATION,
             EPISODE_DOWNLOADED,
-			EPISODE_TYPE
+			EPISODE_TYPE,
+            EPISODE_GUID
     };
 
 	public final static String[] SUBSCRIPTIONS_DEFAULT_PROJECTION = new String[]{

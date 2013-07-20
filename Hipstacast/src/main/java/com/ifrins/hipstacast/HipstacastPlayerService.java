@@ -238,6 +238,10 @@ public class HipstacastPlayerService extends Service {
 	public String getEpisodeTitle() {
 		return mPreparation.getEpisodeTitle();
 	}
+
+    public String getEpisodeLink() {
+        return mPreparation.getEpisodeLink();
+    }
 	
 	public String getCoverPath(Context context) {
 		return mPreparation.getCoverPath(context);
@@ -428,6 +432,13 @@ public class HipstacastPlayerService extends Service {
 			}
 			return episodeCursor.getString(episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_TITLE));
 		}
+
+        public String getEpisodeLink() {
+            if (episodeCursor.getPosition() != 0) {
+                episodeCursor.moveToFirst();
+            }
+            return episodeCursor.getString(episodeCursor.getColumnIndex(HipstacastProvider.EPISODE_GUID));
+        }
 
 		public String getSubscriptionName() {
 			if (episodeCursor.getPosition() != 0) {
