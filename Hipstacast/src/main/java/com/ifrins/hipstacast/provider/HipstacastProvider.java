@@ -71,4 +71,5 @@ public class HipstacastProvider {
             "(SELECT COUNT(*) FROM 'episodes' where episodes.podcast_id = podcasts._id AND episodes.status != 3 )"
     };
 
+	//public final static String PLAYER_LEFT_JOIN_SUBSCRIPTION_DATA = "LEFT OUTER JOIN podcasts on episodes.podcast_id = podcasts._id";
 }

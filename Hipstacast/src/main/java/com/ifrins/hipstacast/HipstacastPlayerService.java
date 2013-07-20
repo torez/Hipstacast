@@ -10,6 +10,7 @@ import android.media.MediaMetadataRetriever;
 import android.media.RemoteControlClient;
 import android.os.Build;
 import android.view.Surface;
+import com.crashlytics.android.Crashlytics;
 import com.ifrins.hipstacast.HipstacastPlayerService.Preparation.PlayerStatus;
 import com.ifrins.hipstacast.provider.HipstacastProvider;
 import com.ifrins.hipstacast.remotecontrol.RemoteControlEventReceiver;
@@ -209,8 +210,12 @@ public class HipstacastPlayerService extends Service {
 	}
 	
 	public int getCurrentPosition() {
-		if (mPlayer != null) {
-			return mPlayer.getCurrentPosition();
+		try {
+			if (mPlayer != null) {
+				return mPlayer.getCurrentPosition();
+			}
+		} catch (IllegalStateException e) {
+			Crashlytics.logException(e);
 		}
 		return -1;
 	}

@@ -11,12 +11,12 @@ import com.crashlytics.android.Crashlytics;
 
 public class HipstacastUtils {
 	public static final Boolean hasBeatsSoundConfig(Context c) {
-	    final Intent enhanceSoundIntent = new Intent(
-	            "com.htc.HtcSoundEnhancerSetting.ShowSettingPage");
+	    final Intent enhanceSoundIntent = new Intent("com.htc.HtcSoundEnhancerSetting.ShowSettingPage");
 
 	    // Check if API is supported.
 	    final List<ResolveInfo> activities = c.getPackageManager()
 	            .queryIntentActivities(enhanceSoundIntent, 0);
+		HipstacastLogging.log("HtcSoundEnhancer", activities.size());
 	    if (activities.isEmpty()) {
 	        return false;
 	    } else {

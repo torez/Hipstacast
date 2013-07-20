@@ -3,12 +3,10 @@ package com.ifrins.hipstacast;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.ifrins.hipstacast.fragments.PlayerFragment;
 import com.ifrins.hipstacast.fragments.ShownotesFragment;
-import com.ifrins.hipstacast.tasks.OnTaskCompleted;
 import com.ifrins.hipstacast.utils.HipstacastUtils;
 
 import android.app.ActionBar;
 import android.app.FragmentTransaction;
-import android.app.Notification;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,13 +26,9 @@ public class EpisodePlayer extends FragmentActivity implements ActionBar.TabList
     SectionsPagerAdapter mSectionsPagerAdapter;
 	int show_id;
 	int podcast_id;
-	int type;
 	Boolean fromNotification = false;
-	Notification n;
-	Boolean videoShowingControls = true;
-	
+
 	PlayerFragment playerFragment = null;
-	OnTaskCompleted performActionInFragment = null;
 
 
 	@Override
